@@ -277,9 +277,9 @@ export default function HistoryPage() {
 
                   {selectedDoc.data && (
                     <div className="text-xs text-neutral-700 space-y-3 font-mono bg-neutral-50 p-4 rounded border border-neutral-200">
-                      {selectedDoc.data.projectTitle && <p><strong>Project:</strong> {selectedDoc.data.projectTitle}</p>}
-                      {selectedDoc.data.projectDescription && <p><strong>Scope:</strong> {selectedDoc.data.projectDescription}</p>}
-                      {selectedDoc.data.deliverables && <p className="whitespace-pre-line"><strong>Deliverables:</strong><br />{selectedDoc.data.deliverables}</p>}
+                      {(selectedDoc.data as any).projectTitle && <p><strong>Project:</strong> {(selectedDoc.data as any).projectTitle}</p>}
+                      {(selectedDoc.data as any).projectDescription && <p><strong>Scope:</strong> {(selectedDoc.data as any).projectDescription}</p>}
+                      {(selectedDoc.data as any).deliverables && <p className="whitespace-pre-line"><strong>Deliverables:</strong><br />{(selectedDoc.data as any).deliverables}</p>}
                     </div>
                   )}
                 </div>

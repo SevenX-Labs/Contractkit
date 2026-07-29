@@ -40,6 +40,11 @@ export default function NDAPage() {
     breachPenalty: "Subject to injunctive relief and liquidated damages under applicable law.",
     additionalNotes: "Governed under standard commercial law.",
     
+    freelancerSignature: "",
+    freelancerSignDate: "",
+    clientSignature: "",
+    clientSignDate: "",
+
     status: "draft",
     createdAt: new Date().toISOString(),
   });
@@ -262,7 +267,7 @@ export default function NDAPage() {
               type="text"
               placeholder="Duration (e.g. 2 Years)"
               value={formData.duration}
-              onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, duration: e.target.value as any })}
               className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900"
             />
           </div>
