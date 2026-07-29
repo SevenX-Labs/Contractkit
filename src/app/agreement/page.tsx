@@ -5,17 +5,12 @@ import { useDocumentExport } from "../../hooks/useDocumentExport";
 import { getProfileDB, getNextDocumentNumberDB, createAgreementDB } from "../actions";
 import { AgreementData } from "../../types";
 import { formatCurrency, formatDate } from "../../lib/utils";
+import { ExportDropdown } from "../../components/common/ExportDropdown";
 import {
   FileCheck,
-  Download,
   Save,
-  Image as ImageIcon,
-  FileText,
-  User,
   Building,
-  Calendar,
   IndianRupee,
-  Shield,
   Eye,
   X,
 } from "lucide-react";
@@ -87,6 +82,21 @@ export default function AgreementPage() {
     } else {
       toast.error(`Error saving agreement: ${res.error}`);
     }
+  };
+
+  const handleExportPDF = async () => {
+    await handleSave();
+    await exportToPDF("agreement-pdf-preview", `Agreement-${formData.agreementNumber}.pdf`);
+  };
+
+  const handleExportDOCX = async () => {
+    await handleSave();
+    await exportToDOCX("agreement-pdf-preview", `Agreement-${formData.agreementNumber}.docx`);
+  };
+
+  const handleExportPNG = async () => {
+    await handleSave();
+    await exportToImage("agreement-pdf-preview", `Agreement-${formData.agreementNumber}.png`);
   };
 
   const agreementPreviewContent = (
@@ -193,29 +203,27 @@ export default function AgreementPage() {
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => setShowFloatingPreview(true)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-purple-600 text-white font-bold text-xs shadow hover:bg-purple-700 transition"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-purple-600 text-white font-bold text-xs shadow hover:bg-purple-700 transition cursor-pointer"
           >
             <Eye className="w-3.5 h-3.5" />
-            <span>Floating Preview</span>
+            <span>Preview</span>
           </button>
 
           <button
             onClick={handleSave}
             disabled={isSaving}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#DFD9C9] text-neutral-900 font-bold text-xs hover:bg-[#D5CEBC] transition"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#DFD9C9] text-neutral-900 font-bold text-xs hover:bg-[#D5CEBC] transition cursor-pointer"
           >
             <Save className="w-3.5 h-3.5 text-emerald-700" />
             <span>{isSaving ? "Saving..." : "Save Draft"}</span>
           </button>
 
-          <button
-            onClick={() => { handleSave(); exportToPDF("agreement-pdf-preview", `Agreement-${formData.agreementNumber}.pdf`); }}
-            disabled={isExporting || isSaving}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#121212] text-white font-bold text-xs shadow-md hover:bg-neutral-800 transition"
-          >
-            <Download className="w-3.5 h-3.5 text-pink-400" />
-            <span>PDF</span>
-          </button>
+          <ExportDropdown
+            onExportPDF={handleExportPDF}
+            onExportDOCX={handleExportDOCX}
+            onExportPNG={handleExportPNG}
+            isExporting={isExporting}
+          />
         </div>
       </div>
 
@@ -317,16 +325,15 @@ export default function AgreementPage() {
               </div>
 
               <div className="flex items-center gap-3">
-                <button
-                  onClick={() => { handleSave(); exportToPDF("agreement-pdf-preview", `Agreement-${formData.agreementNumber}.pdf`); }}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#121212] text-white text-xs font-bold shadow hover:bg-neutral-800 transition"
-                >
-                  <Download className="w-3.5 h-3.5 text-pink-400" />
-                  <span>Download PDF</span>
-                </button>
+                <ExportDropdown
+                  onExportPDF={handleExportPDF}
+                  onExportDOCX={handleExportDOCX}
+                  onExportPNG={handleExportPNG}
+                  isExporting={isExporting}
+                />
                 <button
                   onClick={() => setShowFloatingPreview(false)}
-                  className="p-1.5 rounded-full bg-[#DFD9C9] text-neutral-800 hover:bg-neutral-900 hover:text-white transition"
+                  className="p-1.5 rounded-full bg-[#DFD9C9] text-neutral-800 hover:bg-neutral-900 hover:text-white transition cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>

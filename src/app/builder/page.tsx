@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useDocumentExport } from "../../hooks/useDocumentExport";
 import { getProfileDB, getClientsDB, getClausesDB, getProjectsDB, createDocumentSuiteDB, getNextDocumentNumberDB } from "../actions";
 import { formatCurrency, formatDate } from "../../lib/utils";
+import { ExportDropdown } from "../../components/common/ExportDropdown";
 import {
   Wand2,
   Save,
@@ -213,32 +214,12 @@ export default function DocumentStudioPage() {
             <span>{isSaving ? "Saving..." : "Save Draft"}</span>
           </button>
           
-          <button
-            onClick={handleExportPDF}
-            disabled={isExporting || isSaving}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#121212] text-white font-bold text-xs shadow-md hover:bg-neutral-800 transition disabled:opacity-50"
-          >
-            <Download className="w-3.5 h-3.5" />
-            <span>PDF</span>
-          </button>
-
-          <button
-            onClick={handleExportDOCX}
-            disabled={isExporting || isSaving}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-blue-600 text-white font-bold text-xs shadow-md hover:bg-blue-700 transition disabled:opacity-50"
-          >
-            <FileText className="w-3.5 h-3.5" />
-            <span>DOCX</span>
-          </button>
-
-          <button
-            onClick={handleExportImage}
-            disabled={isExporting || isSaving}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-purple-600 text-white font-bold text-xs shadow-md hover:bg-purple-700 transition disabled:opacity-50"
-          >
-            <ImageIcon className="w-3.5 h-3.5" />
-            <span>PNG</span>
-          </button>
+          <ExportDropdown
+            onExportPDF={handleExportPDF}
+            onExportDOCX={handleExportDOCX}
+            onExportPNG={handleExportImage}
+            isExporting={isExporting}
+          />
         </div>
       </div>
 

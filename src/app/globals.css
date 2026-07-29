@@ -50,6 +50,10 @@ body {
   overflow-x: hidden;
 }
 
+button, [role="button"], a {
+  cursor: pointer;
+}
+
 /* Custom Intelly/SevenX UI Elements */
 .intelly-card {
   background-color: var(--card);
@@ -70,6 +74,7 @@ body {
   font-size: 0.75rem;
   font-weight: 700;
   transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .intelly-pill-btn:hover {

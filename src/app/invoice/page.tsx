@@ -5,13 +5,12 @@ import { useDocumentExport } from "../../hooks/useDocumentExport";
 import { getProfileDB, getNextInvoiceNumberDB, createInvoiceDB } from "../actions";
 import { InvoiceData, InvoiceItem, PaymentMethod } from "../../types";
 import { formatCurrency, formatDate, calculateInvoiceTotals } from "../../lib/utils";
+import { ExportDropdown } from "../../components/common/ExportDropdown";
 import {
   FileText,
   Plus,
   Trash2,
-  Download,
   Save,
-  Image as ImageIcon,
   User,
   Building,
   CreditCard,
@@ -303,47 +302,27 @@ export default function InvoicePage() {
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => setShowFloatingPreview(true)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-purple-600 text-white font-bold text-xs shadow hover:bg-purple-700 transition"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-purple-600 text-white font-bold text-xs shadow hover:bg-purple-700 transition cursor-pointer"
           >
             <Eye className="w-3.5 h-3.5" />
-            <span>Floating Preview</span>
+            <span>Preview</span>
           </button>
 
           <button
             onClick={handleSave}
             disabled={isSaving}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#DFD9C9] text-neutral-900 font-bold text-xs hover:bg-[#D5CEBC] transition"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#DFD9C9] text-neutral-900 font-bold text-xs hover:bg-[#D5CEBC] transition cursor-pointer"
           >
             <Save className="w-3.5 h-3.5 text-emerald-700" />
             <span>{isSaving ? "Saving..." : "Save Draft"}</span>
           </button>
 
-          <button
-            onClick={handleExportPDF}
-            disabled={isExporting || isSaving}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#121212] text-white font-bold text-xs shadow-md hover:bg-neutral-800 transition disabled:opacity-50"
-          >
-            <Download className="w-3.5 h-3.5" />
-            <span>PDF</span>
-          </button>
-
-          <button
-            onClick={handleExportDOCX}
-            disabled={isExporting || isSaving}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-blue-600 text-white font-bold text-xs shadow-md hover:bg-blue-700 transition disabled:opacity-50"
-          >
-            <FileText className="w-3.5 h-3.5" />
-            <span>DOCX</span>
-          </button>
-
-          <button
-            onClick={handleExportImage}
-            disabled={isExporting || isSaving}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-purple-600 text-white font-bold text-xs shadow-md hover:bg-purple-700 transition disabled:opacity-50"
-          >
-            <ImageIcon className="w-3.5 h-3.5" />
-            <span>PNG</span>
-          </button>
+          <ExportDropdown
+            onExportPDF={handleExportPDF}
+            onExportDOCX={handleExportDOCX}
+            onExportPNG={handleExportImage}
+            isExporting={isExporting}
+          />
         </div>
       </div>
 
@@ -484,7 +463,7 @@ export default function InvoicePage() {
               <h3 className="text-xs font-extrabold text-neutral-900 uppercase tracking-wider">Line Items</h3>
               <button
                 onClick={addItem}
-                className="flex items-center gap-1 text-xs font-bold text-neutral-900 hover:text-pink-700 transition"
+                className="flex items-center gap-1 text-xs font-bold text-neutral-900 hover:text-pink-700 transition cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Add Item</span>
@@ -526,7 +505,7 @@ export default function InvoicePage() {
                   <div className="col-span-1 text-right">
                     <button
                       onClick={() => removeItem(item.id)}
-                      className="p-1 rounded-lg text-neutral-400 hover:text-pink-700 transition"
+                      className="p-1 rounded-lg text-neutral-400 hover:text-pink-700 transition cursor-pointer"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -624,16 +603,15 @@ export default function InvoicePage() {
               </div>
 
               <div className="flex items-center gap-3">
-                <button
-                  onClick={handleExportPDF}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#121212] text-white text-xs font-bold shadow hover:bg-neutral-800 transition"
-                >
-                  <Download className="w-3.5 h-3.5 text-pink-400" />
-                  <span>Download PDF</span>
-                </button>
+                <ExportDropdown
+                  onExportPDF={handleExportPDF}
+                  onExportDOCX={handleExportDOCX}
+                  onExportPNG={handleExportImage}
+                  isExporting={isExporting}
+                />
                 <button
                   onClick={() => setShowFloatingPreview(false)}
-                  className="p-1.5 rounded-full bg-[#DFD9C9] text-neutral-800 hover:bg-neutral-900 hover:text-white transition"
+                  className="p-1.5 rounded-full bg-[#DFD9C9] text-neutral-800 hover:bg-neutral-900 hover:text-white transition cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
