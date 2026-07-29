@@ -7,6 +7,40 @@ import jsPDF from "jspdf";
 export function useDocumentExport() {
   const [isExporting, setIsExporting] = useState(false);
 
+  // Helper to sanitize cloned DOM tree for html2canvas (removes unsupported lab() and oklch() color functions)
+  const sanitizeClonedDoc = (clonedDoc: Document) => {
+    // Clean all inline styles
+    const allElements = clonedDoc.querySelectorAll("*");
+    allElements.forEach((el) => {
+      const htmlEl = el as HTMLElement;
+      if (htmlEl.style) {
+        const styleAttr = htmlEl.getAttribute("style") || "";
+        if (styleAttr.includes("lab(") || styleAttr.includes("oklch(")) {
+          const cleanedStyle = styleAttr
+            .replace(/lab\([^)]+\)/g, "#111111")
+            .replace(/oklch\([^)]+\)/g, "#111111");
+          htmlEl.setAttribute("style", cleanedStyle);
+        }
+      }
+    });
+
+    // Clean stylesheet text contents
+    const styleSheets = Array.from(clonedDoc.querySelectorAll("style, link[rel='stylesheet']"));
+    styleSheets.forEach((sheet) => {
+      try {
+        const cssText = sheet.textContent || "";
+        if (cssText.includes("lab(") || cssText.includes("oklch(")) {
+          const cleanedCss = cssText
+            .replace(/lab\([^)]+\)/g, "#111111")
+            .replace(/oklch\([^)]+\)/g, "#111111");
+          sheet.textContent = cleanedCss;
+        }
+      } catch (e) {
+        // Ignore cross-origin stylesheet errors
+      }
+    });
+  };
+
   // 1. Export as PDF
   const exportToPDF = async (elementId: string, filename: string = "Document.pdf") => {
     const element = document.getElementById(elementId);
@@ -19,6 +53,7 @@ export function useDocumentExport() {
         useCORS: true,
         logging: false,
         backgroundColor: "#ffffff",
+        onclone: (clonedDoc) => sanitizeClonedDoc(clonedDoc),
       });
 
       const imgData = canvas.toDataURL("image/png");
@@ -65,6 +100,7 @@ export function useDocumentExport() {
         useCORS: true,
         logging: false,
         backgroundColor: "#ffffff",
+        onclone: (clonedDoc) => sanitizeClonedDoc(clonedDoc),
       });
 
       const link = document.createElement("a");
