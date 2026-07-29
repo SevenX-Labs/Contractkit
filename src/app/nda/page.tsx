@@ -163,7 +163,7 @@ export default function NDAPage() {
       </div>
 
       <div className="border-t border-neutral-200 pt-4 text-center text-[10px] text-neutral-400">
-        <p>SevenX Labs Studio • Official Mutual Non-Disclosure Agreement #{formData.ndaNumber}</p>
+        <p>SevenX Labs • Official Mutual Non-Disclosure Agreement #{formData.ndaNumber}</p>
       </div>
     </div>
   );
