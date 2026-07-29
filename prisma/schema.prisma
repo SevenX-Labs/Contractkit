@@ -13,8 +13,19 @@ datasource db {
 
 enum DocumentType {
   INVOICE
+  QUOTATION
+  PROPOSAL
   AGREEMENT
+  SOFTWARE_CONTRACT
+  WEB_CONTRACT
+  MOBILE_APP_CONTRACT
+  AMC_CONTRACT
   NDA
+  CERTIFICATE
+  PAYMENT_RECEIPT
+  CHANGE_REQUEST
+  SCOPE_CHANGE
+  HANDOVER_DOC
 }
 
 enum DocumentStatus {
@@ -49,11 +60,103 @@ model Profile {
   invoicePrefix String   @default("SXL-INV-")
   defaultNotes  String?
   defaultTax    Float    @default(0)
-  currency      String   @default("$")
+  currency      String   @default("₹")
   logoUrl       String?
   stampUrl      String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+}
+
+model Client {
+  id              String   @id @default(uuid())
+  name            String
+  company         String?
+  designation     String?
+  email           String
+  phone           String?
+  gstNo           String?
+  taxNo           String?
+  website         String?
+  billingAddress  String?
+  shippingAddress String?
+  notes           String?
+  tags            String[] @default(["Client"])
+  status          String   @default("Active")
+  
+  projects        Project[]
+  documents       DocumentSuite[]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([name])
+  @@index([company])
+}
+
+model Project {
+  id           String          @id @default(uuid())
+  name         String
+  description  String?
+  budget       Float           @default(0)
+  status       String          @default("In Progress")
+  startDate    DateTime?
+  deliveryDate DateTime?
+  
+  clientId     String?
+  client       Client?         @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  
+  documents    DocumentSuite[]
+  
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@index([name])
+}
+
+model Clause {
+  id          String   @id @default(uuid())
+  category    String   // e.g. "Payment Terms", "IP Transfer", "Warranty"
+  title       String
+  content     String
+  isCustom    Boolean  @default(false)
+  isTemplate  Boolean  @default(true)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+}
+
+model DocumentSuite {
+  id             String         @id @default(uuid())
+  documentNumber String         @unique
+  title          String
+  type           DocumentType
+  status         DocumentStatus @default(DRAFT)
+  
+  totalAmount    Float          @default(0)
+  date           DateTime       @default(now())
+  dueDate        DateTime?
+  
+  clientId       String?
+  client         Client?        @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  clientName     String
+  clientEmail    String
+  
+  projectId      String?
+  project        Project?       @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  
+  contentJson    String         // JSON storing all document specific fields
+  clausesJson    String?        // JSON array of attached legal clauses
+  
+  isDeleted      Boolean        @default(false)
+  
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  @@index([type])
+  @@index([status])
+  @@index([clientName])
 }
 
 model Invoice {

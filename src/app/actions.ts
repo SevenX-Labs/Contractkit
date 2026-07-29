@@ -9,20 +9,20 @@ export async function getProfileDB(): Promise<FreelancerProfile> {
   try {
     const profile = await prisma.profile.findFirst();
     if (!profile) {
-      // Create initial default profile in Prisma DB
       const defaultProf = await prisma.profile.create({
         data: {
           name: "SevenX Labs",
           company: "SevenX Labs Studio",
           email: "hello@sevenxlabs.com",
-          phone: "+1 (555) 789-0123",
-          address: "100 Tech Plaza, Suite 400, Tech District, CA 94107",
+          phone: "+91 98765 43210",
+          address: "SevenX Labs Tech Park, HSR Layout, Sector 1, Bengaluru, KA 560102",
           upiId: "sevenxlabs@upi",
-          bankName: "Silicon Tech Bank",
-          bankAccount: "98765432101234",
-          bankIfsc: "STBK0009876",
+          bankName: "HDFC Bank",
+          bankAccount: "50100234567890",
+          bankIfsc: "HDFC0001234",
           paypalEmail: "billing@sevenxlabs.com",
           invoicePrefix: "SXL-INV-",
+          currency: "₹",
         },
       });
       return {
@@ -54,17 +54,17 @@ export async function getProfileDB(): Promise<FreelancerProfile> {
       invoicePrefix: profile.invoicePrefix || "SXL-INV-",
     };
   } catch (err) {
-    console.error("Error fetching profile from Prisma DB:", err);
+    console.error("Error fetching profile:", err);
     return {
       name: "SevenX Labs",
       company: "SevenX Labs Studio",
       email: "hello@sevenxlabs.com",
-      phone: "+1 (555) 789-0123",
-      address: "100 Tech Plaza, Suite 400, CA 94107",
+      phone: "+91 98765 43210",
+      address: "SevenX Labs Tech Park, HSR Layout, Sector 1, Bengaluru, KA 560102",
       upiId: "sevenxlabs@upi",
-      bankName: "Silicon Tech Bank",
-      bankAccount: "98765432101234",
-      bankIfsc: "STBK0009876",
+      bankName: "HDFC Bank",
+      bankAccount: "50100234567890",
+      bankIfsc: "HDFC0001234",
       paypalEmail: "billing@sevenxlabs.com",
       invoicePrefix: "SXL-INV-",
     };
@@ -111,316 +111,335 @@ export async function saveProfileDB(data: FreelancerProfile) {
     revalidatePath("/settings");
     return { success: true };
   } catch (err) {
-    console.error("Error saving profile to Prisma DB:", err);
     return { success: false, error: String(err) };
   }
 }
 
-// ==================== INVOICE COUNTER ====================
-export async function getNextInvoiceNumberDB(): Promise<string> {
+// ==================== CLIENT CRM ACTIONS ====================
+export async function getClientsDB() {
   try {
-    const profile = await getProfileDB();
-    const prefix = profile.invoicePrefix || "SXL-INV-";
-    const count = await prisma.invoice.count();
-    const nextNum = (count + 1).toString().padStart(3, "0");
-    return `${prefix}${nextNum}`;
-  } catch (err) {
-    return "SXL-INV-001";
-  }
-}
-
-// ==================== INVOICES ====================
-export async function createInvoiceDB(data: InvoiceData) {
-  try {
-    const created = await prisma.invoice.create({
-      data: {
-        invoiceNumber: data.invoiceNumber,
-        invoiceDate: new Date(data.invoiceDate),
-        dueDate: new Date(data.dueDate),
-        senderName: data.senderName,
-        senderCompany: data.senderCompany,
-        senderAddress: data.senderAddress,
-        senderEmail: data.senderEmail,
-        senderPhone: data.senderPhone,
-        clientName: data.clientName,
-        clientCompany: data.clientCompany,
-        clientAddress: data.clientAddress,
-        clientEmail: data.clientEmail,
-        clientPhone: data.clientPhone,
-        paymentMethod: (data.paymentMethod === "Bank Transfer" ? "BANK_TRANSFER" : data.paymentMethod) as any,
-        paymentDetails: data.paymentDetails,
-        subtotal: data.subtotal,
-        discountPct: data.discountPercent,
-        discountAmt: data.discountAmount,
-        taxPct: data.taxPercent,
-        taxAmt: data.taxAmount,
-        total: data.total,
-        note: data.note,
-        status: (data.status.toUpperCase()) as any,
-        items: {
-          create: data.items.map((item) => ({
-            description: item.description,
-            quantity: item.quantity,
-            rate: item.rate,
-            amount: item.amount,
-          })),
-        },
-      },
+    const clients = await prisma.client.findMany({
+      include: { projects: true, documents: true },
+      orderBy: { createdAt: "desc" },
     });
-
-    revalidatePath("/");
-    revalidatePath("/history");
-    revalidatePath("/invoice");
-    return { success: true, id: created.id };
+    return clients;
   } catch (err) {
-    console.error("Error saving invoice to Prisma DB:", err);
-    return { success: false, error: String(err) };
-  }
-}
-
-// ==================== AGREEMENTS ====================
-export async function createAgreementDB(data: AgreementData) {
-  try {
-    const created = await prisma.agreement.create({
-      data: {
-        agreementNumber: data.agreementNumber,
-        date: new Date(data.date),
-        freelancerName: data.freelancerName,
-        freelancerCompany: data.freelancerCompany,
-        freelancerEmail: data.freelancerEmail,
-        clientName: data.clientName,
-        clientCompany: data.clientCompany,
-        clientEmail: data.clientEmail,
-        projectTitle: data.projectTitle,
-        projectDescription: data.projectDescription,
-        deliverables: data.deliverables,
-        startDate: new Date(data.startDate),
-        deadline: new Date(data.deadline),
-        totalAmount: data.totalAmount,
-        advancePercentage: data.advancePercentage,
-        finalPercentage: data.finalPercentage,
-        revisionLimit: data.revisionLimit,
-        ownershipClause: data.ownershipClause,
-        cancellationPolicy: data.cancellationPolicy,
-        additionalTerms: data.additionalTerms,
-        freelancerSignature: data.freelancerSignature,
-        freelancerSignDate: data.freelancerSignDate ? new Date(data.freelancerSignDate) : new Date(),
-        clientSignature: data.clientSignature,
-        clientSignDate: data.clientSignDate ? new Date(data.clientSignDate) : new Date(),
-        status: (data.status.toUpperCase()) as any,
-      },
-    });
-
-    revalidatePath("/");
-    revalidatePath("/history");
-    revalidatePath("/agreement");
-    return { success: true, id: created.id };
-  } catch (err) {
-    console.error("Error saving agreement to Prisma DB:", err);
-    return { success: false, error: String(err) };
-  }
-}
-
-// ==================== NDAs ====================
-export async function createNDADB(data: NDAData) {
-  try {
-    const created = await prisma.nDA.create({
-      data: {
-        ndaNumber: data.ndaNumber,
-        effectiveDate: new Date(data.effectiveDate),
-        freelancerName: data.freelancerName,
-        freelancerCompany: data.freelancerCompany,
-        clientName: data.clientName,
-        clientCompany: data.clientCompany,
-        projectContext: data.projectContext,
-        confidentialInfoDefinition: data.confidentialInfoDefinition,
-        obligations: data.obligations,
-        duration: data.duration,
-        returnDestroyClause: data.returnDestroyClause,
-        breachPenalty: data.breachPenalty,
-        additionalNotes: data.additionalNotes,
-        freelancerSignature: data.freelancerSignature,
-        freelancerSignDate: data.freelancerSignDate ? new Date(data.freelancerSignDate) : new Date(),
-        clientSignature: data.clientSignature,
-        clientSignDate: data.clientSignDate ? new Date(data.clientSignDate) : new Date(),
-        status: (data.status.toUpperCase()) as any,
-      },
-    });
-
-    revalidatePath("/");
-    revalidatePath("/history");
-    revalidatePath("/nda");
-    return { success: true, id: created.id };
-  } catch (err) {
-    console.error("Error saving NDA to Prisma DB:", err);
-    return { success: false, error: String(err) };
-  }
-}
-
-// ==================== GET ALL DOCUMENTS ====================
-export async function getAllDocumentsDB(): Promise<SavedDocument[]> {
-  try {
-    const [invoices, agreements, ndas] = await Promise.all([
-      prisma.invoice.findMany({
-        where: { isDeleted: false },
-        include: { items: true },
-        orderBy: { createdAt: "desc" },
-      }),
-      prisma.agreement.findMany({
-        where: { isDeleted: false },
-        orderBy: { createdAt: "desc" },
-      }),
-      prisma.nDA.findMany({
-        where: { isDeleted: false },
-        orderBy: { createdAt: "desc" },
-      }),
-    ]);
-
-    const formattedInvoices: SavedDocument[] = invoices.map((inv) => ({
-      id: inv.id,
-      title: `Invoice #${inv.invoiceNumber} - ${inv.clientName}`,
-      documentNumber: inv.invoiceNumber,
-      type: "invoice",
-      clientName: inv.clientName,
-      amount: inv.total,
-      date: inv.invoiceDate.toISOString().split("T")[0],
-      status: inv.status.toLowerCase() as any,
-      updatedAt: inv.updatedAt.toISOString(),
-      data: {
-        id: inv.id,
-        invoiceNumber: inv.invoiceNumber,
-        invoiceDate: inv.invoiceDate.toISOString().split("T")[0],
-        dueDate: inv.dueDate.toISOString().split("T")[0],
-        senderName: inv.senderName,
-        senderCompany: inv.senderCompany || "",
-        senderAddress: inv.senderAddress || "",
-        senderEmail: inv.senderEmail,
-        senderPhone: inv.senderPhone || "",
-        clientName: inv.clientName,
-        clientCompany: inv.clientCompany || "",
-        clientAddress: inv.clientAddress || "",
-        clientEmail: inv.clientEmail,
-        clientPhone: inv.clientPhone || "",
-        paymentMethod: inv.paymentMethod as any,
-        paymentDetails: inv.paymentDetails || "",
-        items: inv.items.map((i) => ({
-          id: i.id,
-          description: i.description,
-          quantity: i.quantity,
-          rate: i.rate,
-          amount: i.amount,
-        })),
-        subtotal: inv.subtotal,
-        discountPercent: inv.discountPct,
-        discountAmount: inv.discountAmt,
-        taxPercent: inv.taxPct,
-        taxAmount: inv.taxAmt,
-        total: inv.total,
-        note: inv.note || "",
-        status: inv.status.toLowerCase() as any,
-        createdAt: inv.createdAt.toISOString(),
-      },
-    }));
-
-    const formattedAgreements: SavedDocument[] = agreements.map((agr) => ({
-      id: agr.id,
-      title: `Agreement - ${agr.projectTitle}`,
-      documentNumber: agr.agreementNumber,
-      type: "agreement",
-      clientName: agr.clientName,
-      amount: agr.totalAmount,
-      date: agr.date.toISOString().split("T")[0],
-      status: agr.status.toLowerCase() as any,
-      updatedAt: agr.updatedAt.toISOString(),
-      data: {
-        id: agr.id,
-        agreementNumber: agr.agreementNumber,
-        date: agr.date.toISOString().split("T")[0],
-        freelancerName: agr.freelancerName,
-        freelancerCompany: agr.freelancerCompany || "",
-        freelancerEmail: agr.freelancerEmail,
-        clientName: agr.clientName,
-        clientCompany: agr.clientCompany || "",
-        clientEmail: agr.clientEmail,
-        projectTitle: agr.projectTitle,
-        projectDescription: agr.projectDescription,
-        deliverables: agr.deliverables,
-        startDate: agr.startDate.toISOString().split("T")[0],
-        deadline: agr.deadline.toISOString().split("T")[0],
-        totalAmount: agr.totalAmount,
-        advancePercentage: agr.advancePercentage,
-        finalPercentage: agr.finalPercentage,
-        revisionLimit: agr.revisionLimit as any,
-        ownershipClause: agr.ownershipClause,
-        cancellationPolicy: agr.cancellationPolicy,
-        additionalTerms: agr.additionalTerms || "",
-        freelancerSignature: agr.freelancerSignature || "",
-        freelancerSignDate: agr.freelancerSignDate ? agr.freelancerSignDate.toISOString().split("T")[0] : "",
-        clientSignature: agr.clientSignature || "",
-        clientSignDate: agr.clientSignDate ? agr.clientSignDate.toISOString().split("T")[0] : "",
-        status: agr.status.toLowerCase() as any,
-        createdAt: agr.createdAt.toISOString(),
-      },
-    }));
-
-    const formattedNDAs: SavedDocument[] = ndas.map((nda) => ({
-      id: nda.id,
-      title: `Mutual NDA - ${nda.clientName}`,
-      documentNumber: nda.ndaNumber,
-      type: "nda",
-      clientName: nda.clientName,
-      date: nda.effectiveDate.toISOString().split("T")[0],
-      status: nda.status.toLowerCase() as any,
-      updatedAt: nda.updatedAt.toISOString(),
-      data: {
-        id: nda.id,
-        ndaNumber: nda.ndaNumber,
-        effectiveDate: nda.effectiveDate.toISOString().split("T")[0],
-        freelancerName: nda.freelancerName,
-        freelancerCompany: nda.freelancerCompany || "",
-        clientName: nda.clientName,
-        clientCompany: nda.clientCompany || "",
-        projectContext: nda.projectContext,
-        confidentialInfoDefinition: nda.confidentialInfoDefinition,
-        obligations: nda.obligations,
-        duration: nda.duration as any,
-        returnDestroyClause: nda.returnDestroyClause,
-        breachPenalty: nda.breachPenalty,
-        additionalNotes: nda.additionalNotes || "",
-        freelancerSignature: nda.freelancerSignature || "",
-        freelancerSignDate: nda.freelancerSignDate ? nda.freelancerSignDate.toISOString().split("T")[0] : "",
-        clientSignature: nda.clientSignature || "",
-        clientSignDate: nda.clientSignDate ? nda.clientSignDate.toISOString().split("T")[0] : "",
-        status: nda.status.toLowerCase() as any,
-        createdAt: nda.createdAt.toISOString(),
-      },
-    }));
-
-    const allDocs = [...formattedInvoices, ...formattedAgreements, ...formattedNDAs];
-    allDocs.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
-    return allDocs;
-  } catch (err) {
-    console.error("Error fetching documents from Prisma DB:", err);
+    console.error("Error fetching clients:", err);
     return [];
   }
 }
 
-// ==================== DELETE DOCUMENT ====================
-export async function deleteDocumentDB(id: string, type: "invoice" | "agreement" | "nda") {
+export async function createClientDB(data: {
+  name: string;
+  company?: string;
+  designation?: string;
+  email: string;
+  phone?: string;
+  gstNo?: string;
+  taxNo?: string;
+  website?: string;
+  billingAddress?: string;
+  shippingAddress?: string;
+  notes?: string;
+  tags?: string[];
+  status?: string;
+}) {
   try {
-    if (type === "invoice") {
-      await prisma.invoice.update({ where: { id }, data: { isDeleted: true } });
-    } else if (type === "agreement") {
-      await prisma.agreement.update({ where: { id }, data: { isDeleted: true } });
-    } else if (type === "nda") {
-      await prisma.nDA.update({ where: { id }, data: { isDeleted: true } });
+    const client = await prisma.client.create({
+      data: {
+        name: data.name,
+        company: data.company,
+        designation: data.designation,
+        email: data.email,
+        phone: data.phone,
+        gstNo: data.gstNo,
+        taxNo: data.taxNo,
+        website: data.website,
+        billingAddress: data.billingAddress,
+        shippingAddress: data.shippingAddress,
+        notes: data.notes,
+        tags: data.tags || ["Enterprise"],
+        status: data.status || "Active",
+      },
+    });
+    revalidatePath("/clients");
+    return { success: true, client };
+  } catch (err) {
+    return { success: false, error: String(err) };
+  }
+}
+
+export async function deleteClientDB(id: string) {
+  try {
+    await prisma.client.delete({ where: { id } });
+    revalidatePath("/clients");
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: String(err) };
+  }
+}
+
+// ==================== PROJECT MANAGEMENT ACTIONS ====================
+export async function getProjectsDB() {
+  try {
+    const projects = await prisma.project.findMany({
+      include: { client: true, documents: true },
+      orderBy: { createdAt: "desc" },
+    });
+    return projects;
+  } catch (err) {
+    console.error("Error fetching projects:", err);
+    return [];
+  }
+}
+
+export async function createProjectDB(data: {
+  name: string;
+  description?: string;
+  budget?: number;
+  status?: string;
+  startDate?: string;
+  deliveryDate?: string;
+  clientId?: string;
+}) {
+  try {
+    const project = await prisma.project.create({
+      data: {
+        name: data.name,
+        description: data.description,
+        budget: data.budget || 0,
+        status: data.status || "In Progress",
+        startDate: data.startDate ? new Date(data.startDate) : null,
+        deliveryDate: data.deliveryDate ? new Date(data.deliveryDate) : null,
+        clientId: data.clientId || null,
+      },
+    });
+    revalidatePath("/projects");
+    return { success: true, project };
+  } catch (err) {
+    return { success: false, error: String(err) };
+  }
+}
+
+export async function deleteProjectDB(id: string) {
+  try {
+    await prisma.project.delete({ where: { id } });
+    revalidatePath("/projects");
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: String(err) };
+  }
+}
+
+// ==================== LEGAL CLAUSE LIBRARY ACTIONS ====================
+export async function getClausesDB() {
+  try {
+    const clauses = await prisma.clause.findMany({
+      orderBy: { category: "asc" },
+    });
+
+    if (clauses.length === 0) {
+      // Seed default professional legal clauses
+      const defaultClauses = [
+        {
+          category: "Payment Terms",
+          title: "Standard 50/50 Payment Schedule",
+          content: "50% advance deposit required prior to project kickoff. Remaining 50% balance due upon final project delivery and client sign-off.",
+        },
+        {
+          category: "Payment Terms",
+          title: "Late Payment Interest (2%/month)",
+          content: "Invoices unpaid past 14 calendar days shall accrue late penalty interest at 2% per month calculated daily.",
+        },
+        {
+          category: "Source Code Ownership",
+          title: "Full Intellectual Property Transfer",
+          content: "Full copyright, source code ownership, and patent rights shall be transferred to the Client upon 100% receipt of full agreed project fee.",
+        },
+        {
+          category: "Warranty & Support",
+          title: "30-Day Post Launch Bug Fix Guarantee",
+          content: "SevenX Labs provides 30 calendar days of free warranty coverage for any technical defects or software bugs directly attributable to original specifications.",
+        },
+        {
+          category: "Revision Policy",
+          title: "3 Round Design Revision Cap",
+          content: "Project scope includes up to 3 major revision cycles per milestone. Additional requested revisions shall be billed at ₹2,500/hour.",
+        },
+        {
+          category: "Confidentiality",
+          title: "Mutual NDA & Non-Solicitation",
+          content: "Both parties agree to hold all technical blueprints, customer data, and business strategies in strict confidence for 2 years.",
+        },
+      ];
+
+      for (const cl of defaultClauses) {
+        await prisma.clause.create({ data: cl });
+      }
+
+      return await prisma.clause.findMany({ orderBy: { category: "asc" } });
     }
 
+    return clauses;
+  } catch (err) {
+    console.error("Error fetching clauses:", err);
+    return [];
+  }
+}
+
+export async function createClauseDB(data: { category: string; title: string; content: string }) {
+  try {
+    const clause = await prisma.clause.create({ data });
+    revalidatePath("/clauses");
+    return { success: true, clause };
+  } catch (err) {
+    return { success: false, error: String(err) };
+  }
+}
+
+export async function deleteClauseDB(id: string) {
+  try {
+    await prisma.clause.delete({ where: { id } });
+    revalidatePath("/clauses");
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: String(err) };
+  }
+}
+
+// ==================== DOCUMENT SUITE ACTIONS (15 TYPES) ====================
+export async function getNextDocumentNumberDB(type: string): Promise<string> {
+  try {
+    const prefix = `SXL-${type.slice(0, 3).toUpperCase()}-`;
+    const count = await prisma.documentSuite.count({ where: { type: type as any } });
+    return `${prefix}${(count + 1).toString().padStart(3, "0")}`;
+  } catch (err) {
+    return "SXL-DOC-001";
+  }
+}
+
+export async function createDocumentSuiteDB(data: {
+  documentNumber: string;
+  title: string;
+  type: string;
+  totalAmount?: number;
+  date?: string;
+  dueDate?: string;
+  clientId?: string;
+  clientName: string;
+  clientEmail: string;
+  projectId?: string;
+  contentJson: string;
+  clausesJson?: string;
+}) {
+  try {
+    const created = await prisma.documentSuite.create({
+      data: {
+        documentNumber: data.documentNumber,
+        title: data.title,
+        type: data.type as any,
+        totalAmount: data.totalAmount || 0,
+        date: data.date ? new Date(data.date) : new Date(),
+        dueDate: data.dueDate ? new Date(data.dueDate) : null,
+        clientId: data.clientId || null,
+        clientName: data.clientName,
+        clientEmail: data.clientEmail,
+        projectId: data.projectId || null,
+        contentJson: data.contentJson,
+        clausesJson: data.clausesJson || "[]",
+      },
+    });
+
+    revalidatePath("/");
+    revalidatePath("/history");
+    revalidatePath("/builder");
+    return { success: true, id: created.id };
+  } catch (err) {
+    return { success: false, error: String(err) };
+  }
+}
+
+// Keep legacy fallback helper compatibility
+export async function getNextInvoiceNumberDB(): Promise<string> {
+  return getNextDocumentNumberDB("INVOICE");
+}
+
+export async function createInvoiceDB(data: InvoiceData) {
+  return createDocumentSuiteDB({
+    documentNumber: data.invoiceNumber,
+    title: `Tax Invoice #${data.invoiceNumber}`,
+    type: "INVOICE",
+    totalAmount: data.total,
+    date: data.invoiceDate,
+    dueDate: data.dueDate,
+    clientName: data.clientName,
+    clientEmail: data.clientEmail,
+    contentJson: JSON.stringify(data),
+  });
+}
+
+export async function createAgreementDB(data: AgreementData) {
+  return createDocumentSuiteDB({
+    documentNumber: data.agreementNumber,
+    title: `Agreement - ${data.projectTitle}`,
+    type: "AGREEMENT",
+    totalAmount: data.totalAmount,
+    date: data.date,
+    dueDate: data.deadline,
+    clientName: data.clientName,
+    clientEmail: data.clientEmail,
+    contentJson: JSON.stringify(data),
+  });
+}
+
+export async function createNDADB(data: NDAData) {
+  return createDocumentSuiteDB({
+    documentNumber: data.ndaNumber,
+    title: `Mutual NDA - ${data.clientName}`,
+    type: "NDA",
+    totalAmount: 0,
+    date: data.effectiveDate,
+    clientName: data.clientName,
+    clientEmail: "nda@client.com",
+    contentJson: JSON.stringify(data),
+  });
+}
+
+export async function getAllDocumentsDB(): Promise<SavedDocument[]> {
+  try {
+    const suites = await prisma.documentSuite.findMany({
+      where: { isDeleted: false },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return suites.map((doc) => ({
+      id: doc.id,
+      title: doc.title,
+      documentNumber: doc.documentNumber,
+      type: doc.type.toLowerCase() as any,
+      clientName: doc.clientName,
+      amount: doc.totalAmount,
+      date: doc.date.toISOString().split("T")[0],
+      status: doc.status.toLowerCase() as any,
+      updatedAt: doc.updatedAt.toISOString(),
+      data: JSON.parse(doc.contentJson || "{}"),
+    }));
+  } catch (err) {
+    console.error("Error fetching all documents:", err);
+    return [];
+  }
+}
+
+export async function deleteDocumentDB(id: string, type: string) {
+  try {
+    await prisma.documentSuite.update({
+      where: { id },
+      data: { isDeleted: true },
+    });
     revalidatePath("/");
     revalidatePath("/history");
     return { success: true };
   } catch (err) {
-    console.error("Error deleting document from Prisma DB:", err);
     return { success: false, error: String(err) };
   }
 }
