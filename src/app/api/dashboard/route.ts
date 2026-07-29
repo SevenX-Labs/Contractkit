@@ -4,7 +4,7 @@ import { formatCurrency, formatDate } from "../../../lib/utils";
 
 export async function GET() {
   try {
-    const [invoices, agreements, ndas] = await Promise.all([
+    const [invoices, agreements, ndas, documentSuites, clientsCount, projectsCount] = await Promise.all([
       prisma.invoice.findMany({
         where: { isDeleted: false },
         orderBy: { createdAt: "desc" },
@@ -17,27 +17,35 @@ export async function GET() {
         where: { isDeleted: false },
         orderBy: { createdAt: "desc" },
       }),
+      prisma.documentSuite.findMany({
+        where: { isDeleted: false },
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.client.count(),
+      prisma.project.count(),
     ]);
 
     // Calculate Real Financial Aggregates
     const invoiceTotalSum = invoices.reduce((acc, inv) => acc + inv.total, 0);
     const agreementTotalSum = agreements.reduce((acc, agr) => acc + agr.totalAmount, 0);
-    const totalRevenue = invoiceTotalSum + agreementTotalSum;
+    const suiteTotalSum = documentSuites.reduce((acc, doc) => acc + doc.totalAmount, 0);
+    
+    const totalRevenue = invoiceTotalSum + agreementTotalSum + suiteTotalSum;
 
-    // Payments Received (PAID invoices)
-    const paymentsReceived = invoices
-      .filter((inv) => inv.status === "PAID")
-      .reduce((acc, inv) => acc + inv.total, 0);
+    // Payments Received (PAID invoices & documents)
+    const invoicePaid = invoices.filter((inv) => inv.status === "PAID").reduce((acc, inv) => acc + inv.total, 0);
+    const suitePaid = documentSuites.filter((doc) => doc.status === "PAID" || doc.status === "SIGNED").reduce((acc, doc) => acc + doc.totalAmount, 0);
+    const paymentsReceived = invoicePaid + suitePaid;
 
     // Payments Requested / Pending (SENT / DRAFT invoices)
-    const paymentsRequested = invoices
-      .filter((inv) => inv.status === "SENT" || inv.status === "DRAFT")
-      .reduce((acc, inv) => acc + inv.total, 0);
+    const invoicePending = invoices.filter((inv) => inv.status === "SENT" || inv.status === "DRAFT").reduce((acc, inv) => acc + inv.total, 0);
+    const suitePending = documentSuites.filter((doc) => doc.status === "SENT" || doc.status === "DRAFT").reduce((acc, doc) => acc + doc.totalAmount, 0);
+    const paymentsRequested = invoicePending + suitePending;
 
-    // Direct Contract Billing (Agreements)
-    const directContractBilling = agreementTotalSum;
+    // Direct Contract Billing (Agreements & Software Contracts)
+    const directContractBilling = agreementTotalSum + suiteTotalSum;
 
-    // Recent Transactions (Combine and sort by date)
+    // Unified List of Recent Transactions
     const invoiceTx = invoices.map((inv) => ({
       id: inv.id,
       documentNumber: inv.invoiceNumber,
@@ -71,11 +79,22 @@ export async function GET() {
       createdAt: nda.createdAt.toISOString(),
     }));
 
-    const allTx = [...invoiceTx, ...agreementTx, ...ndaTx].sort(
+    const suiteTx = documentSuites.map((doc) => ({
+      id: doc.id,
+      documentNumber: doc.documentNumber,
+      clientName: doc.clientName,
+      type: doc.type.toLowerCase() as any,
+      amount: doc.totalAmount,
+      date: doc.date.toISOString().split("T")[0],
+      status: doc.status.toLowerCase(),
+      createdAt: doc.createdAt.toISOString(),
+    }));
+
+    const allTx = [...invoiceTx, ...agreementTx, ...ndaTx, ...suiteTx].sort(
       (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
 
-    // Filter pending bills waiting for payment
+    // Waiting for bills pending payment
     const waitingForBills = invoices
       .filter((inv) => inv.status === "SENT" || inv.status === "DRAFT")
       .slice(0, 4)
@@ -91,6 +110,8 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       stats: {
+        totalClients: clientsCount,
+        totalProjects: projectsCount,
         totalRevenue,
         formattedTotalRevenue: formatCurrency(totalRevenue, "₹"),
         paymentsReceived,
@@ -102,14 +123,15 @@ export async function GET() {
         totalInvoices: invoices.length,
         totalAgreements: agreements.length,
         totalNDAs: ndas.length,
-        totalDocuments: invoices.length + agreements.length + ndas.length,
+        totalDocumentSuites: documentSuites.length,
+        totalDocuments: invoices.length + agreements.length + ndas.length + documentSuites.length,
       },
       latestTransactions: allTx.slice(0, 6),
       waitingForBills,
       allDocuments: allTx,
     });
   } catch (err) {
-    console.error("Error fetching dashboard statistics from Prisma DB:", err);
+    console.error("Error fetching dashboard stats:", err);
     return NextResponse.json({ success: false, error: String(err) }, { status: 500 });
   }
 }

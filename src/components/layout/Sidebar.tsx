@@ -165,8 +165,8 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
 
   return (
     <>
-      {/* Desktop Fixed Sidebar (hidden on mobile) */}
-      <aside className="hidden lg:flex w-64 h-screen sticky top-0 overflow-y-auto bg-[#121212] text-white flex-col justify-between shrink-0 border-r border-neutral-800 rounded-r-3xl z-40">
+      {/* Desktop Permanently Fixed Sidebar (fixed to left viewport) */}
+      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 w-64 h-screen bg-[#121212] text-white flex-col justify-between overflow-y-auto shrink-0 border-r border-neutral-800 rounded-r-3xl z-40">
         {navContent}
       </aside>
 
