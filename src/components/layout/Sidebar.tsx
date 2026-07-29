@@ -41,7 +41,7 @@ export function Sidebar() {
   ];
 
   return (
-    <aside className="w-64 bg-[#121212] text-white flex flex-col justify-between p-6 select-none shrink-0 border-r border-neutral-800 rounded-r-3xl">
+    <aside className="w-64 h-screen sticky top-0 overflow-y-auto bg-[#121212] text-white flex flex-col justify-between p-6 select-none shrink-0 border-r border-neutral-800 rounded-r-3xl z-40">
       <div className="flex flex-col gap-8">
         {/* Logo Branding */}
         <div className="pt-2">
