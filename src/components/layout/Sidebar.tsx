@@ -15,10 +15,16 @@ import {
   Settings,
   Sparkles,
   Wand2,
+  X,
 } from "lucide-react";
 import { SevenXLogo } from "../logo/SevenXLogo";
 
-export function Sidebar() {
+interface SidebarProps {
+  mobileOpen?: boolean;
+  onMobileClose?: () => void;
+}
+
+export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
   const pathname = usePathname();
 
   const generalNav = [
@@ -40,14 +46,22 @@ export function Sidebar() {
     { name: "Studio Settings", href: "/settings", icon: Settings },
   ];
 
-  return (
-    <aside className="w-64 h-screen sticky top-0 overflow-y-auto bg-[#121212] text-white flex flex-col justify-between p-6 select-none shrink-0 border-r border-neutral-800 rounded-r-3xl z-40">
+  const navContent = (
+    <div className="flex flex-col justify-between h-full p-6 select-none">
       <div className="flex flex-col gap-8">
-        {/* Logo Branding */}
-        <div className="pt-2">
-          <Link href="/">
+        {/* Logo Branding & Mobile Close */}
+        <div className="pt-2 flex items-center justify-between">
+          <Link href="/" onClick={onMobileClose}>
             <SevenXLogo size="md" />
           </Link>
+          {onMobileClose && (
+            <button
+              onClick={onMobileClose}
+              className="lg:hidden p-1.5 rounded-full bg-neutral-800 text-neutral-400 hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          )}
         </div>
 
         {/* General Navigation */}
@@ -63,6 +77,7 @@ export function Sidebar() {
                 <Link
                   key={item.href}
                   href={item.href}
+                  onClick={onMobileClose}
                   className={`flex items-center gap-3 px-3.5 py-2.5 rounded-full text-xs font-bold transition ${
                     isActive
                       ? "bg-white text-neutral-900 shadow-md"
@@ -92,6 +107,7 @@ export function Sidebar() {
                 <Link
                   key={item.href}
                   href={item.href}
+                  onClick={onMobileClose}
                   className={`flex items-center gap-3 px-3.5 py-2.5 rounded-full text-xs font-bold transition ${
                     isActive
                       ? "bg-white text-neutral-900 shadow-md"
@@ -117,6 +133,7 @@ export function Sidebar() {
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={onMobileClose}
                 className={`flex items-center gap-3 px-3.5 py-2.5 rounded-full text-xs font-bold transition ${
                   isActive
                     ? "bg-white text-neutral-900 shadow-md"
@@ -143,6 +160,31 @@ export function Sidebar() {
           </div>
         </div>
       </div>
-    </aside>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Desktop Fixed Sidebar (hidden on mobile) */}
+      <aside className="hidden lg:flex w-64 h-screen sticky top-0 overflow-y-auto bg-[#121212] text-white flex-col justify-between shrink-0 border-r border-neutral-800 rounded-r-3xl z-40">
+        {navContent}
+      </aside>
+
+      {/* Mobile Slide-Over Drawer Sidebar */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden flex">
+          {/* Backdrop */}
+          <div
+            onClick={onMobileClose}
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"
+          />
+
+          {/* Drawer Panel */}
+          <div className="relative w-72 max-w-[85vw] bg-[#121212] text-white h-full shadow-2xl z-50 overflow-y-auto rounded-r-3xl border-r border-neutral-800">
+            {navContent}
+          </div>
+        </div>
+      )}
+    </>
   );
 }
