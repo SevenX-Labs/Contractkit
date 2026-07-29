@@ -15,12 +15,15 @@ import {
   User,
   Building,
   CreditCard,
+  Eye,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function InvoicePage() {
   const { exportToPDF, exportToDOCX, exportToImage, isExporting } = useDocumentExport();
   const [isSaving, setIsSaving] = useState(false);
+  const [showFloatingPreview, setShowFloatingPreview] = useState(false);
 
   const [formData, setFormData] = useState<InvoiceData>({
     invoiceNumber: "SXL-INV-001",
@@ -47,17 +50,17 @@ export default function InvoicePage() {
         id: "item-1",
         description: "Full Stack Web Application Development",
         quantity: 1,
-        rate: 2500,
-        amount: 2500,
+        rate: 250000,
+        amount: 250000,
       },
     ],
     
-    subtotal: 2500,
+    subtotal: 250000,
     discountPercent: 0,
     discountAmount: 0,
     taxPercent: 0,
     taxAmount: 0,
-    total: 2500,
+    total: 250000,
     
     note: "This is not a GST invoice.",
     status: "sent",
@@ -182,6 +185,107 @@ export default function InvoicePage() {
     await exportToImage("invoice-pdf-preview", `Invoice-${formData.invoiceNumber}.png`);
   };
 
+  const invoicePreviewContent = (
+    <div
+      id="invoice-pdf-preview"
+      className="w-[210mm] min-h-[297mm] bg-white text-neutral-900 p-10 mx-auto flex flex-col justify-between select-none shadow-lg rounded-xl"
+      style={{ fontFamily: "Arial, sans-serif" }}
+    >
+      <div>
+        {/* Header */}
+        <div className="flex justify-between items-start border-b border-neutral-200 pb-6 mb-6">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-neutral-900">
+              {formData.senderCompany || formData.senderName || "SevenX Labs"}
+            </h1>
+            <p className="text-xs text-neutral-500 mt-1">{formData.senderAddress}</p>
+            <p className="text-xs text-neutral-500">{formData.senderEmail} {formData.senderPhone && `| ${formData.senderPhone}`}</p>
+          </div>
+
+          <div className="text-right">
+            <span className="inline-block px-3 py-1 bg-neutral-900 text-white font-bold text-xs uppercase tracking-widest rounded">
+              INVOICE
+            </span>
+            <p className="text-sm font-bold text-neutral-800 mt-2 font-mono">{formData.invoiceNumber}</p>
+            <p className="text-xs text-neutral-500 mt-0.5">Date: {formatDate(formData.invoiceDate)}</p>
+            <p className="text-xs text-neutral-500">Due: {formatDate(formData.dueDate)}</p>
+          </div>
+        </div>
+
+        {/* Bill To */}
+        <div className="mb-8 p-4 bg-neutral-50 rounded-lg border border-neutral-100">
+          <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block mb-1">
+            BILLED TO:
+          </span>
+          <h3 className="text-sm font-bold text-neutral-900">{formData.clientName || "Client Name"}</h3>
+          {formData.clientCompany && <p className="text-xs text-neutral-600">{formData.clientCompany}</p>}
+          {formData.clientAddress && <p className="text-xs text-neutral-500 whitespace-pre-line mt-0.5">{formData.clientAddress}</p>}
+          {formData.clientEmail && <p className="text-xs text-neutral-500 mt-0.5">{formData.clientEmail}</p>}
+        </div>
+
+        {/* Items Table */}
+        <table className="w-full text-left text-xs mb-8">
+          <thead>
+            <tr className="border-b-2 border-neutral-900 text-neutral-700 font-bold uppercase text-[10px]">
+              <th className="py-2.5">Description</th>
+              <th className="py-2.5 text-center">Qty</th>
+              <th className="py-2.5 text-right">Rate</th>
+              <th className="py-2.5 text-right">Amount</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-neutral-200">
+            {formData.items.map((item: InvoiceItem) => (
+              <tr key={item.id}>
+                <td className="py-3 font-medium text-neutral-800">{item.description || "Service Description"}</td>
+                <td className="py-3 text-center text-neutral-600">{item.quantity}</td>
+                <td className="py-3 text-right text-neutral-600">{formatCurrency(item.rate, "₹")}</td>
+                <td className="py-3 text-right font-semibold text-neutral-900">{formatCurrency(item.amount, "₹")}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {/* Totals Summary */}
+        <div className="flex justify-end mb-8">
+          <div className="w-64 flex flex-col gap-1 text-xs">
+            <div className="flex justify-between py-1 border-b border-neutral-100 text-neutral-600">
+              <span>Subtotal:</span>
+              <span className="font-semibold text-neutral-800">{formatCurrency(formData.subtotal, "₹")}</span>
+            </div>
+            {formData.discountPercent > 0 && (
+              <div className="flex justify-between py-1 border-b border-neutral-100 text-neutral-600">
+                <span>Discount ({formData.discountPercent}%):</span>
+                <span className="text-emerald-600">-{formatCurrency(formData.discountAmount, "₹")}</span>
+              </div>
+            )}
+            {formData.taxPercent > 0 && (
+              <div className="flex justify-between py-1 border-b border-neutral-100 text-neutral-600">
+                <span>Tax ({formData.taxPercent}%):</span>
+                <span>+{formatCurrency(formData.taxAmount, "₹")}</span>
+              </div>
+            )}
+            <div className="flex justify-between py-2 border-b-2 border-neutral-900 text-sm font-bold text-neutral-900">
+              <span>Total Due:</span>
+              <span>{formatCurrency(formData.total, "₹")}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Payment Information */}
+        <div className="p-4 rounded-lg bg-neutral-50 border border-neutral-200 text-xs">
+          <span className="font-bold text-neutral-900 block mb-1">Payment Method: {formData.paymentMethod}</span>
+          <p className="text-neutral-600 whitespace-pre-line">{formData.paymentDetails}</p>
+        </div>
+      </div>
+
+      {/* Footer Note */}
+      <div className="border-t border-neutral-200 pt-4 mt-8 text-center text-[10px] text-neutral-500 font-medium">
+        <p>{formData.note || "This is not a GST invoice."}</p>
+        <p className="mt-1 text-neutral-400">Thank you for your business! — SevenX Labs</p>
+      </div>
+    </div>
+  );
+
   return (
     <div className="flex flex-col gap-6 pb-12">
       {/* Top Header Actions */}
@@ -197,6 +301,14 @@ export default function InvoicePage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => setShowFloatingPreview(true)}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-purple-600 text-white font-bold text-xs shadow hover:bg-purple-700 transition"
+          >
+            <Eye className="w-3.5 h-3.5" />
+            <span>Floating Preview</span>
+          </button>
+
           <button
             onClick={handleSave}
             disabled={isSaving}
@@ -455,7 +567,7 @@ export default function InvoicePage() {
             <div className="flex flex-col gap-2 bg-[#F4F0E6] p-4 rounded-2xl border border-[#E2DDD0] text-xs text-neutral-800">
               <div className="flex justify-between py-1">
                 <span>Subtotal:</span>
-                <span className="font-bold text-neutral-900">{formatCurrency(formData.subtotal)}</span>
+                <span className="font-bold text-neutral-900">{formatCurrency(formData.subtotal, "₹")}</span>
               </div>
               <div className="flex justify-between items-center py-1">
                 <span>Discount (%):</span>
@@ -482,7 +594,7 @@ export default function InvoicePage() {
               <hr className="border-[#D5CEBC] my-1" />
               <div className="flex justify-between py-1 text-sm font-extrabold text-neutral-900">
                 <span>Grand Total:</span>
-                <span className="text-pink-700">{formatCurrency(formData.total)}</span>
+                <span className="text-pink-700">{formatCurrency(formData.total, "₹")}</span>
               </div>
             </div>
           </div>
@@ -496,107 +608,44 @@ export default function InvoicePage() {
           </div>
 
           <div className="overflow-x-auto shadow-xl rounded-3xl bg-[#EBE7DC] p-3 border border-[#E2DDD0]">
-            <div
-              id="invoice-pdf-preview"
-              className="w-[210mm] min-h-[297mm] bg-white text-neutral-900 p-10 mx-auto flex flex-col justify-between select-none shadow-lg rounded-xl"
-              style={{ fontFamily: "Arial, sans-serif" }}
-            >
-              <div>
-                {/* Header */}
-                <div className="flex justify-between items-start border-b border-neutral-200 pb-6 mb-6">
-                  <div>
-                    <h1 className="text-2xl font-bold tracking-tight text-neutral-900">
-                      {formData.senderCompany || formData.senderName || "SevenX Labs"}
-                    </h1>
-                    <p className="text-xs text-neutral-500 mt-1">{formData.senderAddress}</p>
-                    <p className="text-xs text-neutral-500">{formData.senderEmail} {formData.senderPhone && `| ${formData.senderPhone}`}</p>
-                  </div>
-
-                  <div className="text-right">
-                    <span className="inline-block px-3 py-1 bg-neutral-900 text-white font-bold text-xs uppercase tracking-widest rounded">
-                      INVOICE
-                    </span>
-                    <p className="text-sm font-bold text-neutral-800 mt-2 font-mono">{formData.invoiceNumber}</p>
-                    <p className="text-xs text-neutral-500 mt-0.5">Date: {formatDate(formData.invoiceDate)}</p>
-                    <p className="text-xs text-neutral-500">Due: {formatDate(formData.dueDate)}</p>
-                  </div>
-                </div>
-
-                {/* Bill To */}
-                <div className="mb-8 p-4 bg-neutral-50 rounded-lg border border-neutral-100">
-                  <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block mb-1">
-                    BILLED TO:
-                  </span>
-                  <h3 className="text-sm font-bold text-neutral-900">{formData.clientName || "Client Name"}</h3>
-                  {formData.clientCompany && <p className="text-xs text-neutral-600">{formData.clientCompany}</p>}
-                  {formData.clientAddress && <p className="text-xs text-neutral-500 whitespace-pre-line mt-0.5">{formData.clientAddress}</p>}
-                  {formData.clientEmail && <p className="text-xs text-neutral-500 mt-0.5">{formData.clientEmail}</p>}
-                </div>
-
-                {/* Items Table */}
-                <table className="w-full text-left text-xs mb-8">
-                  <thead>
-                    <tr className="border-b-2 border-neutral-900 text-neutral-700 font-bold uppercase text-[10px]">
-                      <th className="py-2.5">Description</th>
-                      <th className="py-2.5 text-center">Qty</th>
-                      <th className="py-2.5 text-right">Rate</th>
-                      <th className="py-2.5 text-right">Amount</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-neutral-200">
-                    {formData.items.map((item: InvoiceItem) => (
-                      <tr key={item.id}>
-                        <td className="py-3 font-medium text-neutral-800">{item.description || "Service Description"}</td>
-                        <td className="py-3 text-center text-neutral-600">{item.quantity}</td>
-                        <td className="py-3 text-right text-neutral-600">{formatCurrency(item.rate)}</td>
-                        <td className="py-3 text-right font-semibold text-neutral-900">{formatCurrency(item.amount)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-
-                {/* Totals Summary */}
-                <div className="flex justify-end mb-8">
-                  <div className="w-64 flex flex-col gap-1 text-xs">
-                    <div className="flex justify-between py-1 border-b border-neutral-100 text-neutral-600">
-                      <span>Subtotal:</span>
-                      <span className="font-semibold text-neutral-800">{formatCurrency(formData.subtotal)}</span>
-                    </div>
-                    {formData.discountPercent > 0 && (
-                      <div className="flex justify-between py-1 border-b border-neutral-100 text-neutral-600">
-                        <span>Discount ({formData.discountPercent}%):</span>
-                        <span className="text-emerald-600">-{formatCurrency(formData.discountAmount)}</span>
-                      </div>
-                    )}
-                    {formData.taxPercent > 0 && (
-                      <div className="flex justify-between py-1 border-b border-neutral-100 text-neutral-600">
-                        <span>Tax ({formData.taxPercent}%):</span>
-                        <span>+{formatCurrency(formData.taxAmount)}</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between py-2 border-b-2 border-neutral-900 text-sm font-bold text-neutral-900">
-                      <span>Total Due:</span>
-                      <span>{formatCurrency(formData.total)}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Payment Information */}
-                <div className="p-4 rounded-lg bg-neutral-50 border border-neutral-200 text-xs">
-                  <span className="font-bold text-neutral-900 block mb-1">Payment Method: {formData.paymentMethod}</span>
-                  <p className="text-neutral-600 whitespace-pre-line">{formData.paymentDetails}</p>
-                </div>
-              </div>
-
-              {/* Footer Note */}
-              <div className="border-t border-neutral-200 pt-4 mt-8 text-center text-[10px] text-neutral-500 font-medium">
-                <p>{formData.note || "This is not a GST invoice."}</p>
-                <p className="mt-1 text-neutral-400">Thank you for your business! — SevenX Labs</p>
-              </div>
-            </div>
+            {invoicePreviewContent}
           </div>
         </div>
       </div>
+
+      {/* Floating Printable A4 Preview Screen Modal */}
+      {showFloatingPreview && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-6 max-w-4xl w-full shadow-2xl flex flex-col gap-4 my-auto max-h-[90vh]">
+            <div className="flex items-center justify-between border-b border-[#D5CEBC] pb-4">
+              <div>
+                <h3 className="text-base font-extrabold text-neutral-900">Floating Live Invoice Preview</h3>
+                <p className="text-xs text-neutral-600 font-mono">Invoice #{formData.invoiceNumber}</p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={handleExportPDF}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#121212] text-white text-xs font-bold shadow hover:bg-neutral-800 transition"
+                >
+                  <Download className="w-3.5 h-3.5 text-pink-400" />
+                  <span>Download PDF</span>
+                </button>
+                <button
+                  onClick={() => setShowFloatingPreview(false)}
+                  className="p-1.5 rounded-full bg-[#DFD9C9] text-neutral-800 hover:bg-neutral-900 hover:text-white transition"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            <div className="overflow-y-auto p-4 bg-neutral-950/20 rounded-2xl flex justify-center">
+              {invoicePreviewContent}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

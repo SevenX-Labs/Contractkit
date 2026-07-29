@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { getAllDocumentsDB, deleteDocumentDB } from "../actions";
 import { SavedDocument, DocumentType, DocumentStatus } from "../../types";
 import { formatCurrency, formatDate } from "../../lib/utils";
+import { useDocumentExport } from "../../hooks/useDocumentExport";
 import {
   History,
   Search,
@@ -14,6 +15,7 @@ import {
   Eye,
   X,
   RefreshCw,
+  Download,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -24,6 +26,7 @@ export default function HistoryPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDoc, setSelectedDoc] = useState<SavedDocument | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { exportToPDF } = useDocumentExport();
 
   const fetchDocs = async () => {
     setIsLoading(true);
@@ -67,9 +70,9 @@ export default function HistoryPage() {
             <History className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-xl font-extrabold text-neutral-900 tracking-tight">Document History</h1>
+            <h1 className="text-xl font-extrabold text-neutral-900 tracking-tight">Document Vault & History</h1>
             <p className="text-xs text-neutral-600 font-medium">
-              Search, filter, view and manage all studio contracts saved in Prisma Database
+              View floating A4 screen previews, download PDFs, and manage studio contracts
             </p>
           </div>
         </div>
@@ -79,7 +82,7 @@ export default function HistoryPage() {
           className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#DFD9C9] text-neutral-900 text-xs font-bold hover:bg-[#D5CEBC] transition"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`} />
-          <span>Refresh DB</span>
+          <span>Refresh Vault</span>
         </button>
       </div>
 
@@ -129,18 +132,19 @@ export default function HistoryPage() {
         </div>
       </div>
 
-      {/* Documents Table */}
+      {/* Documents Table with Skeleton Loader */}
       <div className="rounded-3xl bg-[#EBE7DC] border border-[#E2DDD0] p-6 shadow-sm">
         {isLoading ? (
-          <div className="py-16 text-center text-neutral-500 flex flex-col items-center gap-2">
-            <div className="w-6 h-6 border-2 border-neutral-900 border-t-transparent rounded-full animate-spin" />
-            <p className="text-xs font-medium">Loading documents from Prisma Database...</p>
+          <div className="flex flex-col gap-3">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="animate-pulse bg-[#DFD9C9] h-12 rounded-xl w-full" />
+            ))}
           </div>
         ) : filteredDocs.length === 0 ? (
           <div className="py-16 text-center text-neutral-500 flex flex-col items-center gap-2">
             <History className="w-8 h-8 text-neutral-400" />
-            <p className="text-sm font-bold text-neutral-800">No documents found in database.</p>
-            <p className="text-xs text-neutral-500">Create an invoice, agreement, or NDA to start saving to Supabase!</p>
+            <p className="text-sm font-bold text-neutral-800">No documents found in vault.</p>
+            <p className="text-xs text-neutral-500">Create an invoice, agreement, or NDA to start saving!</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -176,7 +180,7 @@ export default function HistoryPage() {
                     </td>
                     <td className="py-4 px-4 text-neutral-600 font-mono">{formatDate(doc.date)}</td>
                     <td className="py-4 px-4 font-extrabold text-neutral-900">
-                      {doc.amount ? formatCurrency(doc.amount) : "N/A"}
+                      {doc.amount ? formatCurrency(doc.amount, "₹") : "N/A"}
                     </td>
                     <td className="py-4 px-4">
                       <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase ${
@@ -194,7 +198,7 @@ export default function HistoryPage() {
                         <button
                           onClick={() => setSelectedDoc(doc)}
                           className="p-1.5 rounded-full bg-[#DFD9C9] text-neutral-800 hover:bg-[#121212] hover:text-white transition"
-                          title="View Details"
+                          title="Floating Preview"
                         >
                           <Eye className="w-3.5 h-3.5" />
                         </button>
@@ -215,37 +219,75 @@ export default function HistoryPage() {
         )}
       </div>
 
-      {/* Modal View Details */}
+      {/* Floating Printable A4 Document Preview Modal */}
       {selectedDoc && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-6 max-w-lg w-full shadow-2xl flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-neutral-900">{selectedDoc.title}</h3>
-              <button
-                onClick={() => setSelectedDoc(null)}
-                className="p-1 rounded-lg text-neutral-500 hover:text-neutral-900"
-              >
-                <X className="w-5 h-5" />
-              </button>
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-6 max-w-4xl w-full shadow-2xl flex flex-col gap-4 my-auto max-h-[90vh]">
+            <div className="flex items-center justify-between border-b border-[#D5CEBC] pb-4">
+              <div>
+                <h3 className="text-base font-extrabold text-neutral-900">Floating Live Document Preview</h3>
+                <p className="text-xs text-neutral-600 font-mono">{selectedDoc.title} (#{selectedDoc.documentNumber})</p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => exportToPDF("floating-vault-doc", `${selectedDoc.documentNumber}.pdf`)}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#121212] text-white text-xs font-bold shadow hover:bg-neutral-800 transition"
+                >
+                  <Download className="w-3.5 h-3.5 text-pink-400" />
+                  <span>Download PDF</span>
+                </button>
+                <button
+                  onClick={() => setSelectedDoc(null)}
+                  className="p-1.5 rounded-full bg-[#DFD9C9] text-neutral-800 hover:bg-neutral-900 hover:text-white transition"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
-            <div className="bg-[#F4F0E6] p-4 rounded-2xl border border-[#E2DDD0] text-xs text-neutral-800 flex flex-col gap-2 font-mono">
-              <div><strong className="text-neutral-900">Doc #:</strong> {selectedDoc.documentNumber}</div>
-              <div><strong className="text-neutral-900">Type:</strong> {selectedDoc.type}</div>
-              <div><strong className="text-neutral-900">Client:</strong> {selectedDoc.clientName}</div>
-              <div><strong className="text-neutral-900">Date:</strong> {formatDate(selectedDoc.date)}</div>
-              {selectedDoc.amount && <div><strong className="text-neutral-900">Amount:</strong> {formatCurrency(selectedDoc.amount)}</div>}
-              <div><strong className="text-neutral-900">Status:</strong> {selectedDoc.status}</div>
-              <div><strong className="text-neutral-900">Prisma ID:</strong> {selectedDoc.id}</div>
-            </div>
-
-            <div className="flex justify-end gap-3 mt-2">
-              <button
-                onClick={() => setSelectedDoc(null)}
-                className="px-5 py-2 rounded-full bg-[#121212] text-white text-xs font-bold hover:bg-neutral-800 transition"
+            {/* Printable A4 Card */}
+            <div className="overflow-y-auto p-4 bg-neutral-950/20 rounded-2xl flex justify-center">
+              <div
+                id="floating-vault-doc"
+                className="w-[210mm] min-h-[297mm] bg-white text-neutral-900 p-10 shadow-2xl rounded-xl flex flex-col justify-between"
+                style={{ fontFamily: "Arial, sans-serif" }}
               >
-                Close
-              </button>
+                <div>
+                  <div className="border-b-2 border-neutral-900 pb-4 mb-6 flex justify-between items-end">
+                    <div>
+                      <h1 className="text-xl font-bold tracking-tight text-neutral-900 uppercase">
+                        {selectedDoc.title}
+                      </h1>
+                      <p className="text-xs text-neutral-500 mt-1 font-mono">Ref #: {selectedDoc.documentNumber}</p>
+                    </div>
+                    <div className="text-right text-xs text-neutral-600">
+                      <p>Date: {formatDate(selectedDoc.date)}</p>
+                      <p className="font-bold text-neutral-900 uppercase mt-0.5">Status: {selectedDoc.status}</p>
+                    </div>
+                  </div>
+
+                  <div className="text-xs text-neutral-800 leading-relaxed mb-6 bg-neutral-50 p-4 rounded border border-neutral-100">
+                    <p className="font-bold text-neutral-900 text-sm mb-1">CLIENT DETAILS:</p>
+                    <p className="text-sm font-extrabold text-neutral-900">{selectedDoc.clientName}</p>
+                    {selectedDoc.amount ? (
+                      <p className="text-neutral-700 mt-1 font-mono font-bold">Total Amount: {formatCurrency(selectedDoc.amount, "₹")}</p>
+                    ) : null}
+                  </div>
+
+                  {selectedDoc.data && (
+                    <div className="text-xs text-neutral-700 space-y-3 font-mono bg-neutral-50 p-4 rounded border border-neutral-200">
+                      {selectedDoc.data.projectTitle && <p><strong>Project:</strong> {selectedDoc.data.projectTitle}</p>}
+                      {selectedDoc.data.projectDescription && <p><strong>Scope:</strong> {selectedDoc.data.projectDescription}</p>}
+                      {selectedDoc.data.deliverables && <p className="whitespace-pre-line"><strong>Deliverables:</strong><br />{selectedDoc.data.deliverables}</p>}
+                    </div>
+                  )}
+                </div>
+
+                <div className="border-t border-neutral-300 pt-4 text-center text-[10px] text-neutral-400">
+                  <p>SevenX Labs Studio • Official Record #{selectedDoc.documentNumber}</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
