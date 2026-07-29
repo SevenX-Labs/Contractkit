@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { usePDFExport } from "../../hooks/usePDFExport";
+import { useDocumentExport } from "../../hooks/useDocumentExport";
 import { getProfileDB, createNDADB } from "../actions";
 import { NDAData } from "../../types";
 import { formatDate } from "../../lib/utils";
@@ -10,6 +10,8 @@ import {
   ShieldCheck,
   Save,
   Download,
+  FileText,
+  Image as ImageIcon,
   User,
   Clock,
   AlertTriangle,
@@ -17,7 +19,7 @@ import {
 import { toast } from "sonner";
 
 export default function NDAPage() {
-  const { exportToPDF, isExporting } = usePDFExport();
+  const { exportToPDF, exportToDOCX, exportToImage, isExporting } = useDocumentExport();
   const [formData, setFormData] = useState<NDAData>(DEFAULT_NDA_DATA);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -49,9 +51,19 @@ export default function NDAPage() {
     }
   };
 
-  const handleDownloadPDF = async () => {
+  const handleExportPDF = async () => {
     await handleSave();
     await exportToPDF("nda-pdf-preview", `NDA-${formData.ndaNumber}.pdf`);
+  };
+
+  const handleExportDOCX = async () => {
+    await handleSave();
+    await exportToDOCX("nda-pdf-preview", `NDA-${formData.ndaNumber}.docx`);
+  };
+
+  const handleExportImage = async () => {
+    await handleSave();
+    await exportToImage("nda-pdf-preview", `NDA-${formData.ndaNumber}.png`);
   };
 
   return (
@@ -68,22 +80,41 @@ export default function NDAPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={handleSave}
             disabled={isSaving}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#DFD9C9] text-neutral-900 font-bold text-xs hover:bg-[#D5CEBC] transition"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#DFD9C9] text-neutral-900 font-bold text-xs hover:bg-[#D5CEBC] transition"
           >
-            <Save className="w-4 h-4 text-emerald-700" />
+            <Save className="w-3.5 h-3.5 text-emerald-700" />
             <span>{isSaving ? "Saving..." : "Save Draft"}</span>
           </button>
+
           <button
-            onClick={handleDownloadPDF}
+            onClick={handleExportPDF}
             disabled={isExporting || isSaving}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#121212] text-white font-bold text-xs shadow-md hover:bg-neutral-800 transition disabled:opacity-50"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#121212] text-white font-bold text-xs shadow-md hover:bg-neutral-800 transition disabled:opacity-50"
           >
-            <Download className="w-4 h-4" />
-            <span>{isExporting ? "Generating PDF..." : "Download PDF"}</span>
+            <Download className="w-3.5 h-3.5" />
+            <span>PDF</span>
+          </button>
+
+          <button
+            onClick={handleExportDOCX}
+            disabled={isExporting || isSaving}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-blue-600 text-white font-bold text-xs shadow-md hover:bg-blue-700 transition disabled:opacity-50"
+          >
+            <FileText className="w-3.5 h-3.5" />
+            <span>DOCX</span>
+          </button>
+
+          <button
+            onClick={handleExportImage}
+            disabled={isExporting || isSaving}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-purple-600 text-white font-bold text-xs shadow-md hover:bg-purple-700 transition disabled:opacity-50"
+          >
+            <ImageIcon className="w-3.5 h-3.5" />
+            <span>PNG</span>
           </button>
         </div>
       </div>

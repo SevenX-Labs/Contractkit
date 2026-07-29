@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { usePDFExport } from "../../hooks/usePDFExport";
+import { useDocumentExport } from "../../hooks/useDocumentExport";
 import { getProfileDB, createAgreementDB } from "../actions";
 import { AgreementData } from "../../types";
 import { formatCurrency, formatDate } from "../../lib/utils";
@@ -10,6 +10,8 @@ import {
   FileCheck,
   Save,
   Download,
+  FileText,
+  Image as ImageIcon,
   User,
   Building,
   Calendar,
@@ -19,7 +21,7 @@ import {
 import { toast } from "sonner";
 
 export default function AgreementPage() {
-  const { exportToPDF, isExporting } = usePDFExport();
+  const { exportToPDF, exportToDOCX, exportToImage, isExporting } = useDocumentExport();
   const [formData, setFormData] = useState<AgreementData>(DEFAULT_AGREEMENT_DATA);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -52,9 +54,19 @@ export default function AgreementPage() {
     }
   };
 
-  const handleDownloadPDF = async () => {
+  const handleExportPDF = async () => {
     await handleSave();
     await exportToPDF("agreement-pdf-preview", `Agreement-${formData.agreementNumber}.pdf`);
+  };
+
+  const handleExportDOCX = async () => {
+    await handleSave();
+    await exportToDOCX("agreement-pdf-preview", `Agreement-${formData.agreementNumber}.docx`);
+  };
+
+  const handleExportImage = async () => {
+    await handleSave();
+    await exportToImage("agreement-pdf-preview", `Agreement-${formData.agreementNumber}.png`);
   };
 
   return (
@@ -73,29 +85,48 @@ export default function AgreementPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={handleSave}
             disabled={isSaving}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#DFD9C9] text-neutral-900 font-bold text-xs hover:bg-[#D5CEBC] transition"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#DFD9C9] text-neutral-900 font-bold text-xs hover:bg-[#D5CEBC] transition"
           >
-            <Save className="w-4 h-4 text-emerald-700" />
+            <Save className="w-3.5 h-3.5 text-emerald-700" />
             <span>{isSaving ? "Saving..." : "Save Draft"}</span>
           </button>
+          
           <button
-            onClick={handleDownloadPDF}
+            onClick={handleExportPDF}
             disabled={isExporting || isSaving}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#121212] text-white font-bold text-xs shadow-md hover:bg-neutral-800 transition disabled:opacity-50"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#121212] text-white font-bold text-xs shadow-md hover:bg-neutral-800 transition disabled:opacity-50"
           >
-            <Download className="w-4 h-4" />
-            <span>{isExporting ? "Generating PDF..." : "Download PDF"}</span>
+            <Download className="w-3.5 h-3.5" />
+            <span>PDF</span>
+          </button>
+
+          <button
+            onClick={handleExportDOCX}
+            disabled={isExporting || isSaving}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-blue-600 text-white font-bold text-xs shadow-md hover:bg-blue-700 transition disabled:opacity-50"
+          >
+            <FileText className="w-3.5 h-3.5" />
+            <span>DOCX</span>
+          </button>
+
+          <button
+            onClick={handleExportImage}
+            disabled={isExporting || isSaving}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-purple-600 text-white font-bold text-xs shadow-md hover:bg-purple-700 transition disabled:opacity-50"
+          >
+            <ImageIcon className="w-3.5 h-3.5" />
+            <span>PNG</span>
           </button>
         </div>
       </div>
 
       {/* Main Split Screen Container */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Left Form Panel (Clean High Contrast Inputs) */}
+        {/* Left Form Panel */}
         <div className="lg:col-span-6 flex flex-col gap-6 bg-[#EBE7DC] border border-[#E2DDD0] p-6 md:p-8 rounded-3xl shadow-sm">
           {/* Parties */}
           <div className="flex flex-col gap-3">
