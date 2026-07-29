@@ -1,0 +1,188 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum DocumentType {
+  INVOICE
+  AGREEMENT
+  NDA
+}
+
+enum DocumentStatus {
+  DRAFT
+  SENT
+  PAID
+  SIGNED
+  PENDING
+  CANCELLED
+}
+
+enum PaymentMethod {
+  UPI
+  BANK_TRANSFER
+  PAYPAL
+}
+
+model Profile {
+  id            String   @id @default(uuid())
+  name          String
+  company       String?
+  email         String
+  phone         String?
+  address       String?
+  gst           String?
+  website       String?
+  upiId         String?
+  bankName      String?
+  bankAccount   String?
+  bankIfsc      String?
+  paypalEmail   String?
+  invoicePrefix String   @default("SXL-INV-")
+  defaultNotes  String?
+  defaultTax    Float    @default(0)
+  currency      String   @default("$")
+  logoUrl       String?
+  stampUrl      String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Invoice {
+  id            String         @id @default(uuid())
+  invoiceNumber String         @unique
+  invoiceDate   DateTime
+  dueDate       DateTime
+  
+  senderName    String
+  senderCompany String?
+  senderAddress String?
+  senderEmail   String
+  senderPhone   String?
+  
+  clientName    String
+  clientCompany String?
+  clientAddress String?
+  clientEmail   String
+  clientPhone   String?
+  
+  paymentMethod PaymentMethod  @default(UPI)
+  paymentDetails String?
+  
+  items         InvoiceItem[]
+  subtotal      Float          @default(0)
+  discountPct   Float          @default(0)
+  discountAmt   Float          @default(0)
+  taxPct        Float          @default(0)
+  taxAmt        Float          @default(0)
+  total         Float          @default(0)
+  
+  note          String?
+  status        DocumentStatus @default(DRAFT)
+  isDeleted     Boolean        @default(false)
+  
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([clientName])
+  @@index([status])
+  @@index([isDeleted])
+}
+
+model InvoiceItem {
+  id          String   @id @default(uuid())
+  invoiceId   String
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  description String
+  quantity    Int      @default(1)
+  rate        Float    @default(0)
+  amount      Float    @default(0)
+  createdAt   DateTime @default(now())
+}
+
+model Agreement {
+  id                  String         @id @default(uuid())
+  agreementNumber     String         @unique
+  date                DateTime
+  
+  freelancerName      String
+  freelancerCompany   String?
+  freelancerEmail     String
+  
+  clientName          String
+  clientCompany       String?
+  clientEmail         String
+  
+  projectTitle        String
+  projectDescription  String
+  deliverables        String
+  
+  startDate           DateTime
+  deadline            DateTime
+  
+  totalAmount         Float
+  advancePercentage   Float          @default(50)
+  finalPercentage     Float          @default(50)
+  revisionLimit       String         @default("3")
+  
+  ownershipClause     String
+  cancellationPolicy  String
+  additionalTerms     String?
+  
+  freelancerSignature String?
+  freelancerSignDate  DateTime?
+  clientSignature     String?
+  clientSignDate      DateTime?
+  
+  status              DocumentStatus @default(DRAFT)
+  isDeleted           Boolean        @default(false)
+  
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  @@index([clientName])
+  @@index([status])
+}
+
+model NDA {
+  id                         String         @id @default(uuid())
+  ndaNumber                  String         @unique
+  effectiveDate              DateTime
+  
+  freelancerName             String
+  freelancerCompany          String?
+  
+  clientName                 String
+  clientCompany              String?
+  
+  projectContext             String
+  confidentialInfoDefinition String
+  obligations                String
+  duration                   String         @default("2 Years")
+  
+  returnDestroyClause        String
+  breachPenalty              String
+  additionalNotes            String?
+  
+  freelancerSignature        String?
+  freelancerSignDate         DateTime?
+  clientSignature            String?
+  clientSignDate             DateTime?
+  
+  status                     DocumentStatus @default(DRAFT)
+  isDeleted                  Boolean        @default(false)
+  
+  createdAt                  DateTime       @default(now())
+  updatedAt                  DateTime       @updatedAt
+
+  @@index([clientName])
+  @@index([status])
+}
