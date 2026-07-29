@@ -5,6 +5,9 @@ import Link from "next/link";
 import {
   FileCheck,
   IndianRupee,
+  Users,
+  FolderKanban,
+  FileText,
   ArrowUpRight,
   ArrowDownRight,
   Trash2,
@@ -19,6 +22,8 @@ import { toast } from "sonner";
 
 interface DashboardData {
   stats: {
+    totalClients: number;
+    totalProjects: number;
     totalRevenue: number;
     formattedTotalRevenue: string;
     paymentsReceived: number;
@@ -30,13 +35,14 @@ interface DashboardData {
     totalInvoices: number;
     totalAgreements: number;
     totalNDAs: number;
+    totalDocumentSuites: number;
     totalDocuments: number;
   };
   latestTransactions: Array<{
     id: string;
     documentNumber: string;
     clientName: string;
-    type: "invoice" | "agreement" | "nda";
+    type: string;
     amount: number;
     date: string;
     status: string;
@@ -54,7 +60,7 @@ interface DashboardData {
     id: string;
     documentNumber: string;
     clientName: string;
-    type: "invoice" | "agreement" | "nda";
+    type: string;
     amount: number;
     date: string;
     status: string;
@@ -64,7 +70,7 @@ interface DashboardData {
 
 export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
-  const [activeFilter, setActiveFilter] = useState<"all" | "invoice" | "agreement" | "nda">("all");
+  const [activeFilter, setActiveFilter] = useState<string>("all");
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchDashboardData = async () => {
@@ -75,7 +81,7 @@ export default function DashboardPage() {
       if (json.success) {
         setData(json);
       } else {
-        toast.error("Failed to load dashboard statistics.");
+        toast.error("Failed to load dashboard metrics.");
       }
     } catch (err) {
       console.error(err);
@@ -89,7 +95,7 @@ export default function DashboardPage() {
     fetchDashboardData();
   }, []);
 
-  const handleDelete = async (doc: { id: string; type: "invoice" | "agreement" | "nda"; clientName: string }) => {
+  const handleDelete = async (doc: { id: string; type: any; clientName: string }) => {
     const res = await deleteDocumentDB(doc.id, doc.type);
     if (res.success) {
       toast.success(`Deleted item from database`);
@@ -101,7 +107,7 @@ export default function DashboardPage() {
 
   const filteredDocs = (data?.allDocuments || []).filter((d) => {
     if (activeFilter === "all") return true;
-    return d.type === activeFilter;
+    return d.type.toLowerCase().includes(activeFilter.toLowerCase());
   });
 
   return (
@@ -113,7 +119,7 @@ export default function DashboardPage() {
             Your client billing & invoices
           </h1>
           <p className="text-xs text-neutral-600 mt-1 font-medium">
-            Real-time dashboard powered by Prisma Database & Indian Rupees (₹)
+            Real-time studio analytics powered by Prisma Database & Indian Rupees (₹)
           </p>
         </div>
 
@@ -130,20 +136,83 @@ export default function DashboardPage() {
             href="/invoice"
             className="px-4 py-2 rounded-full bg-[#121212] text-white text-xs font-bold shadow-md hover:bg-neutral-800 transition flex items-center gap-1.5"
           >
-            <Plus className="w-3.5 h-3.5" />
+            <Plus className="w-3.5 h-3.5 text-pink-400" />
             <span>Create Invoice</span>
           </Link>
           <Link
-            href="/agreement"
+            href="/builder"
             className="px-4 py-2 rounded-full bg-[#EBE7DC] border border-[#E2DDD0] text-neutral-900 text-xs font-bold hover:bg-[#E2DDD0] transition flex items-center gap-1.5"
           >
             <FileCheck className="w-3.5 h-3.5" />
-            <span>New Agreement</span>
+            <span>Document Studio</span>
           </Link>
         </div>
       </div>
 
-      {/* Top Grid: Donut Revenue Chart, Waiting for Bills, Latest Transactions */}
+      {/* Top 4 Enterprise Metrics Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-5 shadow-sm flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-neutral-600 uppercase tracking-wider">Total Earnings</span>
+            <div className="p-2 rounded-xl bg-pink-100 text-pink-700">
+              <IndianRupee className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-3">
+            <span className="text-xl sm:text-2xl font-extrabold text-neutral-900">
+              {data?.stats ? data.stats.formattedTotalRevenue : "₹0.00"}
+            </span>
+            <p className="text-[10px] text-neutral-500 font-medium mt-0.5">All time revenue</p>
+          </div>
+        </div>
+
+        <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-5 shadow-sm flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-neutral-600 uppercase tracking-wider">Total Clients</span>
+            <div className="p-2 rounded-xl bg-blue-100 text-blue-700">
+              <Users className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-3">
+            <span className="text-xl sm:text-2xl font-extrabold text-neutral-900">
+              {data?.stats ? data.stats.totalClients : 0}
+            </span>
+            <p className="text-[10px] text-neutral-500 font-medium mt-0.5">Active CRM clients</p>
+          </div>
+        </div>
+
+        <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-5 shadow-sm flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-neutral-600 uppercase tracking-wider">Total Projects</span>
+            <div className="p-2 rounded-xl bg-purple-100 text-purple-700">
+              <FolderKanban className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-3">
+            <span className="text-xl sm:text-2xl font-extrabold text-neutral-900">
+              {data?.stats ? data.stats.totalProjects : 0}
+            </span>
+            <p className="text-[10px] text-neutral-500 font-medium mt-0.5">Studio projects</p>
+          </div>
+        </div>
+
+        <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-5 shadow-sm flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-neutral-600 uppercase tracking-wider">Total Documents</span>
+            <div className="p-2 rounded-xl bg-emerald-100 text-emerald-700">
+              <FileText className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-3">
+            <span className="text-xl sm:text-2xl font-extrabold text-neutral-900">
+              {data?.stats ? data.stats.totalDocuments : 0}
+            </span>
+            <p className="text-[10px] text-neutral-500 font-medium mt-0.5">Invoices, contracts & NDAs</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Grid: Donut Revenue Chart, Waiting for Bills, Latest Transactions */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Donut Chart Component */}
         <div className="lg:col-span-4 bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-6 flex flex-col items-center justify-center relative shadow-sm min-h-[240px]">
