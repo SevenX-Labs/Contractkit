@@ -6,8 +6,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatCurrency(amount: number, currencySymbol: string = "$"): string {
-  return `${currencySymbol}${amount.toLocaleString("en-US", {
+export function formatCurrency(amount: number, currencySymbol: string = "₹"): string {
+  if (isNaN(amount) || amount === null || amount === undefined) {
+    return `${currencySymbol}0.00`;
+  }
+  return `${currencySymbol}${amount.toLocaleString("en-IN", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}`;
@@ -18,7 +21,7 @@ export function formatDate(dateString: string): string {
   try {
     const d = new Date(dateString);
     if (isNaN(d.getTime())) return dateString;
-    return d.toLocaleDateString("en-US", {
+    return d.toLocaleDateString("en-IN", {
       year: "numeric",
       month: "short",
       day: "numeric",

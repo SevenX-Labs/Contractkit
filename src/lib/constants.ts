@@ -4,12 +4,12 @@ export const DEFAULT_PROFILE: FreelancerProfile = {
   name: "SevenX Labs",
   company: "SevenX Labs Studio",
   email: "hello@sevenxlabs.com",
-  phone: "+1 (555) 789-0123",
-  address: "100 Tech Plaza, Suite 400, Tech District, CA 94107",
+  phone: "+91 98765 43210",
+  address: "SevenX Labs Tech Park, HSR Layout, Sector 1, Bengaluru, Karnataka 560102",
   upiId: "sevenxlabs@upi",
-  bankName: "Silicon Tech Bank",
-  bankAccount: "98765432101234",
-  bankIfsc: "STBK0009876",
+  bankName: "HDFC Bank",
+  bankAccount: "50100234567890",
+  bankIfsc: "HDFC0001234",
   paypalEmail: "billing@sevenxlabs.com",
   invoicePrefix: "SXL-INV-",
 };
@@ -25,38 +25,38 @@ export const DEFAULT_INVOICE_DATA: InvoiceData = {
   senderEmail: DEFAULT_PROFILE.email,
   senderPhone: DEFAULT_PROFILE.phone,
   
-  clientName: "Acme Dynamics Corp",
-  clientCompany: "Acme Corp",
-  clientAddress: "742 Evergreen Terrace, Tech Park, CA 90001",
-  clientEmail: "billing@acmedynamics.io",
-  clientPhone: "+1 (555) 234-5678",
+  clientName: "Acme Dynamics Private Limited",
+  clientCompany: "Acme Dynamics Pvt Ltd",
+  clientAddress: "100 MG Road, Indiranagar, Bengaluru, KA 560038",
+  clientEmail: "billing@acmedynamics.in",
+  clientPhone: "+91 91234 56789",
   
   paymentMethod: "UPI",
-  paymentDetails: `UPI ID: ${DEFAULT_PROFILE.upiId} | Bank Acc: ${DEFAULT_PROFILE.bankAccount} (IFSC: ${DEFAULT_PROFILE.bankIfsc})`,
+  paymentDetails: `UPI ID: ${DEFAULT_PROFILE.upiId} | HDFC Acc: ${DEFAULT_PROFILE.bankAccount} (IFSC: ${DEFAULT_PROFILE.bankIfsc})`,
   
   items: [
     {
       id: "item-1",
-      description: "Custom Web Application Development (Next.js 16 + Tailwind CSS v4)",
+      description: "Custom Full-Stack Next.js 16 Web Application",
       quantity: 1,
-      rate: 3500,
-      amount: 3500,
+      rate: 250000,
+      amount: 250000,
     },
     {
       id: "item-2",
-      description: "UI/UX High-Fidelity Design System & Component Library",
+      description: "UI/UX Design System & Mobile Responsive UI",
       quantity: 1,
-      rate: 1200,
-      amount: 1200,
+      rate: 95000,
+      amount: 95000,
     },
   ],
   
-  subtotal: 4700,
+  subtotal: 345000,
   discountPercent: 0,
   discountAmount: 0,
   taxPercent: 0,
   taxAmount: 0,
-  total: 4700,
+  total: 345000,
   
   note: "This is not a GST invoice.",
   status: "sent",
@@ -71,18 +71,18 @@ export const DEFAULT_AGREEMENT_DATA: AgreementData = {
   freelancerCompany: DEFAULT_PROFILE.company,
   freelancerEmail: DEFAULT_PROFILE.email,
   
-  clientName: "Vortex Innovations Inc",
+  clientName: "Vortex Innovations Pvt Ltd",
   clientCompany: "Vortex Innovations",
-  clientEmail: "contracts@vortex.tech",
+  clientEmail: "contracts@vortex.in",
   
   projectTitle: "SaaS Dashboard & Automation Platform Development",
   projectDescription: "Design and full-stack development of a modern customer management dashboard with real-time analytics, dynamic reporting, and payment gateway integration.",
-  deliverables: "- Fully responsive Next.js 16 web application\n- Custom Tailwind CSS v4 design system\n- REST/GraphQL API integration\n- User documentation and deployment setup on Vercel/AWS",
+  deliverables: "- Fully responsive Next.js 16 web application\n- Custom Tailwind CSS v4 design system\n- REST/GraphQL API integration\n- Deployment setup on Vercel & AWS",
   
   startDate: new Date().toISOString().split("T")[0],
   deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
   
-  totalAmount: 6500,
+  totalAmount: 450000,
   advancePercentage: 50,
   finalPercentage: 50,
   revisionLimit: "3",
@@ -93,7 +93,7 @@ export const DEFAULT_AGREEMENT_DATA: AgreementData = {
   
   freelancerSignature: DEFAULT_PROFILE.name,
   freelancerSignDate: new Date().toISOString().split("T")[0],
-  clientSignature: "Alex Rivera, CTO",
+  clientSignature: "Rajesh Kumar, CTO",
   clientSignDate: new Date().toISOString().split("T")[0],
   
   status: "signed",
@@ -107,7 +107,7 @@ export const DEFAULT_NDA_DATA: NDAData = {
   freelancerName: DEFAULT_PROFILE.name,
   freelancerCompany: DEFAULT_PROFILE.company,
   
-  clientName: "Nexus AI Tech Ltd",
+  clientName: "Nexus AI Tech India",
   clientCompany: "Nexus AI Tech",
   
   projectContext: "Exploratory discussion and development of proprietary AI algorithm workflows, trade secrets, software blueprints, and strategic roadmaps.",
@@ -117,11 +117,11 @@ export const DEFAULT_NDA_DATA: NDAData = {
   
   returnDestroyClause: "Upon written request or termination of project discussions, all documents, prototypes, and electronic data containing Confidential Information must be returned or certified destroyed within 7 business days.",
   breachPenalty: "Any unauthorized disclosure or breach of confidentiality will entitle the Disclosing Party to seek immediate injunctive relief and monetary damages equal to actual proven financial loss.",
-  additionalNotes: "Governed by the laws of the State of California.",
+  additionalNotes: "Governed by the laws of India and jurisdiction of Bengaluru.",
   
   freelancerSignature: DEFAULT_PROFILE.name,
   freelancerSignDate: new Date().toISOString().split("T")[0],
-  clientSignature: "Samantha Reed, CEO",
+  clientSignature: "Priya Sharma, CEO",
   clientSignDate: new Date().toISOString().split("T")[0],
   
   status: "signed",
