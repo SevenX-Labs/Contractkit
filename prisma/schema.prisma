@@ -80,6 +80,7 @@ model Client {
   billingAddress  String?
   shippingAddress String?
   notes           String?
+  workType        String?  @default("Web Dev")
   tags            String[] @default(["Client"])
   status          String   @default("Active")
   
@@ -94,23 +95,53 @@ model Client {
 }
 
 model Project {
-  id           String          @id @default(uuid())
-  name         String
-  description  String?
-  budget       Float           @default(0)
-  status       String          @default("In Progress")
-  startDate    DateTime?
-  deliveryDate DateTime?
+  id            String           @id @default(uuid())
+  name          String
+  description   String?
+  workType      String?          @default("Web Dev")
+  budget        Float            @default(0)
+  totalValue    Float            @default(0)
+  amountPaid    Float            @default(0)
+  amountPending Float            @default(0)
+  status        String           @default("In Progress")
+  startDate     DateTime?
+  deliveryDate  DateTime?
   
-  clientId     String?
-  client       Client?         @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  clientId      String?
+  client        Client?          @relation(fields: [clientId], references: [id], onDelete: SetNull)
   
-  documents    DocumentSuite[]
+  payments      ProjectPayment[]
+  documents     DocumentSuite[]
   
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
 
   @@index([name])
+}
+
+model ProjectPayment {
+  id        String    @id @default(uuid())
+  projectId String
+  project   Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  label     String    // e.g. "Advance (50%)", "Milestone 2", "Final Delivery"
+  amount    Float
+  dueDate   DateTime?
+  paidDate  DateTime?
+  status    String    @default("PENDING") // PENDING / PAID / OVERDUE
+  note      String?
+  createdAt DateTime  @default(now())
+
+  @@index([projectId])
+  @@index([status])
+}
+
+model Expense {
+  id        String   @id @default(uuid())
+  title     String
+  amount    Float
+  category  String   @default("Software & Hosting")
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
 }
 
 model Clause {

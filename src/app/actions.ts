@@ -115,14 +115,198 @@ export async function saveProfileDB(data: FreelancerProfile) {
   }
 }
 
+// ==================== WORK & PROFIT TRACKER ====================
+export async function createClientWorkTrackerDB(data: {
+  name: string;
+  company?: string;
+  email: string;
+  phone?: string;
+  billingAddress?: string;
+  workType: string;
+  projectValue: number;
+  paymentStructure: "50/50" | "3-Way Split" | "Full Upfront" | "Monthly Retainer" | "Milestone";
+  customMilestones?: Array<{ label: string; percentage: number }>;
+  startDate?: string;
+  deadline?: string;
+  notes?: string;
+}) {
+  try {
+    // 1. Create Client
+    const client = await prisma.client.create({
+      data: {
+        name: data.name,
+        company: data.company,
+        email: data.email,
+        phone: data.phone,
+        billingAddress: data.billingAddress,
+        workType: data.workType,
+        notes: data.notes,
+        status: "Active",
+      },
+    });
+
+    // 2. Create Project
+    const project = await prisma.project.create({
+      data: {
+        name: `${data.name} — ${data.workType}`,
+        description: data.notes || `${data.workType} project for ${data.name}`,
+        workType: data.workType,
+        budget: data.projectValue,
+        totalValue: data.projectValue,
+        amountPaid: 0,
+        amountPending: data.projectValue,
+        status: "In Progress",
+        startDate: data.startDate ? new Date(data.startDate) : new Date(),
+        deliveryDate: data.deadline ? new Date(data.deadline) : null,
+        clientId: client.id,
+      },
+    });
+
+    // 3. Auto-generate ProjectPayment Milestone Rows
+    const paymentRows: Array<{ label: string; amount: number; dueDate?: Date }> = [];
+    const val = data.projectValue;
+
+    if (data.paymentStructure === "50/50") {
+      paymentRows.push(
+        { label: "Advance Payment (50%)", amount: val * 0.5, dueDate: new Date() },
+        { label: "Final Delivery (50%)", amount: val * 0.5, dueDate: data.deadline ? new Date(data.deadline) : undefined }
+      );
+    } else if (data.paymentStructure === "3-Way Split") {
+      paymentRows.push(
+        { label: "Advance Deposit (30%)", amount: val * 0.3, dueDate: new Date() },
+        { label: "Milestone 2 — Design & Prototype (30%)", amount: val * 0.3 },
+        { label: "Final Deployment (40%)", amount: val * 0.4, dueDate: data.deadline ? new Date(data.deadline) : undefined }
+      );
+    } else if (data.paymentStructure === "Full Upfront") {
+      paymentRows.push({ label: "Full Upfront Payment (100%)", amount: val, dueDate: new Date() });
+    } else if (data.paymentStructure === "Monthly Retainer") {
+      paymentRows.push({ label: "Monthly Retainer (Month 1)", amount: val, dueDate: new Date() });
+    } else if (data.paymentStructure === "Milestone" && data.customMilestones) {
+      data.customMilestones.forEach((m) => {
+        paymentRows.push({ label: m.label, amount: (val * m.percentage) / 100 });
+      });
+    } else {
+      paymentRows.push({ label: "Advance Deposit (50%)", amount: val * 0.5 }, { label: "Final Delivery (50%)", amount: val * 0.5 });
+    }
+
+    for (const row of paymentRows) {
+      await prisma.projectPayment.create({
+        data: {
+          projectId: project.id,
+          label: row.label,
+          amount: row.amount,
+          dueDate: row.dueDate || null,
+          status: "PENDING",
+        },
+      });
+    }
+
+    revalidatePath("/");
+    revalidatePath("/clients");
+    revalidatePath("/projects");
+    return { success: true, client, project };
+  } catch (err) {
+    console.error("Error creating client work tracker:", err);
+    return { success: false, error: String(err) };
+  }
+}
+
+export async function updatePaymentStatusDB(
+  paymentId: string,
+  status: "PAID" | "PENDING" | "OVERDUE",
+  note?: string
+) {
+  try {
+    const payment = await prisma.projectPayment.update({
+      where: { id: paymentId },
+      data: {
+        status,
+        paidDate: status === "PAID" ? new Date() : null,
+        note: note || null,
+      },
+    });
+
+    // Recalculate Project Amount Paid & Amount Pending
+    const allPayments = await prisma.projectPayment.findMany({
+      where: { projectId: payment.projectId },
+    });
+
+    const paidSum = allPayments
+      .filter((p) => p.status === "PAID")
+      .reduce((acc, p) => acc + p.amount, 0);
+
+    const project = await prisma.project.findUnique({ where: { id: payment.projectId } });
+    const totalVal = project?.totalValue || project?.budget || 0;
+
+    await prisma.project.update({
+      where: { id: payment.projectId },
+      data: {
+        amountPaid: paidSum,
+        amountPending: Math.max(0, totalVal - paidSum),
+        status: paidSum >= totalVal ? "Completed" : "In Progress",
+      },
+    });
+
+    revalidatePath("/");
+    revalidatePath("/clients");
+    revalidatePath("/projects");
+    return { success: true };
+  } catch (err) {
+    console.error("Error updating payment status:", err);
+    return { success: false, error: String(err) };
+  }
+}
+
+// ==================== EXPENSE TRACKER ====================
+export async function createExpenseDB(data: { title: string; amount: number; category: string }) {
+  try {
+    const exp = await prisma.expense.create({
+      data: {
+        title: data.title,
+        amount: data.amount,
+        category: data.category || "Software & Hosting",
+      },
+    });
+    revalidatePath("/");
+    return { success: true, expense: exp };
+  } catch (err) {
+    return { success: false, error: String(err) };
+  }
+}
+
+export async function getExpensesDB() {
+  try {
+    return await prisma.expense.findMany({ orderBy: { createdAt: "desc" } });
+  } catch (err) {
+    return [];
+  }
+}
+
 // ==================== CLIENT CRM ACTIONS ====================
 export async function getClientsDB() {
   try {
     const clients = await prisma.client.findMany({
-      include: { projects: true, documents: true },
+      include: {
+        projects: {
+          include: { payments: true },
+        },
+        documents: true,
+      },
       orderBy: { createdAt: "desc" },
     });
-    return clients;
+
+    return clients.map((c) => {
+      const totalVal = c.projects.reduce((acc, p) => acc + (p.totalValue || p.budget), 0);
+      const paidVal = c.projects.reduce((acc, p) => acc + p.amountPaid, 0);
+      const pendingVal = Math.max(0, totalVal - paidVal);
+
+      return {
+        ...c,
+        totalValue: totalVal,
+        amountPaid: paidVal,
+        amountPending: pendingVal,
+      };
+    });
   } catch (err) {
     console.error("Error fetching clients:", err);
     return [];
@@ -141,6 +325,7 @@ export async function createClientDB(data: {
   billingAddress?: string;
   shippingAddress?: string;
   notes?: string;
+  workType?: string;
   tags?: string[];
   status?: string;
 }) {
@@ -158,6 +343,7 @@ export async function createClientDB(data: {
         billingAddress: data.billingAddress,
         shippingAddress: data.shippingAddress,
         notes: data.notes,
+        workType: data.workType || "Web Dev",
         tags: data.tags || ["Enterprise"],
         status: data.status || "Active",
       },
@@ -183,7 +369,11 @@ export async function deleteClientDB(id: string) {
 export async function getProjectsDB() {
   try {
     const projects = await prisma.project.findMany({
-      include: { client: true, documents: true },
+      include: {
+        client: true,
+        payments: { orderBy: { createdAt: "asc" } },
+        documents: true,
+      },
       orderBy: { createdAt: "desc" },
     });
     return projects;
@@ -197,17 +387,23 @@ export async function createProjectDB(data: {
   name: string;
   description?: string;
   budget?: number;
+  workType?: string;
   status?: string;
   startDate?: string;
   deliveryDate?: string;
   clientId?: string;
 }) {
   try {
+    const val = data.budget || 0;
     const project = await prisma.project.create({
       data: {
         name: data.name,
         description: data.description,
-        budget: data.budget || 0,
+        workType: data.workType || "Web Dev",
+        budget: val,
+        totalValue: val,
+        amountPaid: 0,
+        amountPending: val,
         status: data.status || "In Progress",
         startDate: data.startDate ? new Date(data.startDate) : null,
         deliveryDate: data.deliveryDate ? new Date(data.deliveryDate) : null,
@@ -239,7 +435,6 @@ export async function getClausesDB() {
     });
 
     if (clauses.length === 0) {
-      // Seed default professional legal clauses
       const defaultClauses = [
         {
           category: "Payment Terms",
@@ -260,16 +455,6 @@ export async function getClausesDB() {
           category: "Warranty & Support",
           title: "30-Day Post Launch Bug Fix Guarantee",
           content: "SevenX Labs provides 30 calendar days of free warranty coverage for any technical defects or software bugs directly attributable to original specifications.",
-        },
-        {
-          category: "Revision Policy",
-          title: "3 Round Design Revision Cap",
-          content: "Project scope includes up to 3 major revision cycles per milestone. Additional requested revisions shall be billed at ₹2,500/hour.",
-        },
-        {
-          category: "Confidentiality",
-          title: "Mutual NDA & Non-Solicitation",
-          content: "Both parties agree to hold all technical blueprints, customer data, and business strategies in strict confidence for 2 years.",
         },
       ];
 
@@ -307,7 +492,7 @@ export async function deleteClauseDB(id: string) {
   }
 }
 
-// ==================== DOCUMENT SUITE ACTIONS (15 TYPES) ====================
+// ==================== DOCUMENT SUITE ACTIONS ====================
 export async function getNextDocumentNumberDB(type: string): Promise<string> {
   try {
     const prefix = `SXL-${type.slice(0, 3).toUpperCase()}-`;
@@ -359,7 +544,6 @@ export async function createDocumentSuiteDB(data: {
   }
 }
 
-// Keep legacy fallback helper compatibility
 export async function getNextInvoiceNumberDB(): Promise<string> {
   return getNextDocumentNumberDB("INVOICE");
 }

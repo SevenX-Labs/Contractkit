@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { getClientsDB, createClientDB, deleteClientDB } from "../actions";
-import { Users, Plus, Search, Trash2, Building, Mail, Phone, Globe, MapPin, X, FileText } from "lucide-react";
+import { getClientsDB, createClientWorkTrackerDB, deleteClientDB } from "../actions";
+import { Users, Plus, Search, Trash2, Building, Mail, Phone, MapPin, X, FileText, CheckCircle2, Clock } from "lucide-react";
+import { formatCurrency } from "../../lib/utils";
 import Link from "next/link";
 import { toast } from "sonner";
 
@@ -10,17 +11,15 @@ interface ClientItem {
   id: string;
   name: string;
   company?: string | null;
-  designation?: string | null;
   email: string;
   phone?: string | null;
-  gstNo?: string | null;
-  taxNo?: string | null;
-  website?: string | null;
+  workType?: string | null;
   billingAddress?: string | null;
-  shippingAddress?: string | null;
   notes?: string | null;
-  tags: string[];
   status: string;
+  totalValue: number;
+  amountPaid: number;
+  amountPending: number;
 }
 
 export default function ClientsPage() {
@@ -32,12 +31,14 @@ export default function ClientsPage() {
   const [formData, setFormData] = useState({
     name: "",
     company: "",
-    designation: "CTO / Director",
     email: "",
     phone: "",
-    gstNo: "",
-    website: "",
     billingAddress: "",
+    workType: "Web Dev",
+    projectValue: 250000,
+    paymentStructure: "50/50" as "50/50" | "3-Way Split" | "Full Upfront" | "Monthly Retainer" | "Milestone",
+    startDate: new Date().toISOString().split("T")[0],
+    deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
     notes: "",
   });
 
@@ -59,19 +60,21 @@ export default function ClientsPage() {
       return;
     }
 
-    const res = await createClientDB(formData);
+    const res = await createClientWorkTrackerDB(formData);
     if (res.success) {
-      toast.success(`Client "${formData.name}" saved to CRM!`);
+      toast.success(`Client "${formData.name}" & Project Payments created!`);
       setIsModalOpen(false);
       setFormData({
         name: "",
         company: "",
-        designation: "CTO / Director",
         email: "",
         phone: "",
-        gstNo: "",
-        website: "",
         billingAddress: "",
+        workType: "Web Dev",
+        projectValue: 250000,
+        paymentStructure: "50/50",
+        startDate: new Date().toISOString().split("T")[0],
+        deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
         notes: "",
       });
       fetchClients();
@@ -94,7 +97,8 @@ export default function ClientsPage() {
     (c) =>
       c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (c.company && c.company.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      c.email.toLowerCase().includes(searchQuery.toLowerCase())
+      c.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (c.workType && c.workType.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   return (
@@ -106,8 +110,8 @@ export default function ClientsPage() {
             <Users className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-xl font-extrabold text-neutral-900 tracking-tight">Client CRM & Directory</h1>
-            <p className="text-xs text-neutral-600 font-medium">Manage reusable client profiles, tax info, and direct document generation</p>
+            <h1 className="text-xl font-extrabold text-neutral-900 tracking-tight">Client Work & Profit Tracker</h1>
+            <p className="text-xs text-neutral-600 font-medium">Manage enterprise clients, payment structures (50/50, Retainers, Milestones), and earnings</p>
           </div>
         </div>
 
@@ -116,7 +120,7 @@ export default function ClientsPage() {
           className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#121212] text-white font-bold text-xs shadow-md hover:bg-neutral-800 transition"
         >
           <Plus className="w-4 h-4 text-pink-400" />
-          <span>Add New Client</span>
+          <span>Add Client</span>
         </button>
       </div>
 
@@ -125,107 +129,109 @@ export default function ClientsPage() {
         <Search className="w-4 h-4 text-neutral-500 ml-2" />
         <input
           type="text"
-          placeholder="Search by client name, company, email, or GST number..."
+          placeholder="Search by client name, company, email, or work type..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-full px-4 py-2 text-xs text-neutral-900 focus:outline-none"
         />
       </div>
 
-      {/* Clients Cards Grid */}
-      {isLoading ? (
-        <div className="py-16 text-center text-xs text-neutral-500 font-medium">Loading client directory...</div>
-      ) : filteredClients.length === 0 ? (
-        <div className="py-16 bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl text-center p-8 flex flex-col items-center gap-3">
-          <Users className="w-10 h-10 text-neutral-400" />
-          <h3 className="text-sm font-bold text-neutral-800">No client profiles found</h3>
-          <p className="text-xs text-neutral-500 max-w-sm">
-            Add your enterprise clients to auto-fill contract, agreement, and invoice forms in 1-click!
-          </p>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="px-4 py-2 rounded-full bg-[#121212] text-white text-xs font-bold shadow"
-          >
-            + Add First Client
-          </button>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredClients.map((c) => (
-            <div key={c.id} className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-6 shadow-sm flex flex-col justify-between gap-4">
-              <div>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h3 className="text-base font-extrabold text-neutral-900">{c.name}</h3>
-                    <p className="text-xs text-neutral-600 font-medium">{c.company || "Individual Client"}</p>
-                  </div>
-                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold uppercase">
-                    {c.status}
-                  </span>
-                </div>
+      {/* Client Table */}
+      <div className="rounded-3xl bg-[#EBE7DC] border border-[#E2DDD0] p-6 shadow-sm overflow-hidden">
+        {isLoading ? (
+          <div className="py-16 text-center text-xs text-neutral-500 font-medium">Loading client directory...</div>
+        ) : filteredClients.length === 0 ? (
+          <div className="py-16 text-center p-8 flex flex-col items-center gap-3">
+            <Users className="w-10 h-10 text-neutral-400" />
+            <h3 className="text-sm font-bold text-neutral-800">No client records found</h3>
+            <p className="text-xs text-neutral-500 max-w-sm">Add a client to automatically track project milestones, paid earnings, and pending balances!</p>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="px-4 py-2 rounded-full bg-[#121212] text-white text-xs font-bold shadow"
+            >
+              + Add Client
+            </button>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs text-neutral-900">
+              <thead className="text-neutral-500 uppercase tracking-wider text-[10px] border-b border-[#D5CEBC]">
+                <tr>
+                  <th className="py-3.5 px-4">Name / Email</th>
+                  <th className="py-3.5 px-4">Company</th>
+                  <th className="py-3.5 px-4">Work Type</th>
+                  <th className="py-3.5 px-4">Total Value</th>
+                  <th className="py-3.5 px-4">Paid</th>
+                  <th className="py-3.5 px-4">Pending</th>
+                  <th className="py-3.5 px-4">Status</th>
+                  <th className="py-3.5 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#E2DDD0]">
+                {filteredClients.map((c) => (
+                  <tr key={c.id} className="hover:bg-[#DFD9C9]/50 transition">
+                    <td className="py-4 px-4">
+                      <div className="font-extrabold text-neutral-900">{c.name}</div>
+                      <div className="text-[11px] text-neutral-600 font-medium">{c.email}</div>
+                    </td>
+                    <td className="py-4 px-4 font-bold text-neutral-800">
+                      {c.company || "Individual"}
+                    </td>
+                    <td className="py-4 px-4">
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#DFD9C9] text-neutral-900">
+                        {c.workType || "Web Dev"}
+                      </span>
+                    </td>
+                    <td className="py-4 px-4 font-extrabold text-neutral-900">
+                      {formatCurrency(c.totalValue, "₹")}
+                    </td>
+                    <td className="py-4 px-4 font-extrabold text-emerald-700">
+                      {formatCurrency(c.amountPaid, "₹")}
+                    </td>
+                    <td className="py-4 px-4 font-extrabold text-pink-700">
+                      {formatCurrency(c.amountPending, "₹")}
+                    </td>
+                    <td className="py-4 px-4">
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                        c.amountPending === 0 && c.totalValue > 0
+                          ? "bg-emerald-200 text-emerald-900"
+                          : "bg-purple-200 text-purple-900"
+                      }`}>
+                        {c.amountPending === 0 && c.totalValue > 0 ? "Fully Paid" : c.status}
+                      </span>
+                    </td>
+                    <td className="py-4 px-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <Link
+                          href={`/projects`}
+                          className="p-1.5 rounded-full bg-[#DFD9C9] text-neutral-800 hover:bg-[#121212] hover:text-white transition"
+                          title="View Milestones"
+                        >
+                          <FileText className="w-3.5 h-3.5" />
+                        </Link>
+                        <button
+                          onClick={() => handleDelete(c.id, c.name)}
+                          className="p-1.5 rounded-full bg-pink-100 text-pink-800 hover:bg-pink-200 transition"
+                          title="Delete Client"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
 
-                <div className="mt-4 flex flex-col gap-2 text-xs text-neutral-700 font-medium">
-                  <div className="flex items-center gap-2">
-                    <Mail className="w-3.5 h-3.5 text-neutral-500" />
-                    <span>{c.email}</span>
-                  </div>
-                  {c.phone && (
-                    <div className="flex items-center gap-2">
-                      <Phone className="w-3.5 h-3.5 text-neutral-500" />
-                      <span>{c.phone}</span>
-                    </div>
-                  )}
-                  {c.website && (
-                    <div className="flex items-center gap-2">
-                      <Globe className="w-3.5 h-3.5 text-neutral-500" />
-                      <a href={c.website.startsWith("http") ? c.website : `https://${c.website}`} target="_blank" rel="noreferrer" className="text-blue-700 hover:underline">
-                        {c.website}
-                      </a>
-                    </div>
-                  )}
-                  {c.gstNo && (
-                    <div className="flex items-center gap-2 font-mono text-[11px]">
-                      <Building className="w-3.5 h-3.5 text-neutral-500" />
-                      <span>GST: {c.gstNo}</span>
-                    </div>
-                  )}
-                  {c.billingAddress && (
-                    <div className="flex items-start gap-2 text-[11px] text-neutral-600 mt-1">
-                      <MapPin className="w-3.5 h-3.5 text-neutral-500 shrink-0 mt-0.5" />
-                      <span className="line-clamp-2">{c.billingAddress}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-[#D5CEBC] flex items-center justify-between">
-                <Link
-                  href={`/invoice?client=${encodeURIComponent(c.name)}`}
-                  className="flex items-center gap-1 text-xs font-bold text-neutral-900 hover:text-pink-700 transition"
-                >
-                  <FileText className="w-3.5 h-3.5 text-pink-600" />
-                  <span>Create Invoice</span>
-                </Link>
-
-                <button
-                  onClick={() => handleDelete(c.id, c.name)}
-                  className="p-1.5 rounded-full bg-pink-100 text-pink-800 hover:bg-pink-200 transition"
-                  title="Delete Client"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Create Client Modal */}
+      {/* Add Client Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-6 max-w-lg w-full shadow-2xl flex flex-col gap-4">
             <div className="flex items-center justify-between border-b border-[#D5CEBC] pb-3">
-              <h3 className="text-base font-extrabold text-neutral-900">Add New Client to CRM</h3>
+              <h3 className="text-base font-extrabold text-neutral-900">Add Client & Project Work Structure</h3>
               <button onClick={() => setIsModalOpen(false)} className="p-1 text-neutral-500 hover:text-neutral-900">
                 <X className="w-5 h-5" />
               </button>
@@ -234,17 +240,17 @@ export default function ClientsPage() {
             <form onSubmit={handleCreate} className="flex flex-col gap-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">Full Name *</label>
+                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">Client Name *</label>
                   <input
                     type="text"
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900"
+                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-bold"
                   />
                 </div>
                 <div>
-                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">Company Name</label>
+                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">Company</label>
                   <input
                     type="text"
                     value={formData.company}
@@ -278,35 +284,68 @@ export default function ClientsPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">GST Number</label>
-                  <input
-                    type="text"
-                    placeholder="29AAAAA0000A1Z5"
-                    value={formData.gstNo}
-                    onChange={(e) => setFormData({ ...formData, gstNo: e.target.value })}
-                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-mono text-neutral-900"
-                  />
+                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">Work Type</label>
+                  <select
+                    value={formData.workType}
+                    onChange={(e) => setFormData({ ...formData, workType: e.target.value })}
+                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900"
+                  >
+                    <option value="Web Dev">Web Development</option>
+                    <option value="App Dev">Mobile App Dev</option>
+                    <option value="Automation">Automation Platform</option>
+                    <option value="AI Agent">AI Solutions / Agents</option>
+                    <option value="UI/UX">UI/UX Design</option>
+                    <option value="SEO">SEO & Growth</option>
+                    <option value="E-Commerce">E-Commerce Store</option>
+                    <option value="Other">Other Consultancy</option>
+                  </select>
                 </div>
                 <div>
-                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">Website URL</label>
+                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">Project Value (₹) *</label>
                   <input
-                    type="text"
-                    placeholder="acme.com"
-                    value={formData.website}
-                    onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900"
+                    type="number"
+                    min={0}
+                    required
+                    value={formData.projectValue}
+                    onChange={(e) => setFormData({ ...formData, projectValue: Number(e.target.value) })}
+                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-extrabold text-neutral-900"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-[11px] font-bold text-neutral-700 block mb-1">Full Billing Address</label>
-                <textarea
-                  rows={2}
-                  value={formData.billingAddress}
-                  onChange={(e) => setFormData({ ...formData, billingAddress: e.target.value })}
-                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 resize-none"
-                />
+                <label className="text-[11px] font-bold text-neutral-700 block mb-1">Payment Milestone Structure</label>
+                <select
+                  value={formData.paymentStructure}
+                  onChange={(e) => setFormData({ ...formData, paymentStructure: e.target.value as any })}
+                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900"
+                >
+                  <option value="50/50">50/50 (50% Advance + 50% Final Delivery)</option>
+                  <option value="3-Way Split">3-Way Split (30% Advance + 30% Milestone 2 + 40% Final)</option>
+                  <option value="Full Upfront">Full Upfront (100% Advance Payment)</option>
+                  <option value="Monthly Retainer">Monthly Retainer Billing</option>
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">Start Date</label>
+                  <input
+                    type="date"
+                    value={formData.startDate}
+                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">Deadline</label>
+                  <input
+                    type="date"
+                    value={formData.deadline}
+                    onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
+                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900"
+                  />
+                </div>
               </div>
 
               <div className="flex justify-end gap-3 mt-3">
@@ -321,7 +360,7 @@ export default function ClientsPage() {
                   type="submit"
                   className="px-5 py-2 rounded-full bg-[#121212] text-white text-xs font-bold hover:bg-neutral-800 transition"
                 >
-                  Save Client
+                  Create Client & Payments
                 </button>
               </div>
             </form>

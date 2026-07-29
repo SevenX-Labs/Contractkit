@@ -4,134 +4,94 @@ import { formatCurrency, formatDate } from "../../../lib/utils";
 
 export async function GET() {
   try {
-    const [invoices, agreements, ndas, documentSuites, clientsCount, projectsCount] = await Promise.all([
-      prisma.invoice.findMany({
-        where: { isDeleted: false },
+    const [payments, expenses, projectsCount, clientsCount, invoices, suites] = await Promise.all([
+      prisma.projectPayment.findMany({
+        include: {
+          project: {
+            include: { client: true },
+          },
+        },
         orderBy: { createdAt: "desc" },
       }),
-      prisma.agreement.findMany({
-        where: { isDeleted: false },
-        orderBy: { createdAt: "desc" },
-      }),
-      prisma.nDA.findMany({
-        where: { isDeleted: false },
-        orderBy: { createdAt: "desc" },
-      }),
-      prisma.documentSuite.findMany({
-        where: { isDeleted: false },
-        orderBy: { createdAt: "desc" },
-      }),
-      prisma.client.count(),
+      prisma.expense.findMany(),
       prisma.project.count(),
+      prisma.client.count(),
+      prisma.invoice.findMany({ where: { isDeleted: false } }),
+      prisma.documentSuite.findMany({ where: { isDeleted: false } }),
     ]);
 
-    // Calculate Real Financial Aggregates
-    const invoiceTotalSum = invoices.reduce((acc, inv) => acc + inv.total, 0);
-    const agreementTotalSum = agreements.reduce((acc, agr) => acc + agr.totalAmount, 0);
-    const suiteTotalSum = documentSuites.reduce((acc, doc) => acc + doc.totalAmount, 0);
-    
-    const totalRevenue = invoiceTotalSum + agreementTotalSum + suiteTotalSum;
+    // 1. Total Earnings (Sum of all PAID ProjectPayment amounts + PAID Invoices)
+    const paidPaymentsSum = payments
+      .filter((p) => p.status === "PAID")
+      .reduce((acc, p) => acc + p.amount, 0);
 
-    // Payments Received (PAID invoices & documents)
-    const invoicePaid = invoices.filter((inv) => inv.status === "PAID").reduce((acc, inv) => acc + inv.total, 0);
-    const suitePaid = documentSuites.filter((doc) => doc.status === "PAID" || doc.status === "SIGNED").reduce((acc, doc) => acc + doc.totalAmount, 0);
-    const paymentsReceived = invoicePaid + suitePaid;
+    const paidInvoicesSum = invoices
+      .filter((inv) => inv.status === "PAID")
+      .reduce((acc, inv) => acc + inv.total, 0);
 
-    // Payments Requested / Pending (SENT / DRAFT invoices)
-    const invoicePending = invoices.filter((inv) => inv.status === "SENT" || inv.status === "DRAFT").reduce((acc, inv) => acc + inv.total, 0);
-    const suitePending = documentSuites.filter((doc) => doc.status === "SENT" || doc.status === "DRAFT").reduce((acc, doc) => acc + doc.totalAmount, 0);
-    const paymentsRequested = invoicePending + suitePending;
+    const totalEarnings = paidPaymentsSum + paidInvoicesSum;
 
-    // Direct Contract Billing (Agreements & Software Contracts)
-    const directContractBilling = agreementTotalSum + suiteTotalSum;
+    // 2. Total Pending (Sum of all PENDING ProjectPayment amounts + PENDING Invoices)
+    const pendingPaymentsSum = payments
+      .filter((p) => p.status === "PENDING")
+      .reduce((acc, p) => acc + p.amount, 0);
 
-    // Unified List of Recent Transactions
-    const invoiceTx = invoices.map((inv) => ({
-      id: inv.id,
-      documentNumber: inv.invoiceNumber,
-      clientName: inv.clientName,
-      type: "invoice" as const,
-      amount: inv.total,
-      date: inv.invoiceDate.toISOString().split("T")[0],
-      status: inv.status.toLowerCase(),
-      createdAt: inv.createdAt.toISOString(),
-    }));
-
-    const agreementTx = agreements.map((agr) => ({
-      id: agr.id,
-      documentNumber: agr.agreementNumber,
-      clientName: agr.clientName,
-      type: "agreement" as const,
-      amount: agr.totalAmount,
-      date: agr.date.toISOString().split("T")[0],
-      status: agr.status.toLowerCase(),
-      createdAt: agr.createdAt.toISOString(),
-    }));
-
-    const ndaTx = ndas.map((nda) => ({
-      id: nda.id,
-      documentNumber: nda.ndaNumber,
-      clientName: nda.clientName,
-      type: "nda" as const,
-      amount: 0,
-      date: nda.effectiveDate.toISOString().split("T")[0],
-      status: nda.status.toLowerCase(),
-      createdAt: nda.createdAt.toISOString(),
-    }));
-
-    const suiteTx = documentSuites.map((doc) => ({
-      id: doc.id,
-      documentNumber: doc.documentNumber,
-      clientName: doc.clientName,
-      type: doc.type.toLowerCase() as any,
-      amount: doc.totalAmount,
-      date: doc.date.toISOString().split("T")[0],
-      status: doc.status.toLowerCase(),
-      createdAt: doc.createdAt.toISOString(),
-    }));
-
-    const allTx = [...invoiceTx, ...agreementTx, ...ndaTx, ...suiteTx].sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-
-    // Waiting for bills pending payment
-    const waitingForBills = invoices
+    const pendingInvoicesSum = invoices
       .filter((inv) => inv.status === "SENT" || inv.status === "DRAFT")
-      .slice(0, 4)
-      .map((inv) => ({
-        id: inv.id,
-        clientName: inv.clientName,
-        invoiceNumber: inv.invoiceNumber,
-        amount: inv.total,
-        formattedAmount: formatCurrency(inv.total, "₹"),
-        date: formatDate(inv.invoiceDate.toISOString().split("T")[0]),
-      }));
+      .reduce((acc, inv) => acc + inv.total, 0);
+
+    const totalPending = pendingPaymentsSum + pendingInvoicesSum;
+
+    // 3. This Month Earnings
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
+    const thisMonthEarnings = payments
+      .filter((p) => {
+        if (p.status !== "PAID" || !p.paidDate) return false;
+        const d = new Date(p.paidDate);
+        return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+      })
+      .reduce((acc, p) => acc + p.amount, 0);
+
+    // 4. Profit = Total Earnings - Total Expenses
+    const totalExpenses = expenses.reduce((acc, e) => acc + e.amount, 0);
+    const profit = Math.max(0, totalEarnings - totalExpenses);
+
+    // 5. Format recent payments list
+    const recentPayments = payments.slice(0, 8).map((p) => ({
+      id: p.id,
+      clientName: p.project?.client?.name || p.project?.name || "Client",
+      projectName: p.project?.name || "Project",
+      label: p.label,
+      amount: p.amount,
+      formattedAmount: formatCurrency(p.amount, "₹"),
+      status: p.status,
+      date: p.paidDate ? formatDate(p.paidDate.toISOString().split("T")[0]) : p.dueDate ? formatDate(p.dueDate.toISOString().split("T")[0]) : "Pending",
+    }));
 
     return NextResponse.json({
       success: true,
       stats: {
-        totalClients: clientsCount,
+        totalEarnings,
+        formattedTotalEarnings: formatCurrency(totalEarnings, "₹"),
+        totalPending,
+        formattedTotalPending: formatCurrency(totalPending, "₹"),
         totalProjects: projectsCount,
-        totalRevenue,
-        formattedTotalRevenue: formatCurrency(totalRevenue, "₹"),
-        paymentsReceived,
-        formattedPaymentsReceived: formatCurrency(paymentsReceived, "₹"),
-        paymentsRequested,
-        formattedPaymentsRequested: formatCurrency(paymentsRequested, "₹"),
-        directContractBilling,
-        formattedDirectContractBilling: formatCurrency(directContractBilling, "₹"),
-        totalInvoices: invoices.length,
-        totalAgreements: agreements.length,
-        totalNDAs: ndas.length,
-        totalDocumentSuites: documentSuites.length,
-        totalDocuments: invoices.length + agreements.length + ndas.length + documentSuites.length,
+        totalClients: clientsCount,
+        thisMonthEarnings,
+        formattedThisMonthEarnings: formatCurrency(thisMonthEarnings, "₹"),
+        totalExpenses,
+        formattedTotalExpenses: formatCurrency(totalExpenses, "₹"),
+        profit,
+        formattedProfit: formatCurrency(profit, "₹"),
+        totalDocuments: invoices.length + suites.length,
       },
-      latestTransactions: allTx.slice(0, 6),
-      waitingForBills,
-      allDocuments: allTx,
+      recentPayments,
     });
   } catch (err) {
-    console.error("Error fetching dashboard stats:", err);
+    console.error("Error fetching dashboard statistics:", err);
     return NextResponse.json({ success: false, error: String(err) }, { status: 500 });
   }
 }
