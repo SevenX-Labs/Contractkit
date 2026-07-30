@@ -364,7 +364,7 @@ export default function AgreementPage() {
                 </button>
                 {openSections[1] && (
                   <div className="p-5 border-t border-[#D5CEBC] flex flex-col gap-3">
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="text-[11px] font-bold text-neutral-700 block mb-1">Agreement #</label>
                         <div className="flex items-center bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl overflow-hidden shadow-xs">
@@ -395,15 +395,6 @@ export default function AgreementPage() {
                           value={formData.date}
                           onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                           className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-[11px] font-bold text-neutral-700 block mb-1">Version</label>
-                        <input
-                          type="text"
-                          value={formData.version}
-                          onChange={(e) => setFormData({ ...formData, version: e.target.value })}
-                          className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900"
                         />
                       </div>
                     </div>
