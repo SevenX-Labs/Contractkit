@@ -49,9 +49,7 @@ import {
   AlertCircle,
   IndianRupee,
   Calendar,
-  CheckSquare,
-  Hourglass,
-  TrendingUp,
+  MoreVertical,
 } from "lucide-react";
 import { formatCurrency, formatDate } from "../../lib/utils";
 import { useDocumentExport } from "../../hooks/useDocumentExport";
@@ -155,6 +153,7 @@ export default function ProjectsPage() {
   // Collapsible toggle states
   const [expandedDocsProjectId, setExpandedDocsProjectId] = useState<string | null>(null);
   const [expandedMilestonesProjectId, setExpandedMilestonesProjectId] = useState<string | null>(null);
+  const [openMoreMenuProjectId, setOpenMoreMenuProjectId] = useState<string | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -624,14 +623,15 @@ export default function ProjectsPage() {
 
   return (
     <div className="flex flex-col gap-5 pb-12">
-      {/* Top Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-[#EBE7DC] border border-[#E2DDD0] p-5 rounded-3xl shadow-sm">
+      {/* 1. Integrated Header & Search Bar (Single Top Row) */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#EBE7DC] border border-[#E2DDD0] p-4 sm:p-5 rounded-3xl shadow-sm">
+        {/* Left: Title & Subtitle */}
         <div className="flex items-center gap-3">
-          <div className="p-3 rounded-2xl bg-purple-100 text-purple-700">
+          <div className="p-2.5 rounded-2xl bg-purple-100 text-purple-700">
             <FolderKanban className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-xl font-extrabold text-neutral-900 tracking-tight">
+            <h1 className="text-lg sm:text-xl font-extrabold text-neutral-900 tracking-tight">
               Projects & Milestone Hub
             </h1>
             <p className="text-xs text-neutral-600 font-medium">
@@ -640,28 +640,30 @@ export default function ProjectsPage() {
           </div>
         </div>
 
-        <button
-          onClick={() => setShowAddProjectModal(true)}
-          className="flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-[#121212] hover:bg-neutral-800 text-white font-bold text-xs transition shadow-md cursor-pointer whitespace-nowrap"
-        >
-          <Plus className="w-4 h-4 text-[#a6ce39]" />
-          <span>Add New Project</span>
-        </button>
+        {/* Right Side Flex Row: Integrated Search Bar + Add New Project Button */}
+        <div className="flex items-center gap-2.5 shrink-0 flex-wrap sm:flex-nowrap">
+          <div className="relative flex-1 sm:w-64 min-w-[200px]">
+            <Search className="w-4 h-4 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="Search projects, clients..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-full pl-9 pr-4 py-2 text-xs text-neutral-900 focus:outline-none focus:border-neutral-800 transition"
+            />
+          </div>
+
+          <button
+            onClick={() => setShowAddProjectModal(true)}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#121212] hover:bg-neutral-800 text-white font-bold text-xs transition shadow-md cursor-pointer whitespace-nowrap"
+          >
+            <Plus className="w-4 h-4 text-[#a6ce39]" />
+            <span>Add New Project</span>
+          </button>
+        </div>
       </div>
 
-      {/* Search Bar */}
-      <div className="flex items-center gap-3 bg-[#EBE7DC] border border-[#E2DDD0] p-2.5 rounded-2xl">
-        <Search className="w-4 h-4 text-neutral-500 ml-2" />
-        <input
-          type="text"
-          placeholder="Search projects by title, scope description, client name, or work type..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-full px-4 py-1.5 text-xs text-neutral-900 focus:outline-none"
-        />
-      </div>
-
-      {/* Projects Ultra-Compact High-Density List */}
+      {/* 2. Linear/Notion Style Compact High-Density Project List */}
       {isLoading ? (
         <div className="py-16 text-center text-xs text-neutral-500 font-medium">Loading projects & directory...</div>
       ) : filteredProjects.length === 0 ? (
@@ -707,8 +709,6 @@ export default function ProjectsPage() {
               .reduce((acc, pm) => acc + pm.amount * 0.5, 0);
 
             const effectivePaidAmount = totalPaidAmount + totalPartiallyPaidAmount;
-            const totalPendingAmount = Math.max(0, totalMilestoneAmount - effectivePaidAmount);
-
             const isDocsExpanded = expandedDocsProjectId === p.id;
             const isMilestonesExpanded = expandedMilestonesProjectId === p.id;
 
@@ -724,121 +724,160 @@ export default function ProjectsPage() {
             return (
               <div
                 key={p.id}
-                className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-2xl p-4 shadow-sm hover:border-[#D5CEBC] transition flex flex-col gap-3"
+                className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-2xl p-3.5 shadow-xs hover:border-[#D5CEBC] transition flex flex-col gap-2"
               >
-                {/* 1. SINGLE COMPACT ROW: Title, Client, Scope + Stats + Actions */}
+                {/* Primary Card Main Row (Compact Height ~65px-80px) */}
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-                  {/* Left: Project Title, Badges, Client & 1-Line Scope */}
+                  {/* Left Column: Project Title (Primary Focus) & Metadata Row */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="text-sm font-extrabold text-neutral-900 tracking-tight truncate">
-                        {p.name}
-                      </h3>
-                      <span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-900 text-[10px] font-bold">
+                    <h3 className="text-sm font-extrabold text-neutral-900 tracking-tight truncate">
+                      {p.name}
+                    </h3>
+
+                    {/* Metadata Row with Icons & Pills */}
+                    <div className="flex items-center gap-2.5 mt-1 text-[11px] text-neutral-600 flex-wrap">
+                      {p.client && (
+                        <span className="flex items-center gap-1 font-semibold text-neutral-900 shrink-0">
+                          <Building className="w-3.5 h-3.5 text-neutral-500" />
+                          <span>{p.client.name}</span>
+                          {p.client.company && <span className="text-neutral-400 font-normal">({p.client.company})</span>}
+                        </span>
+                      )}
+
+                      <span className="px-2 py-0.5 rounded-md bg-[#DFD9C9] text-neutral-900 text-[10px] font-bold">
                         {p.workType || "Web Dev"}
                       </span>
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 text-[10px] font-extrabold uppercase">
+
+                      <span className={`px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase ${
+                        p.status === "Completed"
+                          ? "bg-emerald-200 text-emerald-900"
+                          : p.status === "On Hold"
+                          ? "bg-amber-200 text-amber-900"
+                          : "bg-purple-200 text-purple-900"
+                      }`}>
                         {p.status || "In Progress"}
                       </span>
-                    </div>
 
-                    <div className="flex items-center gap-2 mt-1 text-xs text-neutral-600 font-medium">
-                      {p.client && (
-                        <span className="flex items-center gap-1 shrink-0">
-                          <Building className="w-3 h-3 text-neutral-500" />
-                          <span>Client: <strong className="text-neutral-900">{p.client.name}</strong></span>
+                      {p.deliveryDate && (
+                        <span className="flex items-center gap-1 text-[10px] text-neutral-500 font-mono">
+                          <Calendar className="w-3 h-3 text-neutral-400" />
+                          <span>Due: {formatDate(p.deliveryDate as any)}</span>
                         </span>
                       )}
-                      {p.description && (
-                        <span className="text-[11px] text-neutral-600 truncate border-l border-[#D5CEBC] pl-2 font-normal">
-                          <strong className="text-neutral-800 font-semibold">Scope:</strong> {p.description}
-                        </span>
-                      )}
+
+                      {/* Compact Document & Milestone Chips */}
+                      <button
+                        onClick={() => setExpandedDocsProjectId(isDocsExpanded ? null : p.id)}
+                        className={`flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold transition cursor-pointer ${
+                          isDocsExpanded
+                            ? "bg-[#121212] text-white"
+                            : "bg-[#DFD9C9] text-neutral-800 hover:bg-[#D5CEBC]"
+                        }`}
+                      >
+                        <Layers className="w-3 h-3 text-[#a6ce39]" />
+                        <span>Docs ({p.documents?.length || 0})</span>
+                        {isDocsExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                      </button>
+
+                      <button
+                        onClick={() => setExpandedMilestonesProjectId(isMilestonesExpanded ? null : p.id)}
+                        className={`flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold transition cursor-pointer ${
+                          isMilestonesExpanded
+                            ? "bg-[#121212] text-white"
+                            : "bg-[#DFD9C9] text-neutral-800 hover:bg-[#D5CEBC]"
+                        }`}
+                      >
+                        <MapPin className="w-3 h-3 text-amber-500" />
+                        <span>Milestones ({totalMilestones})</span>
+                        {isMilestonesExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                      </button>
                     </div>
                   </div>
 
-                  {/* Right: Inline Progress, Financials & Actions */}
-                  <div className="flex items-center gap-4 shrink-0 self-end lg:self-center">
-                    {/* Work Progress Pill */}
-                    <div className="flex flex-col text-right">
-                      <span className="text-[10px] text-neutral-500 font-bold">
-                        Progress: <strong className="text-neutral-900">{workProgressPct}%</strong> ({completedMilestones}/{totalMilestones} Done)
-                      </span>
-                      <div className="w-28 bg-[#DFD9C9] h-1.5 rounded-full overflow-hidden mt-1 self-end border border-[#D5CEBC]">
+                  {/* Right Column: Work Progress, Merged Payment Info & Actions */}
+                  <div className="flex items-center gap-3 shrink-0 self-end lg:self-center">
+                    {/* Compact Work Progress Bar */}
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-20 bg-[#DFD9C9] h-1.5 rounded-full overflow-hidden border border-[#D5CEBC]">
                         <div
                           className="bg-emerald-600 h-full rounded-full transition-all duration-300"
                           style={{ width: `${workProgressPct}%` }}
                         />
                       </div>
+                      <span className="text-[10px] font-extrabold text-neutral-900 font-mono">{workProgressPct}%</span>
                     </div>
 
-                    {/* Financial Stats */}
-                    <div className="flex flex-col text-right font-mono">
-                      <span className="text-[10px] text-neutral-500 font-bold">
-                        Paid: <strong className="text-emerald-700 font-sans">{formatCurrency(effectivePaidAmount, "₹")}</strong> / {formatCurrency(totalMilestoneAmount, "₹")}
-                      </span>
-                      <span className="text-[10px] text-pink-700 font-bold">
-                        Pending: {formatCurrency(totalPendingAmount, "₹")}
+                    {/* Merged Payment Information in 1 Line */}
+                    <div className="text-right font-mono text-[11px]">
+                      <span className="font-extrabold text-neutral-900">
+                        {formatCurrency(effectivePaidAmount, "₹")} / {formatCurrency(totalMilestoneAmount, "₹")} Paid
                       </span>
                     </div>
 
-                    {/* Action Buttons */}
-                    <div className="flex items-center gap-1.5 border-l border-[#D5CEBC] pl-3">
+                    {/* Edit & More Actions Dropdown */}
+                    <div className="flex items-center gap-1 border-l border-[#D5CEBC] pl-2.5">
                       <button
                         onClick={() => handleStartEditProject(p)}
-                        className="p-1.5 rounded-full bg-blue-100 text-blue-900 hover:bg-blue-200 transition cursor-pointer"
+                        className="p-1.5 rounded-lg bg-[#DFD9C9] text-neutral-800 hover:bg-[#121212] hover:text-white transition cursor-pointer"
                         title="Edit Project"
                       >
                         <Pencil className="w-3.5 h-3.5" />
                       </button>
 
-                      <button
-                        onClick={() => handleDelete(p.id, p.name)}
-                        className="p-1.5 rounded-full bg-pink-100 text-pink-800 hover:bg-pink-200 transition cursor-pointer"
-                        title="Delete Project"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                      {/* More Menu Dropdown */}
+                      <div className="relative">
+                        <button
+                          onClick={() => setOpenMoreMenuProjectId(openMoreMenuProjectId === p.id ? null : p.id)}
+                          className="p-1.5 rounded-lg bg-[#DFD9C9] text-neutral-800 hover:bg-[#121212] hover:text-white transition cursor-pointer"
+                          title="More Actions"
+                        >
+                          <MoreVertical className="w-3.5 h-3.5" />
+                        </button>
+
+                        {openMoreMenuProjectId === p.id && (
+                          <div className="absolute right-0 mt-1 w-44 bg-[#EBE7DC] border border-[#E2DDD0] rounded-xl shadow-xl z-30 p-1 flex flex-col gap-0.5 animate-in fade-in zoom-in-95">
+                            <button
+                              onClick={() => {
+                                setOpenMoreMenuProjectId(null);
+                                handleStartEditProject(p);
+                              }}
+                              className="flex items-center gap-2 px-3 py-1.5 text-xs text-neutral-800 hover:bg-[#DFD9C9] rounded-lg transition font-medium text-left cursor-pointer"
+                            >
+                              <Pencil className="w-3.5 h-3.5 text-blue-600" />
+                              <span>Edit Details</span>
+                            </button>
+
+                            <button
+                              onClick={() => {
+                                setOpenMoreMenuProjectId(null);
+                                handleOpenAddMilestone(p.id);
+                              }}
+                              className="flex items-center gap-2 px-3 py-1.5 text-xs text-neutral-800 hover:bg-[#DFD9C9] rounded-lg transition font-medium text-left cursor-pointer"
+                            >
+                              <Plus className="w-3.5 h-3.5 text-purple-600" />
+                              <span>Add Milestone</span>
+                            </button>
+
+                            <div className="border-t border-[#D5CEBC] my-0.5" />
+
+                            <button
+                              onClick={() => {
+                                setOpenMoreMenuProjectId(null);
+                                handleDelete(p.id, p.name);
+                              }}
+                              className="flex items-center gap-2 px-3 py-1.5 text-xs text-pink-700 hover:bg-pink-100 rounded-lg transition font-bold text-left cursor-pointer"
+                            >
+                              <Trash2 className="w-3.5 h-3.5 text-pink-700" />
+                              <span>Delete Project</span>
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* 2. TOGGLE ACTION BAR (Documents Suite & Milestones Breakdown) */}
-                <div className="flex items-center justify-between pt-2 border-t border-[#D5CEBC] text-[11px]">
-                  <div className="flex items-center gap-2.5">
-                    <button
-                      onClick={() => setExpandedDocsProjectId(isDocsExpanded ? null : p.id)}
-                      className={`flex items-center gap-1 px-3 py-1 rounded-full font-bold transition cursor-pointer ${
-                        isDocsExpanded
-                          ? "bg-[#121212] text-white"
-                          : "bg-[#DFD9C9] text-neutral-800 hover:bg-[#D5CEBC]"
-                      }`}
-                    >
-                      <Layers className="w-3 h-3 text-[#a6ce39]" />
-                      <span>Documents ({p.documents?.length || 0})</span>
-                      {isDocsExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-                    </button>
-
-                    <button
-                      onClick={() => setExpandedMilestonesProjectId(isMilestonesExpanded ? null : p.id)}
-                      className={`flex items-center gap-1 px-3 py-1 rounded-full font-bold transition cursor-pointer ${
-                        isMilestonesExpanded
-                          ? "bg-[#121212] text-white"
-                          : "bg-[#DFD9C9] text-neutral-800 hover:bg-[#D5CEBC]"
-                      }`}
-                    >
-                      <MapPin className="w-3 h-3 text-amber-500" />
-                      <span>Milestones ({totalMilestones})</span>
-                      {isMilestonesExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-                    </button>
-                  </div>
-
-                  <span className="text-[10px] text-neutral-500 font-mono">
-                    {completedMilestones} Completed • {remainingMilestones} Remaining
-                  </span>
-                </div>
-
-                {/* 3. COLLAPSIBLE DOCUMENTS SUITE GRID */}
+                {/* Collapsible Documents Suite Grid */}
                 {isDocsExpanded && (
                   <div className="mt-1 bg-[#F4F0E6] p-3 rounded-2xl border border-[#E2DDD0] flex flex-col gap-2">
                     <div className="flex items-center justify-between">
@@ -892,7 +931,7 @@ export default function ProjectsPage() {
                   </div>
                 )}
 
-                {/* 4. COLLAPSIBLE MILESTONES BREAKDOWN */}
+                {/* Collapsible Milestones Breakdown */}
                 {isMilestonesExpanded && (
                   <div className="mt-1 bg-[#F4F0E6] p-3 rounded-2xl border border-[#E2DDD0] flex flex-col gap-2.5">
                     <div className="flex items-center justify-between border-b border-[#E2DDD0] pb-2">
