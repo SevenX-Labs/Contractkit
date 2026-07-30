@@ -452,6 +452,8 @@ export async function getClientsDB() {
 
       return {
         ...c,
+        projectTitle: c.website || "",
+        projectSummary: c.notes || "",
         totalValue: totalVal,
         amountPaid: paidVal,
         amountPending: pendingVal,
@@ -472,6 +474,8 @@ export async function createClientDB(data: {
   gstNo?: string;
   taxNo?: string;
   website?: string;
+  projectTitle?: string;
+  projectSummary?: string;
   billingAddress?: string;
   shippingAddress?: string;
   notes?: string;
@@ -489,10 +493,10 @@ export async function createClientDB(data: {
         phone: data.phone,
         gstNo: data.gstNo,
         taxNo: data.taxNo,
-        website: data.website,
+        website: data.projectTitle || data.website,
         billingAddress: data.billingAddress,
         shippingAddress: data.shippingAddress,
-        notes: data.notes,
+        notes: data.projectSummary || data.notes,
         workType: data.workType || "Web Dev",
         tags: data.tags || ["Enterprise"],
         status: data.status || "Active",
@@ -564,6 +568,8 @@ export async function updateClientDB(
     gstNo?: string;
     taxNo?: string;
     website?: string;
+    projectTitle?: string;
+    projectSummary?: string;
     billingAddress?: string;
     shippingAddress?: string;
     notes?: string;
@@ -574,7 +580,21 @@ export async function updateClientDB(
   try {
     const updated = await prisma.client.update({
       where: { id },
-      data,
+      data: {
+        name: data.name,
+        company: data.company,
+        designation: data.designation,
+        email: data.email,
+        phone: data.phone,
+        gstNo: data.gstNo,
+        taxNo: data.taxNo,
+        website: data.projectTitle !== undefined ? data.projectTitle : data.website,
+        billingAddress: data.billingAddress,
+        shippingAddress: data.shippingAddress,
+        notes: data.projectSummary !== undefined ? data.projectSummary : data.notes,
+        workType: data.workType,
+        status: data.status,
+      },
     });
 
     // Sync status to all linked projects

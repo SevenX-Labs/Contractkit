@@ -14,6 +14,8 @@ interface ClientItem {
   email: string;
   phone?: string | null;
   workType?: string | null;
+  projectTitle?: string | null;
+  projectSummary?: string | null;
   billingAddress?: string | null;
   notes?: string | null;
   status: string;
@@ -35,21 +37,21 @@ export default function ClientsPage() {
     company: "",
     email: "",
     phone: "",
-    billingAddress: "",
     workType: "Web Dev",
+    projectTitle: "",
+    projectSummary: "",
     status: "Active",
-    notes: "",
   });
 
-  // Create Client State (Client Info Only)
+  // Create Client State (Client Info + Project Title & Passage Summary)
   const [formData, setFormData] = useState({
     name: "",
     company: "",
     email: "",
     phone: "",
-    billingAddress: "",
     workType: "Web Dev",
-    notes: "",
+    projectTitle: "",
+    projectSummary: "",
   });
 
   const fetchClients = async () => {
@@ -79,9 +81,9 @@ export default function ClientsPage() {
         company: "",
         email: "",
         phone: "",
-        billingAddress: "",
         workType: "Web Dev",
-        notes: "",
+        projectTitle: "",
+        projectSummary: "",
       });
       fetchClients();
     } else {
@@ -96,10 +98,10 @@ export default function ClientsPage() {
       company: client.company || "",
       email: client.email || "",
       phone: client.phone || "",
-      billingAddress: client.billingAddress || "",
       workType: client.workType || "Web Dev",
+      projectTitle: client.projectTitle || "",
+      projectSummary: client.projectSummary || client.notes || "",
       status: client.status || "Active",
-      notes: client.notes || "",
     });
   };
 
@@ -150,7 +152,7 @@ export default function ClientsPage() {
           </div>
           <div>
             <h1 className="text-xl font-extrabold text-neutral-900 tracking-tight">Client Directory & CRM</h1>
-            <p className="text-xs text-neutral-600 font-medium">Manage enterprise client profiles, contact information, billing addresses, and earnings</p>
+            <p className="text-xs text-neutral-600 font-medium">Manage enterprise client profiles, project titles, project summary scope passages, and earnings</p>
           </div>
         </div>
 
@@ -199,6 +201,7 @@ export default function ClientsPage() {
                   <th className="py-3.5 px-4">Name / Email</th>
                   <th className="py-3.5 px-4">Company</th>
                   <th className="py-3.5 px-4">Work Type</th>
+                  <th className="py-3.5 px-4">Project Title</th>
                   <th className="py-3.5 px-4">Total Value</th>
                   <th className="py-3.5 px-4">Paid</th>
                   <th className="py-3.5 px-4">Pending</th>
@@ -220,6 +223,9 @@ export default function ClientsPage() {
                       <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#DFD9C9] text-neutral-900">
                         {c.workType || "Web Dev"}
                       </span>
+                    </td>
+                    <td className="py-4 px-4 font-bold text-neutral-800 max-w-[150px] truncate">
+                      {c.projectTitle || "Not set"}
                     </td>
                     <td className="py-4 px-4 font-extrabold text-neutral-900">
                       {formatCurrency(c.totalValue, "₹")}
@@ -274,14 +280,14 @@ export default function ClientsPage() {
         )}
       </div>
 
-      {/* Add Client Modal (Client Info Only) */}
+      {/* Add Client Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-6 max-w-lg w-full shadow-2xl flex flex-col gap-4 my-auto">
             <div className="flex items-center justify-between border-b border-[#D5CEBC] pb-3">
               <div>
-                <h3 className="text-base font-extrabold text-neutral-900">Add New Client Profile</h3>
-                <p className="text-[11px] text-neutral-500 font-medium">Add client details to CRM. Assign projects & milestones in Project Hub.</p>
+                <h3 className="text-base font-extrabold text-neutral-900">Add New Client & Project Summary</h3>
+                <p className="text-[11px] text-neutral-500 font-medium">Add client profile, project title, and passage scope summary.</p>
               </div>
               <button onClick={() => setIsModalOpen(false)} className="p-1 text-neutral-500 hover:text-neutral-900 cursor-pointer">
                 <X className="w-5 h-5" />
@@ -356,23 +362,23 @@ export default function ClientsPage() {
               </div>
 
               <div>
-                <label className="text-[11px] font-bold text-neutral-700 block mb-1">Billing Address</label>
+                <label className="text-[11px] font-bold text-neutral-700 block mb-1">Project Title *</label>
                 <input
                   type="text"
-                  placeholder="Street, City, State, Pincode"
-                  value={formData.billingAddress}
-                  onChange={(e) => setFormData({ ...formData, billingAddress: e.target.value })}
-                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium"
+                  placeholder="e.g. E-Commerce Store & Web App"
+                  value={formData.projectTitle}
+                  onChange={(e) => setFormData({ ...formData, projectTitle: e.target.value })}
+                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-bold"
                 />
               </div>
 
               <div>
-                <label className="text-[11px] font-bold text-neutral-700 block mb-1">Notes / Preferences</label>
+                <label className="text-[11px] font-bold text-neutral-700 block mb-1">Project Summary (Passage / Scope Notes)</label>
                 <textarea
-                  rows={2}
-                  placeholder="Add any internal client notes, preferences, or tax details..."
-                  value={formData.notes}
-                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                  rows={3}
+                  placeholder="Write a passage summarizing the project scope, key features, tech stack, and client requirements..."
+                  value={formData.projectSummary}
+                  onChange={(e) => setFormData({ ...formData, projectSummary: e.target.value })}
                   className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium resize-none"
                 />
               </div>
@@ -399,8 +405,8 @@ export default function ClientsPage() {
 
       {/* Edit Client Modal */}
       {editingClient && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-6 max-w-lg w-full shadow-2xl flex flex-col gap-4">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-6 max-w-lg w-full shadow-2xl flex flex-col gap-4 my-auto">
             <div className="flex items-center justify-between border-b border-[#D5CEBC] pb-3">
               <div className="flex items-center gap-2">
                 <Pencil className="w-4 h-4 text-blue-600" />
@@ -491,21 +497,21 @@ export default function ClientsPage() {
               </div>
 
               <div>
-                <label className="text-[11px] font-bold text-neutral-700 block mb-1">Billing Address</label>
+                <label className="text-[11px] font-bold text-neutral-700 block mb-1">Project Title</label>
                 <input
                   type="text"
-                  value={editFormData.billingAddress}
-                  onChange={(e) => setEditFormData({ ...editFormData, billingAddress: e.target.value })}
-                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium"
+                  value={editFormData.projectTitle}
+                  onChange={(e) => setEditFormData({ ...editFormData, projectTitle: e.target.value })}
+                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-bold"
                 />
               </div>
 
               <div>
-                <label className="text-[11px] font-bold text-neutral-700 block mb-1">Notes / Preferences</label>
+                <label className="text-[11px] font-bold text-neutral-700 block mb-1">Project Summary (Passage / Scope Notes)</label>
                 <textarea
-                  rows={2}
-                  value={editFormData.notes}
-                  onChange={(e) => setEditFormData({ ...editFormData, notes: e.target.value })}
+                  rows={3}
+                  value={editFormData.projectSummary}
+                  onChange={(e) => setEditFormData({ ...editFormData, projectSummary: e.target.value })}
                   className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium resize-none"
                 />
               </div>

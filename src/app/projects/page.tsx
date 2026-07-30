@@ -43,6 +43,7 @@ import {
   Sparkles,
   Layers,
   UserCheck,
+  FileCode2,
 } from "lucide-react";
 import { formatCurrency, formatDate } from "../../lib/utils";
 import { useDocumentExport } from "../../hooks/useDocumentExport";
@@ -86,6 +87,9 @@ interface ClientItem {
   email: string;
   phone?: string | null;
   workType?: string | null;
+  projectTitle?: string | null;
+  projectSummary?: string | null;
+  notes?: string | null;
 }
 
 interface ProjectItem {
@@ -183,17 +187,23 @@ export default function ProjectsPage() {
 
   const handleSelectClient = (clientId: string) => {
     const matched = clients.find((c) => c.id === clientId);
-    setNewProject((prev) => ({
-      ...prev,
-      clientId,
-      workType: matched?.workType || prev.workType || "Web Dev",
-    }));
+    if (matched) {
+      setNewProject((prev) => ({
+        ...prev,
+        clientId,
+        name: matched.projectTitle || prev.name || `${matched.workType || "Web Dev"} Project`,
+        description: matched.projectSummary || matched.notes || prev.description || "",
+        workType: matched.workType || prev.workType || "Web Dev",
+      }));
+    } else {
+      setNewProject((prev) => ({ ...prev, clientId }));
+    }
   };
 
   const handleCreateProject = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newProject.name) {
-      toast.error("Please enter a project name.");
+      toast.error("Please select a client or enter a project title.");
       return;
     }
 
@@ -526,7 +536,7 @@ export default function ProjectsPage() {
               Projects & Milestone Hub
             </h1>
             <p className="text-xs text-neutral-600 font-medium">
-              Create projects, select client to auto-fetch details, set payment structure, and track milestones
+              Select client to auto-fetch Project Title & Summary passage, add payment structure & milestone dates
             </p>
           </div>
         </div>
@@ -560,7 +570,7 @@ export default function ProjectsPage() {
           <FolderKanban className="w-10 h-10 text-neutral-400" />
           <h3 className="text-sm font-bold text-neutral-800">No projects found</h3>
           <p className="text-xs text-neutral-500 max-w-sm">
-            Create your first project or select a client to auto-fetch details and set milestone payments!
+            Create your first project or select a client to auto-fetch project title & summary and set milestone payments!
           </p>
           <button
             onClick={() => setShowAddProjectModal(true)}
@@ -620,7 +630,7 @@ export default function ProjectsPage() {
                     {/* Scope / Description (Compact Line) */}
                     {p.description && (
                       <p className="text-[11px] text-neutral-600 font-medium leading-tight mt-1 line-clamp-1">
-                        <strong className="text-neutral-800 font-bold">Scope:</strong> {p.description}
+                        <strong className="text-neutral-800 font-bold">Project Summary:</strong> {p.description}
                       </p>
                     )}
                   </div>
@@ -917,10 +927,10 @@ export default function ProjectsPage() {
               </div>
 
               <div>
-                <label className="text-xs font-bold text-neutral-700 block mb-1">Project Description & Scope</label>
+                <label className="text-xs font-bold text-neutral-700 block mb-1">Project Summary (Passage)</label>
                 <textarea
                   rows={3}
-                  placeholder="Detailed project requirements, scope summary..."
+                  placeholder="Detailed project requirements, scope summary passage..."
                   value={projectEditForm.description}
                   onChange={(e) => setProjectEditForm({ ...projectEditForm, description: e.target.value })}
                   className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium focus:outline-none resize-none"
@@ -1120,7 +1130,7 @@ export default function ProjectsPage() {
         </div>
       )}
 
-      {/* Add New Project Modal with Auto-Fetched Client */}
+      {/* Add New Project Modal with Auto-Fetched Client & Passage Summary */}
       {showAddProjectModal && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-6 max-w-lg w-full shadow-2xl flex flex-col gap-4 my-auto">
@@ -1129,7 +1139,7 @@ export default function ProjectsPage() {
                 <div className="p-2 rounded-xl bg-purple-100 text-purple-700">
                   <FolderKanban className="w-5 h-5" />
                 </div>
-                <h3 className="text-base font-extrabold text-neutral-900">Create New Project & Payments</h3>
+                <h3 className="text-base font-extrabold text-neutral-900">Create New Project & Milestones</h3>
               </div>
               <button
                 onClick={() => setShowAddProjectModal(false)}
@@ -1141,7 +1151,7 @@ export default function ProjectsPage() {
 
             <form onSubmit={handleCreateProject} className="flex flex-col gap-3">
               <div>
-                <label className="text-xs font-bold text-neutral-700 block mb-1">Select Client (Auto-Fetches Info) *</label>
+                <label className="text-xs font-bold text-neutral-700 block mb-1">Select Client (Auto-Fetches Title & Summary) *</label>
                 <select
                   value={newProject.clientId}
                   onChange={(e) => handleSelectClient(e.target.value)}
@@ -1151,24 +1161,36 @@ export default function ProjectsPage() {
                   <option value="">-- Select Client from Directory --</option>
                   {clients.map((c) => (
                     <option key={c.id} value={c.id}>
-                      {c.name} {c.company ? `(${c.company})` : ""} — {c.email}
+                      {c.name} {c.company ? `(${c.company})` : ""} {c.projectTitle ? `— ${c.projectTitle}` : ""}
                     </option>
                   ))}
                 </select>
 
                 {/* Auto-Fetched Client Summary Card */}
                 {selectedClientObj && (
-                  <div className="mt-2 bg-[#F4F0E6] p-3 rounded-2xl border border-[#E2DDD0] text-xs font-medium text-neutral-700 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <UserCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-                      <div>
-                        <span className="font-extrabold text-neutral-900 block">{selectedClientObj.name} {selectedClientObj.company ? `(${selectedClientObj.company})` : ""}</span>
-                        <span className="text-[11px] text-neutral-500 font-mono">{selectedClientObj.email} {selectedClientObj.phone ? `• ${selectedClientObj.phone}` : ""}</span>
+                  <div className="mt-2 bg-[#F4F0E6] p-3 rounded-2xl border border-[#E2DDD0] text-xs font-medium text-neutral-700 flex flex-col gap-1.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <UserCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                        <span className="font-extrabold text-neutral-900">{selectedClientObj.name} {selectedClientObj.company ? `(${selectedClientObj.company})` : ""}</span>
                       </div>
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 text-[10px] font-extrabold uppercase">
+                        {selectedClientObj.workType || "Web Dev"}
+                      </span>
                     </div>
-                    <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-900 text-[10px] font-extrabold uppercase">
-                      {selectedClientObj.workType || "Web Dev"}
-                    </span>
+
+                    {selectedClientObj.projectTitle && (
+                      <div className="text-[11px] font-bold text-purple-900">
+                        Title: {selectedClientObj.projectTitle}
+                      </div>
+                    )}
+
+                    {(selectedClientObj.projectSummary || selectedClientObj.notes) && (
+                      <div className="text-[11px] text-neutral-600 leading-snug line-clamp-2 bg-[#EBE7DC] p-2 rounded-xl border border-[#E2DDD0]">
+                        <span className="font-bold text-neutral-800">Passage Summary: </span>
+                        {selectedClientObj.projectSummary || selectedClientObj.notes}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -1186,10 +1208,10 @@ export default function ProjectsPage() {
               </div>
 
               <div>
-                <label className="text-xs font-bold text-neutral-700 block mb-1">Project Description & Scope</label>
+                <label className="text-xs font-bold text-neutral-700 block mb-1">Project Description / Passage Summary</label>
                 <textarea
                   rows={2}
-                  placeholder="Describe key features, deliverables, tech stack..."
+                  placeholder="Detailed scope passage..."
                   value={newProject.description}
                   onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
                   className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium focus:outline-none resize-none"
