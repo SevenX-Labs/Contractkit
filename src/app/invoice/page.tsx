@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useDocumentExport } from "../../hooks/useDocumentExport";
 import { getProfileDB, getNextInvoiceNumberDB, createInvoiceDB } from "../actions";
-import { InvoiceData, InvoiceItem, PaymentMethod } from "../../types";
+import { InvoiceData, InvoiceItem } from "../../types";
 import { calculateInvoiceTotals } from "../../lib/utils";
 import { ExportDropdown } from "../../components/common/ExportDropdown";
 import { ModernInvoiceTemplate } from "../../components/invoice/ModernInvoiceTemplate";
@@ -17,6 +17,7 @@ import {
   CreditCard,
   Eye,
   X,
+  Calculator,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -27,7 +28,7 @@ export default function InvoicePage() {
   const [accentTheme, setAccentTheme] = useState<"lime" | "purple" | "pink" | "emerald">("lime");
 
   const [bankDetails, setBankDetails] = useState({
-    holderName: "Sahil Hode (SevenX Labs)",
+    holderName: "SevenX Labs",
     bankName: "HDFC Bank",
     accountNumber: "50100234567890",
     ifscCode: "HDFC0001234",
@@ -51,7 +52,7 @@ export default function InvoicePage() {
     clientPhone: "+123-456-7890",
     
     paymentMethod: "Payment Method.",
-    paymentDetails: "Holder Name: Sahil Hode (SevenX Labs) | Bank Name: HDFC Bank | Account No: 50100234567890 | IFSC Code: HDFC0001234",
+    paymentDetails: "Holder Name: SevenX Labs | Bank Name: HDFC Bank | Account No: 50100234567890 | IFSC Code: HDFC0001234",
     
     items: [
       { id: "item-1", description: "Website Design and Development", quantity: 1, rate: 1230, amount: 1230 },
@@ -76,7 +77,7 @@ export default function InvoicePage() {
 
   useEffect(() => {
     Promise.all([getProfileDB(), getNextInvoiceNumberDB()]).then(([profile, invNum]) => {
-      const hName = profile.name ? `${profile.name} (SevenX Labs)` : "Sahil Hode (SevenX Labs)";
+      const hName = profile.name || "SevenX Labs";
       const bName = profile.bankName || "HDFC Bank";
       const accNo = profile.bankAccount || "50100234567890";
       const ifsc = profile.bankIfsc || "HDFC0001234";
@@ -161,19 +162,6 @@ export default function InvoicePage() {
       return {
         ...prev,
         items: updatedItems,
-        ...totals,
-      };
-    });
-  };
-
-  const handleDiscountTaxChange = (field: "discountPercent" | "taxPercent", value: number) => {
-    setFormData((prev: InvoiceData) => {
-      const discountPct = field === "discountPercent" ? value : prev.discountPercent;
-      const taxPct = field === "taxPercent" ? value : prev.taxPercent;
-      const totals = calculateInvoiceTotals(prev.items, discountPct, taxPct);
-      return {
-        ...prev,
-        [field]: value,
         ...totals,
       };
     });
@@ -490,17 +478,20 @@ export default function InvoicePage() {
 
           <hr className="border-[#D5CEBC]" />
 
-          {/* Payment Details 4 Separate Boxes & Calculations */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* 4 Separate Clean Input Boxes for Payment Details */}
-            <div className="flex flex-col gap-2.5">
+          {/* Redesigned Payment Details & Calculations Section */}
+          <div className="flex flex-col gap-4">
+            {/* Payment Details Header */}
+            <div className="flex items-center justify-between">
               <h3 className="text-xs font-bold text-neutral-700 uppercase tracking-wider flex items-center gap-1.5">
                 <CreditCard className="w-3.5 h-3.5" />
                 <span>Payment Details</span>
               </h3>
+            </div>
 
+            {/* 2x2 Grid of Payment Input Fields */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="text-[10px] font-bold text-neutral-500 block mb-0.5">Holder Name</label>
+                <label className="text-[10px] font-bold text-neutral-500 block mb-1">Holder Name</label>
                 <input
                   type="text"
                   placeholder="Holder Name"
@@ -511,7 +502,7 @@ export default function InvoicePage() {
               </div>
 
               <div>
-                <label className="text-[10px] font-bold text-neutral-500 block mb-0.5">Bank Name</label>
+                <label className="text-[10px] font-bold text-neutral-500 block mb-1">Bank Name</label>
                 <input
                   type="text"
                   placeholder="Bank Name"
@@ -522,7 +513,7 @@ export default function InvoicePage() {
               </div>
 
               <div>
-                <label className="text-[10px] font-bold text-neutral-500 block mb-0.5">Account Number</label>
+                <label className="text-[10px] font-bold text-neutral-500 block mb-1">Account Number</label>
                 <input
                   type="text"
                   placeholder="Account Number"
@@ -533,7 +524,7 @@ export default function InvoicePage() {
               </div>
 
               <div>
-                <label className="text-[10px] font-bold text-neutral-500 block mb-0.5">IFSC Code</label>
+                <label className="text-[10px] font-bold text-neutral-500 block mb-1">IFSC Code</label>
                 <input
                   type="text"
                   placeholder="IFSC Code"
@@ -544,18 +535,18 @@ export default function InvoicePage() {
               </div>
             </div>
 
-            {/* Calculations Summary */}
-            <div className="flex flex-col justify-between bg-[#F4F0E6] p-4 rounded-2xl border border-[#E2DDD0] text-xs text-neutral-800">
-              <div className="space-y-2">
-                <div className="flex justify-between py-1">
-                  <span>Sub Total:</span>
-                  <span className="font-bold text-neutral-900">₹{formData.subtotal}</span>
+            {/* Sleek Compact Grand Total Summary Banner */}
+            <div className="flex items-center justify-between bg-[#F4F0E6] px-5 py-4 rounded-2xl border border-[#E2DDD0] shadow-xs mt-2">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-xl bg-pink-100 text-pink-700">
+                  <Calculator className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-xs font-extrabold text-neutral-900 block">Grand Total</span>
+                  <span className="text-[10px] text-neutral-500 font-medium">Subtotal amount across all items</span>
                 </div>
               </div>
-              <div className="flex justify-between py-2 border-t border-[#D5CEBC] text-sm font-extrabold text-neutral-900">
-                <span>Grand Total:</span>
-                <span className="text-pink-700">₹{formData.total}</span>
-              </div>
+              <span className="text-2xl font-black font-mono text-pink-700 tracking-tight">₹{formData.total}</span>
             </div>
           </div>
         </div>
