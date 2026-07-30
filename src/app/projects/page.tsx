@@ -1163,7 +1163,7 @@ export default function ProjectsPage() {
                   <MapPin className="w-5 h-5" />
                 </div>
                 <h3 className="text-base font-extrabold text-neutral-900">
-                  📍 {milestoneModalState.mode === "CREATE" ? "Add Project Milestone" : "Edit Project Milestone"}
+                  {milestoneModalState.mode === "CREATE" ? "Add Project Milestone" : "Edit Project Milestone"}
                 </h3>
               </div>
               <button
@@ -1622,7 +1622,7 @@ export default function ProjectsPage() {
                   <div className="p-4 rounded-3xl bg-purple-100 text-purple-700">
                     <FileQuestion className="w-10 h-10" />
                   </div>
-                  <h3 className="text-base font-extrabold text-neutral-900">📄 No document available yet</h3>
+                  <h3 className="text-base font-extrabold text-neutral-900">No document available yet</h3>
                   <p className="text-xs text-neutral-600 font-medium">
                     The {previewDoc.relatedDocsList[previewDoc.docIndex]?.typeLabel} for project &quot;{previewDoc.project?.name}&quot; has not been generated. Generate it now!
                   </p>
