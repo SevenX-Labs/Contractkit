@@ -518,17 +518,35 @@ export async function createDocumentSuiteDB(data: {
   clausesJson?: string;
 }) {
   try {
-    const created = await prisma.documentSuite.create({
-      data: {
-        documentNumber: data.documentNumber,
+    const docNumber = data.documentNumber || `SXL-${data.type.slice(0, 3)}-${Date.now()}`;
+    const safeClientName = data.clientName || "Client";
+    const safeClientEmail = data.clientEmail || "client@email.com";
+
+    const upserted = await prisma.documentSuite.upsert({
+      where: { documentNumber: docNumber },
+      update: {
         title: data.title,
         type: data.type as any,
         totalAmount: data.totalAmount || 0,
         date: data.date ? new Date(data.date) : new Date(),
         dueDate: data.dueDate ? new Date(data.dueDate) : null,
         clientId: data.clientId || null,
-        clientName: data.clientName,
-        clientEmail: data.clientEmail,
+        clientName: safeClientName,
+        clientEmail: safeClientEmail,
+        projectId: data.projectId || null,
+        contentJson: data.contentJson,
+        clausesJson: data.clausesJson || "[]",
+      },
+      create: {
+        documentNumber: docNumber,
+        title: data.title,
+        type: data.type as any,
+        totalAmount: data.totalAmount || 0,
+        date: data.date ? new Date(data.date) : new Date(),
+        dueDate: data.dueDate ? new Date(data.dueDate) : null,
+        clientId: data.clientId || null,
+        clientName: safeClientName,
+        clientEmail: safeClientEmail,
         projectId: data.projectId || null,
         contentJson: data.contentJson,
         clausesJson: data.clausesJson || "[]",
@@ -537,9 +555,12 @@ export async function createDocumentSuiteDB(data: {
 
     revalidatePath("/");
     revalidatePath("/history");
-    revalidatePath("/builder");
-    return { success: true, id: created.id };
+    revalidatePath("/invoice");
+    revalidatePath("/agreement");
+    revalidatePath("/nda");
+    return { success: true, id: upserted.id };
   } catch (err) {
+    console.error("Error saving document to DB:", err);
     return { success: false, error: String(err) };
   }
 }
