@@ -88,7 +88,14 @@ export function useDocumentExport() {
 
       // Calculate canvas height corresponding to 1 A4 page in canvas pixels
       const canvasPageHeight = Math.floor((canvas.width * a4HeightMm) / a4WidthMm);
-      const totalPages = Math.max(1, Math.ceil(canvas.height / canvasPageHeight));
+      
+      // Calculate total pages, filtering out trailing pixel overflows (<= 30px)
+      let totalPages = Math.floor(canvas.height / canvasPageHeight);
+      const remainder = canvas.height % canvasPageHeight;
+      if (remainder > 30) {
+        totalPages += 1;
+      }
+      totalPages = Math.max(1, totalPages);
 
       for (let page = 0; page < totalPages; page++) {
         if (page > 0) pdf.addPage();
