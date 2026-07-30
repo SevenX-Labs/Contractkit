@@ -6,6 +6,9 @@ import {
   getClientsDB,
   createProjectDB,
   updatePaymentStatusDB,
+  updateProjectPaymentDB,
+  addProjectPaymentDB,
+  deleteProjectPaymentDB,
   deleteProjectDB,
 } from "../actions";
 import {
@@ -13,6 +16,7 @@ import {
   CheckCircle2,
   Clock,
   Trash2,
+  Pencil,
   Search,
   ChevronDown,
   ChevronUp,
@@ -35,7 +39,6 @@ import {
   Award,
   FileQuestion,
   Building,
-  Calendar,
   Sparkles,
 } from "lucide-react";
 import { formatCurrency, formatDate } from "../../lib/utils";
@@ -119,6 +122,24 @@ export default function ProjectsPage() {
     deliveryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
   });
 
+  // Edit Payment Milestone State
+  const [editingPayment, setEditingPayment] = useState<PaymentItem | null>(null);
+  const [paymentEditForm, setPaymentEditForm] = useState({
+    label: "",
+    amount: 0,
+    dueDate: "",
+    status: "PENDING" as "PENDING" | "PAID" | "OVERDUE",
+  });
+
+  // Add Payment Milestone State
+  const [addingPaymentProjectId, setAddingPaymentProjectId] = useState<string | null>(null);
+  const [newPaymentForm, setNewPaymentForm] = useState({
+    label: "",
+    amount: 10000,
+    dueDate: new Date().toISOString().split("T")[0],
+    status: "PENDING" as "PENDING" | "PAID" | "OVERDUE",
+  });
+
   // Floating Document Preview Modal State
   const [previewDoc, setPreviewDoc] = useState<{
     doc: DocumentItem | null;
@@ -190,6 +211,82 @@ export default function ProjectsPage() {
     }
   };
 
+  const handleStartEditPayment = (payment: PaymentItem) => {
+    setEditingPayment(payment);
+    setPaymentEditForm({
+      label: payment.label,
+      amount: payment.amount,
+      dueDate: payment.dueDate ? new Date(payment.dueDate).toISOString().split("T")[0] : "",
+      status: payment.status,
+    });
+  };
+
+  const handleSavePaymentEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingPayment) return;
+
+    if (!paymentEditForm.label || paymentEditForm.amount <= 0) {
+      toast.error("Please enter a valid milestone label and amount.");
+      return;
+    }
+
+    const res = await updateProjectPaymentDB(editingPayment.id, {
+      label: paymentEditForm.label,
+      amount: Number(paymentEditForm.amount),
+      dueDate: paymentEditForm.dueDate || null,
+      status: paymentEditForm.status,
+    });
+
+    if (res.success) {
+      toast.success("Payment milestone updated successfully!");
+      setEditingPayment(null);
+      fetchInitialData();
+    } else {
+      toast.error(`Error updating payment: ${res.error}`);
+    }
+  };
+
+  const handleAddPayment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!addingPaymentProjectId) return;
+
+    if (!newPaymentForm.label || newPaymentForm.amount <= 0) {
+      toast.error("Please enter a valid milestone label and amount.");
+      return;
+    }
+
+    const res = await addProjectPaymentDB(addingPaymentProjectId, {
+      label: newPaymentForm.label,
+      amount: Number(newPaymentForm.amount),
+      dueDate: newPaymentForm.dueDate || undefined,
+      status: newPaymentForm.status,
+    });
+
+    if (res.success) {
+      toast.success(`New milestone "${newPaymentForm.label}" added!`);
+      setAddingPaymentProjectId(null);
+      setNewPaymentForm({
+        label: "",
+        amount: 10000,
+        dueDate: new Date().toISOString().split("T")[0],
+        status: "PENDING",
+      });
+      fetchInitialData();
+    } else {
+      toast.error(`Error adding milestone: ${res.error}`);
+    }
+  };
+
+  const handleDeletePayment = async (paymentId: string, label: string) => {
+    const res = await deleteProjectPaymentDB(paymentId);
+    if (res.success) {
+      toast.success(`Deleted milestone "${label}"`);
+      fetchInitialData();
+    } else {
+      toast.error(`Error deleting milestone: ${res.error}`);
+    }
+  };
+
   const handleDelete = async (id: string, name: string) => {
     const res = await deleteProjectDB(id);
     if (res.success) {
@@ -206,7 +303,6 @@ export default function ProjectsPage() {
     targetTypeKey: string,
     targetTypeLabel: string
   ) => {
-    // Standard document suite types for a project
     const allDocTypes = [
       { typeKey: "QUOTATION", typeLabel: "Quotation", route: "/quotation" },
       { typeKey: "AGREEMENT", typeLabel: "Agreement", route: "/agreement" },
@@ -361,7 +457,7 @@ export default function ProjectsPage() {
               Project Milestone Tracker & Related Documents
             </h1>
             <p className="text-xs text-neutral-600 font-medium">
-              Track project progress bars, paid vs pending milestones, and view related legal & financial documents
+              Track project progress bars, edit payment milestone amounts & statuses, and preview related documents
             </p>
           </div>
         </div>
@@ -399,7 +495,7 @@ export default function ProjectsPage() {
           </p>
           <button
             onClick={() => setShowAddProjectModal(true)}
-            className="px-4 py-2 rounded-full bg-[#121212] text-white text-xs font-bold shadow mt-2 hover:bg-neutral-800 transition"
+            className="px-4 py-2 rounded-full bg-[#121212] text-white text-xs font-bold shadow mt-2 hover:bg-neutral-800 transition cursor-pointer"
           >
             Create Project Now
           </button>
@@ -411,7 +507,6 @@ export default function ProjectsPage() {
             const progressPct = Math.min(100, Math.round((p.amountPaid / totalVal) * 100));
             const isExpanded = expandedProjectId === p.id;
 
-            // Related documents types list for this project
             const docTypes = [
               { key: "QUOTATION", label: "Quotation" },
               { key: "AGREEMENT", label: "Agreement" },
@@ -546,23 +641,49 @@ export default function ProjectsPage() {
                   </div>
                 </div>
 
-                {/* Toggle Milestone Breakdown */}
+                {/* Milestone Breakdown Section */}
                 <div className="pt-1">
-                  <button
-                    onClick={() => setExpandedProjectId(isExpanded ? null : p.id)}
-                    className="flex items-center gap-1.5 text-xs font-bold text-neutral-900 hover:text-purple-700 transition cursor-pointer"
-                  >
-                    {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                    <span>
-                      {isExpanded ? "Hide Milestone Breakdown" : `View ${p.payments.length} Milestone Payments`}
-                    </span>
-                  </button>
+                  <div className="flex items-center justify-between">
+                    <button
+                      onClick={() => setExpandedProjectId(isExpanded ? null : p.id)}
+                      className="flex items-center gap-1.5 text-xs font-bold text-neutral-900 hover:text-purple-700 transition cursor-pointer"
+                    >
+                      {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                      <span>
+                        {isExpanded ? "Hide Milestone Breakdown" : `View ${p.payments.length} Milestone Payments`}
+                      </span>
+                    </button>
+
+                    {isExpanded && (
+                      <button
+                        onClick={() => {
+                          setAddingPaymentProjectId(p.id);
+                          setNewPaymentForm({
+                            label: `Milestone ${p.payments.length + 1}`,
+                            amount: 10000,
+                            dueDate: new Date().toISOString().split("T")[0],
+                            status: "PENDING",
+                          });
+                        }}
+                        className="flex items-center gap-1 text-[11px] font-bold text-blue-700 hover:text-blue-900 transition cursor-pointer"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Add Milestone</span>
+                      </button>
+                    )}
+                  </div>
 
                   {isExpanded && (
                     <div className="mt-3 flex flex-col gap-3 bg-[#F4F0E6] p-4 rounded-2xl border border-[#E2DDD0]">
-                      <h4 className="text-xs font-extrabold text-neutral-900 uppercase tracking-wider">
-                        Milestone Breakdown & Payment Status
-                      </h4>
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-xs font-extrabold text-neutral-900 uppercase tracking-wider">
+                          Milestone Breakdown & Payment Status
+                        </h4>
+                        <span className="text-[10px] text-neutral-500 font-bold">
+                          Click Pencil icon to edit milestone label, amount, due date or status
+                        </span>
+                      </div>
+
                       <div className="flex flex-col gap-2">
                         {p.payments.map((pm) => (
                           <div
@@ -587,10 +708,19 @@ export default function ProjectsPage() {
                               </div>
                             </div>
 
-                            <div className="flex items-center gap-3 justify-between sm:justify-end">
-                              <span className="text-xs font-extrabold text-neutral-900 font-mono">
+                            <div className="flex items-center gap-2 justify-between sm:justify-end">
+                              <span className="text-xs font-extrabold text-neutral-900 font-mono mr-2">
                                 {formatCurrency(pm.amount, "₹")}
                               </span>
+
+                              <button
+                                onClick={() => handleStartEditPayment(pm)}
+                                className="p-1.5 rounded-full bg-blue-100 text-blue-900 hover:bg-blue-200 transition cursor-pointer"
+                                title="Edit Milestone Payment"
+                              >
+                                <Pencil className="w-3.5 h-3.5" />
+                              </button>
+
                               {pm.status !== "PAID" ? (
                                 <button
                                   onClick={() => handleMarkPaid(pm.id, pm.label)}
@@ -603,6 +733,14 @@ export default function ProjectsPage() {
                                   PAID
                                 </span>
                               )}
+
+                              <button
+                                onClick={() => handleDeletePayment(pm.id, pm.label)}
+                                className="p-1 rounded-full bg-pink-100 text-pink-800 hover:bg-pink-200 transition cursor-pointer"
+                                title="Delete Milestone"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
                             </div>
                           </div>
                         ))}
@@ -613,6 +751,179 @@ export default function ProjectsPage() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Edit Milestone Payment Modal */}
+      {editingPayment && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-6 max-w-md w-full shadow-2xl flex flex-col gap-4">
+            <div className="flex items-center justify-between border-b border-[#D5CEBC] pb-3">
+              <div className="flex items-center gap-2">
+                <Pencil className="w-4 h-4 text-blue-600" />
+                <h3 className="text-base font-extrabold text-neutral-900">Edit Payment Milestone</h3>
+              </div>
+              <button
+                onClick={() => setEditingPayment(null)}
+                className="p-1 rounded-full bg-[#DFD9C9] text-neutral-800 hover:bg-neutral-900 hover:text-white transition cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSavePaymentEdit} className="flex flex-col gap-3">
+              <div>
+                <label className="text-xs font-bold text-neutral-700 block mb-1">Milestone Label *</label>
+                <input
+                  type="text"
+                  required
+                  value={paymentEditForm.label}
+                  onChange={(e) => setPaymentEditForm({ ...paymentEditForm, label: e.target.value })}
+                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 focus:outline-none"
+                  placeholder="e.g. Advance Deposit (50%)"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-bold text-neutral-700 block mb-1">Amount (₹) *</label>
+                  <input
+                    type="number"
+                    min={1}
+                    required
+                    value={paymentEditForm.amount}
+                    onChange={(e) => setPaymentEditForm({ ...paymentEditForm, amount: Number(e.target.value) })}
+                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-mono font-extrabold text-neutral-900 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-neutral-700 block mb-1">Payment Status</label>
+                  <select
+                    value={paymentEditForm.status}
+                    onChange={(e) => setPaymentEditForm({ ...paymentEditForm, status: e.target.value as any })}
+                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 focus:outline-none cursor-pointer"
+                  >
+                    <option value="PENDING">PENDING</option>
+                    <option value="PAID">PAID</option>
+                    <option value="OVERDUE">OVERDUE</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-neutral-700 block mb-1">Due Date</label>
+                <input
+                  type="date"
+                  value={paymentEditForm.dueDate}
+                  onChange={(e) => setPaymentEditForm({ ...paymentEditForm, dueDate: e.target.value })}
+                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-medium text-neutral-900 focus:outline-none"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-2 border-t border-[#D5CEBC] mt-2">
+                <button
+                  type="button"
+                  onClick={() => setEditingPayment(null)}
+                  className="px-4 py-2 rounded-full bg-[#DFD9C9] text-neutral-800 text-xs font-bold hover:bg-[#D5CEBC] transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition shadow-md cursor-pointer"
+                >
+                  Save Milestone Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add New Milestone Modal */}
+      {addingPaymentProjectId && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-6 max-w-md w-full shadow-2xl flex flex-col gap-4">
+            <div className="flex items-center justify-between border-b border-[#D5CEBC] pb-3">
+              <div className="flex items-center gap-2">
+                <Plus className="w-4 h-4 text-purple-600" />
+                <h3 className="text-base font-extrabold text-neutral-900">Add Milestone Payment</h3>
+              </div>
+              <button
+                onClick={() => setAddingPaymentProjectId(null)}
+                className="p-1 rounded-full bg-[#DFD9C9] text-neutral-800 hover:bg-neutral-900 hover:text-white transition cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddPayment} className="flex flex-col gap-3">
+              <div>
+                <label className="text-xs font-bold text-neutral-700 block mb-1">Milestone Label *</label>
+                <input
+                  type="text"
+                  required
+                  value={newPaymentForm.label}
+                  onChange={(e) => setNewPaymentForm({ ...newPaymentForm, label: e.target.value })}
+                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 focus:outline-none"
+                  placeholder="e.g. Milestone 3 — Final Review"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-bold text-neutral-700 block mb-1">Amount (₹) *</label>
+                  <input
+                    type="number"
+                    min={1}
+                    required
+                    value={newPaymentForm.amount}
+                    onChange={(e) => setNewPaymentForm({ ...newPaymentForm, amount: Number(e.target.value) })}
+                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-mono font-extrabold text-neutral-900 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-neutral-700 block mb-1">Status</label>
+                  <select
+                    value={newPaymentForm.status}
+                    onChange={(e) => setNewPaymentForm({ ...newPaymentForm, status: e.target.value as any })}
+                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 focus:outline-none cursor-pointer"
+                  >
+                    <option value="PENDING">PENDING</option>
+                    <option value="PAID">PAID</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-neutral-700 block mb-1">Due Date</label>
+                <input
+                  type="date"
+                  value={newPaymentForm.dueDate}
+                  onChange={(e) => setNewPaymentForm({ ...newPaymentForm, dueDate: e.target.value })}
+                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-medium text-neutral-900 focus:outline-none"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-2 border-t border-[#D5CEBC] mt-2">
+                <button
+                  type="button"
+                  onClick={() => setAddingPaymentProjectId(null)}
+                  className="px-4 py-2 rounded-full bg-[#DFD9C9] text-neutral-800 text-xs font-bold hover:bg-[#D5CEBC] transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-full bg-[#121212] hover:bg-neutral-800 text-white text-xs font-bold transition shadow-md cursor-pointer"
+                >
+                  Add Milestone
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 

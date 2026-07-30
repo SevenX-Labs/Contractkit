@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { getClientsDB, createClientWorkTrackerDB, deleteClientDB } from "../actions";
-import { Users, Plus, Search, Trash2, Building, Mail, Phone, MapPin, X, FileText, CheckCircle2, Clock } from "lucide-react";
+import { getClientsDB, createClientWorkTrackerDB, updateClientDB, deleteClientDB } from "../actions";
+import { Users, Plus, Search, Trash2, Pencil, X, FileText } from "lucide-react";
 import { formatCurrency } from "../../lib/utils";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -28,6 +28,20 @@ export default function ClientsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Edit Client State
+  const [editingClient, setEditingClient] = useState<ClientItem | null>(null);
+  const [editFormData, setEditFormData] = useState({
+    name: "",
+    company: "",
+    email: "",
+    phone: "",
+    billingAddress: "",
+    workType: "Web Dev",
+    status: "Active",
+    notes: "",
+  });
+
+  // Create Client State
   const [formData, setFormData] = useState({
     name: "",
     company: "",
@@ -36,7 +50,7 @@ export default function ClientsPage() {
     billingAddress: "",
     workType: "Web Dev",
     projectValue: 250000,
-    paymentStructure: "50/50" as "50/50" | "3-Way Split" | "Full Upfront" | "Monthly Retainer" | "Milestone",
+    paymentStructure: "50/50" as "50/50" | "3-Way Split" | "Full Upfront" | "Full Payment After Work" | "Monthly Retainer" | "Milestone",
     startDate: new Date().toISOString().split("T")[0],
     deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
     notes: "",
@@ -83,6 +97,39 @@ export default function ClientsPage() {
     }
   };
 
+  const handleStartEdit = (client: ClientItem) => {
+    setEditingClient(client);
+    setEditFormData({
+      name: client.name || "",
+      company: client.company || "",
+      email: client.email || "",
+      phone: client.phone || "",
+      billingAddress: client.billingAddress || "",
+      workType: client.workType || "Web Dev",
+      status: client.status || "Active",
+      notes: client.notes || "",
+    });
+  };
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingClient) return;
+
+    if (!editFormData.name || !editFormData.email) {
+      toast.error("Client Name and Email are required.");
+      return;
+    }
+
+    const res = await updateClientDB(editingClient.id, editFormData);
+    if (res.success) {
+      toast.success(`Client "${editFormData.name}" updated successfully!`);
+      setEditingClient(null);
+      fetchClients();
+    } else {
+      toast.error(`Error updating client: ${res.error}`);
+    }
+  };
+
   const handleDelete = async (id: string, name: string) => {
     const res = await deleteClientDB(id);
     if (res.success) {
@@ -111,13 +158,13 @@ export default function ClientsPage() {
           </div>
           <div>
             <h1 className="text-xl font-extrabold text-neutral-900 tracking-tight">Client Work & Profit Tracker</h1>
-            <p className="text-xs text-neutral-600 font-medium">Manage enterprise clients, payment structures (50/50, Retainers, Milestones), and earnings</p>
+            <p className="text-xs text-neutral-600 font-medium">Manage enterprise clients, edit client details, payment structures (50/50, Retainers, Milestones), and earnings</p>
           </div>
         </div>
 
         <button
           onClick={() => setIsModalOpen(true)}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#121212] text-white font-bold text-xs shadow-md hover:bg-neutral-800 transition"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#121212] text-white font-bold text-xs shadow-md hover:bg-neutral-800 transition cursor-pointer"
         >
           <Plus className="w-4 h-4 text-pink-400" />
           <span>Add Client</span>
@@ -147,7 +194,7 @@ export default function ClientsPage() {
             <p className="text-xs text-neutral-500 max-w-sm">Add a client to automatically track project milestones, paid earnings, and pending balances!</p>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="px-4 py-2 rounded-full bg-[#121212] text-white text-xs font-bold shadow"
+              className="px-4 py-2 rounded-full bg-[#121212] text-white text-xs font-bold shadow cursor-pointer"
             >
               + Add Client
             </button>
@@ -201,17 +248,24 @@ export default function ClientsPage() {
                       </span>
                     </td>
                     <td className="py-4 px-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          onClick={() => handleStartEdit(c)}
+                          className="p-1.5 rounded-full bg-blue-100 text-blue-900 hover:bg-blue-200 transition cursor-pointer"
+                          title="Edit Client Details"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                        </button>
                         <Link
                           href={`/projects`}
-                          className="p-1.5 rounded-full bg-[#DFD9C9] text-neutral-800 hover:bg-[#121212] hover:text-white transition"
+                          className="p-1.5 rounded-full bg-[#DFD9C9] text-neutral-800 hover:bg-[#121212] hover:text-white transition cursor-pointer"
                           title="View Milestones"
                         >
                           <FileText className="w-3.5 h-3.5" />
                         </Link>
                         <button
                           onClick={() => handleDelete(c.id, c.name)}
-                          className="p-1.5 rounded-full bg-pink-100 text-pink-800 hover:bg-pink-200 transition"
+                          className="p-1.5 rounded-full bg-pink-100 text-pink-800 hover:bg-pink-200 transition cursor-pointer"
                           title="Delete Client"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -232,7 +286,7 @@ export default function ClientsPage() {
           <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-6 max-w-lg w-full shadow-2xl flex flex-col gap-4">
             <div className="flex items-center justify-between border-b border-[#D5CEBC] pb-3">
               <h3 className="text-base font-extrabold text-neutral-900">Add Client & Project Work Structure</h3>
-              <button onClick={() => setIsModalOpen(false)} className="p-1 text-neutral-500 hover:text-neutral-900">
+              <button onClick={() => setIsModalOpen(false)} className="p-1 text-neutral-500 hover:text-neutral-900 cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -353,15 +407,147 @@ export default function ClientsPage() {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-full bg-[#DFD9C9] text-xs font-bold text-neutral-900"
+                  className="px-4 py-2 rounded-full bg-[#DFD9C9] text-xs font-bold text-neutral-900 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-full bg-[#121212] text-white text-xs font-bold hover:bg-neutral-800 transition"
+                  className="px-5 py-2 rounded-full bg-[#121212] text-white text-xs font-bold hover:bg-neutral-800 transition cursor-pointer"
                 >
                   Create Client & Payments
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Client Modal */}
+      {editingClient && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-6 max-w-lg w-full shadow-2xl flex flex-col gap-4">
+            <div className="flex items-center justify-between border-b border-[#D5CEBC] pb-3">
+              <div className="flex items-center gap-2">
+                <Pencil className="w-4 h-4 text-blue-600" />
+                <h3 className="text-base font-extrabold text-neutral-900">Edit Client Information</h3>
+              </div>
+              <button onClick={() => setEditingClient(null)} className="p-1 text-neutral-500 hover:text-neutral-900 cursor-pointer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleUpdate} className="flex flex-col gap-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">Client Name *</label>
+                  <input
+                    type="text"
+                    required
+                    value={editFormData.name}
+                    onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">Company</label>
+                  <input
+                    type="text"
+                    value={editFormData.company}
+                    onChange={(e) => setEditFormData({ ...editFormData, company: e.target.value })}
+                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">Email *</label>
+                  <input
+                    type="email"
+                    required
+                    value={editFormData.email}
+                    onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">Phone Number</label>
+                  <input
+                    type="text"
+                    value={editFormData.phone}
+                    onChange={(e) => setEditFormData({ ...editFormData, phone: e.target.value })}
+                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">Work Type</label>
+                  <select
+                    value={editFormData.workType}
+                    onChange={(e) => setEditFormData({ ...editFormData, workType: e.target.value })}
+                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900"
+                  >
+                    <option value="Web Dev">Web Development</option>
+                    <option value="App Dev">Mobile App Dev</option>
+                    <option value="Automation">Automation Platform</option>
+                    <option value="AI Agent">AI Solutions / Agents</option>
+                    <option value="UI/UX">UI/UX Design</option>
+                    <option value="SEO">SEO & Growth</option>
+                    <option value="E-Commerce">E-Commerce Store</option>
+                    <option value="Other">Other Consultancy</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">Client Status</label>
+                  <select
+                    value={editFormData.status}
+                    onChange={(e) => setEditFormData({ ...editFormData, status: e.target.value })}
+                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900"
+                  >
+                    <option value="Active">Active</option>
+                    <option value="Completed">Completed</option>
+                    <option value="On Hold">On Hold</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-neutral-700 block mb-1">Billing Address</label>
+                <input
+                  type="text"
+                  value={editFormData.billingAddress}
+                  onChange={(e) => setEditFormData({ ...editFormData, billingAddress: e.target.value })}
+                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium"
+                />
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-neutral-700 block mb-1">Notes / Preferences</label>
+                <textarea
+                  rows={2}
+                  value={editFormData.notes}
+                  onChange={(e) => setEditFormData({ ...editFormData, notes: e.target.value })}
+                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium resize-none"
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 mt-3">
+                <button
+                  type="button"
+                  onClick={() => setEditingClient(null)}
+                  className="px-4 py-2 rounded-full bg-[#DFD9C9] text-xs font-bold text-neutral-900 cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-full bg-blue-600 text-white text-xs font-bold hover:bg-blue-700 transition cursor-pointer shadow-md"
+                >
+                  Save Client Changes
                 </button>
               </div>
             </form>

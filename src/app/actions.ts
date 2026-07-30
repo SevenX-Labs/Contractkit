@@ -263,6 +263,145 @@ export async function updatePaymentStatusDB(
   }
 }
 
+export async function updateProjectPaymentDB(
+  paymentId: string,
+  data: {
+    label?: string;
+    amount?: number;
+    dueDate?: string | null;
+    status?: "PAID" | "PENDING" | "OVERDUE";
+    note?: string | null;
+  }
+) {
+  try {
+    const payment = await prisma.projectPayment.update({
+      where: { id: paymentId },
+      data: {
+        label: data.label,
+        amount: data.amount,
+        dueDate: data.dueDate ? new Date(data.dueDate) : null,
+        status: data.status,
+        paidDate: data.status === "PAID" ? new Date() : null,
+        note: data.note || null,
+      },
+    });
+
+    // Recalculate Project total, amountPaid, and amountPending
+    const allPayments = await prisma.projectPayment.findMany({
+      where: { projectId: payment.projectId },
+    });
+
+    const totalSum = allPayments.reduce((acc, p) => acc + p.amount, 0);
+    const paidSum = allPayments
+      .filter((p) => p.status === "PAID")
+      .reduce((acc, p) => acc + p.amount, 0);
+
+    await prisma.project.update({
+      where: { id: payment.projectId },
+      data: {
+        totalValue: totalSum,
+        budget: totalSum,
+        amountPaid: paidSum,
+        amountPending: Math.max(0, totalSum - paidSum),
+        status: paidSum >= totalSum && totalSum > 0 ? "Completed" : "In Progress",
+      },
+    });
+
+    revalidatePath("/");
+    revalidatePath("/clients");
+    revalidatePath("/projects");
+    return { success: true };
+  } catch (err) {
+    console.error("Error updating project payment:", err);
+    return { success: false, error: String(err) };
+  }
+}
+
+export async function addProjectPaymentDB(
+  projectId: string,
+  data: {
+    label: string;
+    amount: number;
+    dueDate?: string;
+    status?: "PAID" | "PENDING" | "OVERDUE";
+  }
+) {
+  try {
+    const payment = await prisma.projectPayment.create({
+      data: {
+        projectId,
+        label: data.label,
+        amount: data.amount,
+        dueDate: data.dueDate ? new Date(data.dueDate) : null,
+        status: data.status || "PENDING",
+        paidDate: data.status === "PAID" ? new Date() : null,
+      },
+    });
+
+    // Recalculate Project total
+    const allPayments = await prisma.projectPayment.findMany({
+      where: { projectId },
+    });
+
+    const totalSum = allPayments.reduce((acc, p) => acc + p.amount, 0);
+    const paidSum = allPayments
+      .filter((p) => p.status === "PAID")
+      .reduce((acc, p) => acc + p.amount, 0);
+
+    await prisma.project.update({
+      where: { id: projectId },
+      data: {
+        totalValue: totalSum,
+        budget: totalSum,
+        amountPaid: paidSum,
+        amountPending: Math.max(0, totalSum - paidSum),
+      },
+    });
+
+    revalidatePath("/");
+    revalidatePath("/clients");
+    revalidatePath("/projects");
+    return { success: true, payment };
+  } catch (err) {
+    return { success: false, error: String(err) };
+  }
+}
+
+export async function deleteProjectPaymentDB(paymentId: string) {
+  try {
+    const payment = await prisma.projectPayment.delete({
+      where: { id: paymentId },
+    });
+
+    // Recalculate Project total
+    const allPayments = await prisma.projectPayment.findMany({
+      where: { projectId: payment.projectId },
+    });
+
+    const totalSum = allPayments.reduce((acc, p) => acc + p.amount, 0);
+    const paidSum = allPayments
+      .filter((p) => p.status === "PAID")
+      .reduce((acc, p) => acc + p.amount, 0);
+
+    await prisma.project.update({
+      where: { id: payment.projectId },
+      data: {
+        totalValue: totalSum,
+        budget: totalSum,
+        amountPaid: paidSum,
+        amountPending: Math.max(0, totalSum - paidSum),
+      },
+    });
+
+    revalidatePath("/");
+    revalidatePath("/clients");
+    revalidatePath("/projects");
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: String(err) };
+  }
+}
+
 // ==================== EXPENSE TRACKER ====================
 export async function createExpenseDB(data: { title: string; amount: number; category: string }) {
   try {
@@ -366,6 +505,37 @@ export async function deleteClientDB(id: string) {
     await prisma.client.delete({ where: { id } });
     revalidatePath("/clients");
     return { success: true };
+  } catch (err) {
+    return { success: false, error: String(err) };
+  }
+}
+
+export async function updateClientDB(
+  id: string,
+  data: {
+    name?: string;
+    company?: string;
+    designation?: string;
+    email?: string;
+    phone?: string;
+    gstNo?: string;
+    taxNo?: string;
+    website?: string;
+    billingAddress?: string;
+    shippingAddress?: string;
+    notes?: string;
+    workType?: string;
+    status?: string;
+  }
+) {
+  try {
+    const updated = await prisma.client.update({
+      where: { id },
+      data,
+    });
+    revalidatePath("/clients");
+    revalidatePath("/projects");
+    return { success: true, client: updated };
   } catch (err) {
     return { success: false, error: String(err) };
   }
