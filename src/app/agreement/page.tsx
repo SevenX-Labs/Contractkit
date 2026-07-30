@@ -223,8 +223,6 @@ export default function AgreementPage() {
 
     if (res.success) {
       toast.success(`Agreement #${formData.agreementNumber} saved successfully!`);
-      const nextNum = await getNextDocumentNumberDB("AGREEMENT");
-      setFormData((prev) => ({ ...prev, agreementNumber: nextNum }));
     } else {
       toast.error(`Error saving agreement: ${res.error}`);
     }

@@ -243,9 +243,9 @@ export function ModernAgreementTemplate({
 
             {/* Parties Pill Header & 2-Column Grid */}
             <div className="px-10 mt-4" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
-              <div className="bg-[#0a0a0a] text-white rounded-full py-2.5 px-6 flex justify-between items-center text-xs font-black uppercase tracking-wider mb-2 shadow-md">
-                <span className="w-1/2 text-left pl-2">1. SERVICE PROVIDER</span>
-                <span className="w-1/2 text-left pl-4">2. CLIENT</span>
+              <div className="grid grid-cols-2 gap-4 bg-[#0a0a0a] text-white rounded-full py-2.5 px-4 text-xs font-black uppercase tracking-wider mb-2 shadow-md">
+                <span className="text-left pl-2">1. SERVICE PROVIDER</span>
+                <span className="text-left pl-3">2. CLIENT</span>
               </div>
 
               <div className="grid grid-cols-2 gap-4 bg-neutral-50 p-4 rounded-2xl border border-neutral-200 text-xs">
@@ -304,8 +304,12 @@ export function ModernAgreementTemplate({
                     <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">4. SCOPE OF WORK</h4>
                     <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium">Full lifecycle engineering & code delivery as specified.</p>
                   </div>
-                  <div className="col-span-7 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs whitespace-pre-line font-mono text-neutral-800 leading-normal">
-                    {includedScope}
+                  <div className="col-span-7 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs space-y-0.5 font-mono text-neutral-800">
+                    {includedScope ? (
+                      <p className="whitespace-pre-line leading-relaxed">{includedScope}</p>
+                    ) : (
+                      <p>Custom dashboard & authentication • REST APIs development & integration • PostgreSQL database & migrations • High-performance PDF/DOCX/PNG export engine</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -350,8 +354,8 @@ export function ModernAgreementTemplate({
 
           {/* Page 1 Full-Width Black Footer Bar */}
           <div>
-            <div className="px-10 py-1 flex justify-between items-center text-xs text-neutral-400 font-mono">
-              <span>SevenX Labs • Ref #{agreementNumber}</span>
+            <div className="px-10 pt-3 pb-2 flex justify-between items-center text-xs text-neutral-500 font-mono border-t border-neutral-100 bg-white">
+              <span>SevenX Labs • Ref #{formattedAgrNumber}</span>
               <span>Page 1 of 2</span>
             </div>
 
@@ -377,81 +381,92 @@ export function ModernAgreementTemplate({
 
       {/* PAGE 2 */}
       {showPage2 && (
-        <div className="relative w-full min-h-[297mm] flex flex-col justify-between pt-10 pb-0">
-          <div className="px-10 space-y-4">
-            {/* Section 7: Intellectual Property Rights */}
-            <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
-              <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
-                <FileCheck className="w-5 h-5" />
+        <div className="relative w-full min-h-[297mm] flex flex-col justify-between pt-8 pb-0">
+          <div>
+            {/* Minimal Top Header for Page 2 */}
+            <div className="px-10 pb-4 border-b border-neutral-200 flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <span className="font-black text-neutral-900 text-sm uppercase">SevenX Labs</span>
+                <span className="text-neutral-300">•</span>
+                <span className="text-xs font-bold text-neutral-600 uppercase">IT Development Agreement</span>
               </div>
-              <div className="flex-1">
-                <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">7. INTELLECTUAL PROPERTY & OWNERSHIP</h4>
-                <p className="text-xs text-neutral-800 mt-1 leading-relaxed font-medium">{ipClause}</p>
+              <span className="font-mono text-xs text-neutral-500 font-bold">Ref #{formattedAgrNumber}</span>
+            </div>
+
+            {/* Sections 7, 8, 9, 10 on Page 2 */}
+            <div className="px-10 mt-6 space-y-4">
+              {/* Section 7: Intellectual Property & Ownership */}
+              <div className="flex items-start gap-3 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+                <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
+                  <Code className="w-4 h-4" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1">7. INTELLECTUAL PROPERTY & OWNERSHIP</h4>
+                  <p className="text-xs text-neutral-800 leading-relaxed font-medium">{ipClause}</p>
+                </div>
+              </div>
+
+              {/* Section 8: Deliverables & Code Handover */}
+              <div className="flex items-start gap-3 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+                <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
+                  <FileCheck className="w-4 h-4" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1">8. DELIVERABLES & CODE HANDOVER</h4>
+                  <p className="text-xs text-neutral-800 leading-relaxed font-medium whitespace-pre-line">{deliverables}</p>
+                </div>
+              </div>
+
+              {/* Section 9: Confidentiality & Data Security */}
+              <div className="flex items-start gap-3 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+                <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
+                  <Lock className="w-4 h-4" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1">9. CONFIDENTIALITY & DATA SECURITY</h4>
+                  <p className="text-xs text-neutral-800 leading-relaxed font-medium">{confidentialityClause}</p>
+                </div>
+              </div>
+
+              {/* Section 10: Warranty, Support & Revision Policy */}
+              <div className="flex items-start gap-3 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+                <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
+                  <ShieldCheck className="w-4 h-4" />
+                </div>
+                <div className="flex-1 space-y-1 text-xs">
+                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1">10. WARRANTY, SUPPORT & REVISION POLICY</h4>
+                  <p><strong className="text-neutral-900 font-bold">• Warranty Support:</strong> {warrantyPeriod}</p>
+                  <p><strong className="text-neutral-900 font-bold">• Revision Policy:</strong> {revisionPolicy}</p>
+                  <p><strong className="text-neutral-900 font-bold">• Termination & Refunds:</strong> {cancellationPolicy}</p>
+                </div>
               </div>
             </div>
 
-            {/* Section 8: Deliverables & Code Handover */}
-            <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
-              <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
-                <Code className="w-5 h-5" />
-              </div>
-              <div className="flex-1">
-                <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">8. DELIVERABLES & CODE HANDOVER</h4>
-                <p className="text-xs text-neutral-800 mt-1 leading-relaxed font-medium whitespace-pre-line">{deliverables}</p>
-              </div>
-            </div>
-
-            {/* Section 9: Confidentiality & Non-Disclosure */}
-            <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
-              <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
-                <Lock className="w-5 h-5" />
-              </div>
-              <div className="flex-1">
-                <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">9. CONFIDENTIALITY & DATA SECURITY</h4>
-                <p className="text-xs text-neutral-800 mt-1 leading-relaxed font-medium">{confidentialityClause}</p>
-              </div>
-            </div>
-
-            {/* Section 10: Warranty, Support & Revision Policy */}
-            <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
-              <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
-                <ShieldCheck className="w-5 h-5" />
-              </div>
-              <div className="flex-1">
-                <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">10. WARRANTY, SUPPORT & REVISION POLICY</h4>
-                <p className="text-xs text-neutral-800 mt-1 leading-relaxed font-medium">
-                  • <strong>Warranty Support:</strong> {warrantyPeriod}
-                  <br />
-                  • <strong>Revision Policy:</strong> {revisionPolicy}
-                  <br />
-                  • <strong>Termination & Refunds:</strong> {cancellationPolicy}
-                </p>
+            {/* Signatures Section */}
+            <div className="px-10 mt-8" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+              <div className="grid grid-cols-2 gap-6 bg-neutral-50 p-6 rounded-2xl border border-neutral-200">
+                <div>
+                  <p className="font-extrabold text-neutral-900 uppercase text-xs tracking-wider mb-2">AUTHORIZED SIGNATURE:</p>
+                  <div className="py-2 border-b border-neutral-300">
+                    <span className="font-signature text-3xl font-extrabold text-neutral-900 tracking-wider select-none transform -rotate-3 border-b-2 border-neutral-900/80 pb-0.5 px-2">
+                      shode
+                    </span>
+                  </div>
+                  <p className="text-xs text-neutral-500 font-medium mt-1">Date: {formatDate(effectiveDate)}</p>
+                </div>
+                <div>
+                  <p className="font-extrabold text-neutral-900 uppercase text-xs tracking-wider mb-2">CLIENT SIGNATURE:</p>
+                  <p className="font-mono text-neutral-900 border-b border-neutral-300 pb-1 font-bold text-xs">{clientSignatory}</p>
+                  <p className="text-xs text-neutral-500 font-medium mt-1">Date: {formatDate(effectiveDate)}</p>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Bottom Pinned Digital Signatures Block & Footer on Page 2 End */}
-          <div className="mt-auto">
-            {/* Section 11: Digital Signatures Block Pinned at the Very End */}
-            <div className="px-10 pb-6 pt-4 border-t border-neutral-200 grid grid-cols-2 gap-8 text-xs bg-white" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
-              <div>
-                <p className="font-extrabold text-neutral-900 uppercase text-xs tracking-wider mb-2">AUTHORIZED SIGNATURE:</p>
-                <div className="h-9 flex items-center mb-1">
-                  <span className="font-signature text-3xl font-extrabold text-neutral-900 tracking-wider select-none transform -rotate-3 border-b-2 border-neutral-900/80 pb-0.5 px-2">
-                    shode
-                  </span>
-                </div>
-                <p className="text-xs text-neutral-500 font-medium mt-1">Date: {formatDate(effectiveDate)}</p>
-              </div>
-              <div>
-                <p className="font-extrabold text-neutral-900 uppercase text-xs tracking-wider mb-2">CLIENT SIGNATURE:</p>
-                <p className="font-mono text-neutral-900 border-b border-neutral-300 pb-1 font-bold text-xs">{clientSignatory}</p>
-                <p className="text-xs text-neutral-500 font-medium mt-1">Date: {formatDate(effectiveDate)}</p>
-              </div>
-            </div>
-
-            <div className="px-10 py-1 flex justify-between items-center text-xs text-neutral-400 font-mono">
-              <span>SevenX Labs • Ref #{agreementNumber}</span>
+          {/* Page 2 Full-Width Black Footer Bar */}
+          <div>
+            <div className="px-10 pt-3 pb-2 flex justify-between items-center text-xs text-neutral-500 font-mono border-t border-neutral-100 bg-white">
+              <span>SevenX Labs • Ref #{formattedAgrNumber}</span>
               <span>Page 2 of 2</span>
             </div>
 

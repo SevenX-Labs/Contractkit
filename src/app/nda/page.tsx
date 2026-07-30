@@ -108,8 +108,6 @@ export default function NDABuilderPage() {
       const res = await createNDADB(formData);
       if (res.success) {
         toast.success(`NDA #${formData.ndaNumber} saved successfully!`);
-        const nextNum = await getNextDocumentNumberDB("NDA");
-        setFormData((prev) => ({ ...prev, ndaNumber: nextNum }));
       } else {
         toast.error("Failed to save NDA to database.");
       }

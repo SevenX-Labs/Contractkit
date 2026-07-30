@@ -187,8 +187,6 @@ export default function InvoicePage() {
 
     if (res.success) {
       toast.success(`Invoice #${formData.invoiceNumber} saved successfully!`);
-      const nextInv = await getNextInvoiceNumberDB();
-      setFormData((prev: InvoiceData) => ({ ...prev, invoiceNumber: nextInv }));
     } else {
       toast.error(`Error saving invoice: ${res.error}`);
     }
