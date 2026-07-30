@@ -124,7 +124,7 @@ export async function createClientWorkTrackerDB(data: {
   billingAddress?: string;
   workType: string;
   projectValue: number;
-  paymentStructure: "50/50" | "3-Way Split" | "Full Upfront" | "Monthly Retainer" | "Milestone";
+  paymentStructure: "50/50" | "3-Way Split" | "Full Upfront" | "Full Payment After Work" | "Monthly Retainer" | "Milestone";
   customMilestones?: Array<{ label: string; percentage: number }>;
   startDate?: string;
   deadline?: string;
@@ -179,6 +179,12 @@ export async function createClientWorkTrackerDB(data: {
       );
     } else if (data.paymentStructure === "Full Upfront") {
       paymentRows.push({ label: "Full Upfront Payment (100%)", amount: val, dueDate: new Date() });
+    } else if (data.paymentStructure === "Full Payment After Work") {
+      paymentRows.push({
+        label: "Full Payment Upon Completion (100%)",
+        amount: val,
+        dueDate: data.deadline ? new Date(data.deadline) : undefined,
+      });
     } else if (data.paymentStructure === "Monthly Retainer") {
       paymentRows.push({ label: "Monthly Retainer (Month 1)", amount: val, dueDate: new Date() });
     } else if (data.paymentStructure === "Milestone" && data.customMilestones) {
@@ -426,6 +432,7 @@ export async function createProjectDB(data: {
   startDate?: string;
   deliveryDate?: string;
   clientId?: string;
+  paymentStructure?: string;
 }) {
   try {
     const val = data.budget || 0;
@@ -444,6 +451,51 @@ export async function createProjectDB(data: {
         clientId: data.clientId || null,
       },
     });
+
+    // Auto-generate ProjectPayment Milestone Rows
+    const structure = data.paymentStructure || "50/50";
+    const paymentRows: Array<{ label: string; amount: number; dueDate?: Date }> = [];
+
+    if (structure === "50/50") {
+      paymentRows.push(
+        { label: "Advance Payment (50%)", amount: val * 0.5, dueDate: new Date() },
+        { label: "Final Delivery (50%)", amount: val * 0.5, dueDate: data.deliveryDate ? new Date(data.deliveryDate) : undefined }
+      );
+    } else if (structure === "3-Way Split") {
+      paymentRows.push(
+        { label: "Advance Deposit (30%)", amount: val * 0.3, dueDate: new Date() },
+        { label: "Milestone 2 — Design & Prototype (30%)", amount: val * 0.3 },
+        { label: "Final Deployment (40%)", amount: val * 0.4, dueDate: data.deliveryDate ? new Date(data.deliveryDate) : undefined }
+      );
+    } else if (structure === "Full Upfront") {
+      paymentRows.push({ label: "Full Upfront Payment (100%)", amount: val, dueDate: new Date() });
+    } else if (structure === "Full Payment After Work") {
+      paymentRows.push({
+        label: "Full Payment Upon Completion (100%)",
+        amount: val,
+        dueDate: data.deliveryDate ? new Date(data.deliveryDate) : undefined,
+      });
+    } else if (structure === "Monthly Retainer") {
+      paymentRows.push({ label: "Monthly Retainer (Month 1)", amount: val, dueDate: new Date() });
+    } else {
+      paymentRows.push(
+        { label: "Advance Payment (50%)", amount: val * 0.5, dueDate: new Date() },
+        { label: "Final Delivery (50%)", amount: val * 0.5, dueDate: data.deliveryDate ? new Date(data.deliveryDate) : undefined }
+      );
+    }
+
+    for (const row of paymentRows) {
+      await prisma.projectPayment.create({
+        data: {
+          projectId: project.id,
+          label: row.label,
+          amount: row.amount,
+          dueDate: row.dueDate || null,
+          status: "PENDING",
+        },
+      });
+    }
+
     revalidatePath("/projects");
     return { success: true, project };
   } catch (err) {

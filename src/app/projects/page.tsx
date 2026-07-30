@@ -154,6 +154,7 @@ export default function ProjectsPage() {
       description: newProject.description,
       budget: Number(newProject.budget),
       workType: newProject.workType,
+      paymentStructure: newProject.paymentStructure,
       clientId: newProject.clientId || undefined,
       startDate: newProject.startDate,
       deliveryDate: newProject.deliveryDate,
@@ -676,7 +677,7 @@ export default function ProjectsPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label className="text-xs font-bold text-neutral-700 block mb-1">Total Budget (₹)</label>
                   <input
@@ -686,6 +687,21 @@ export default function ProjectsPage() {
                     onChange={(e) => setNewProject({ ...newProject, budget: Number(e.target.value) })}
                     className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-mono font-bold text-neutral-900 focus:outline-none"
                   />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-neutral-700 block mb-1">Payment Structure</label>
+                  <select
+                    value={newProject.paymentStructure}
+                    onChange={(e) => setNewProject({ ...newProject, paymentStructure: e.target.value })}
+                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 focus:outline-none cursor-pointer"
+                  >
+                    <option value="50/50">50/50 (50% Advance + 50% Final)</option>
+                    <option value="3-Way Split">3-Way Split (30% + 30% + 40%)</option>
+                    <option value="Full Upfront">Full Upfront (100% Advance)</option>
+                    <option value="Full Payment After Work">Full Payment After Work (100% Post-Completion)</option>
+                    <option value="Monthly Retainer">Monthly Retainer</option>
+                  </select>
                 </div>
 
                 <div>

@@ -323,6 +323,7 @@ export default function ClientsPage() {
                   <option value="50/50">50/50 (50% Advance + 50% Final Delivery)</option>
                   <option value="3-Way Split">3-Way Split (30% Advance + 30% Milestone 2 + 40% Final)</option>
                   <option value="Full Upfront">Full Upfront (100% Advance Payment)</option>
+                  <option value="Full Payment After Work">Full Payment After Work (100% Upon Completion)</option>
                   <option value="Monthly Retainer">Monthly Retainer Billing</option>
                 </select>
               </div>

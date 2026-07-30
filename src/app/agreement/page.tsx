@@ -153,6 +153,8 @@ export default function AgreementPage() {
         { id: "p2", label: "Milestone 2: Beta Prototype (30%)", percentage: 30, amount: val * 0.3, dueDate: "Upon Phase 2 completion" },
         { id: "p3", label: "Final Deployment (40%)", percentage: 40, amount: val * 0.4, dueDate: "On final project handover" },
       ];
+    } else if (structure === "Full Payment After Work") {
+      newRows = [{ id: "p1", label: "Full Payment Upon Completion (100%)", percentage: 100, amount: val, dueDate: "Upon final project handover" }];
     } else {
       newRows = [{ id: "p1", label: "Full Upfront Deposit (100%)", percentage: 100, amount: val, dueDate: "Before project start" }];
     }
@@ -658,6 +660,7 @@ export default function AgreementPage() {
                           <option value="3-Way Split">3-Way Split (30% + 30% + 40%)</option>
                           <option value="Milestone-based">Milestone-based (40% + 60%)</option>
                           <option value="Full Upfront">Full Upfront (100%)</option>
+                          <option value="Full Payment After Work">Full Payment After Work (100% Upon Completion)</option>
                           <option value="Monthly Retainer">Monthly Retainer</option>
                         </select>
                       </div>
