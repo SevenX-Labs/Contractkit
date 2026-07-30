@@ -9,7 +9,7 @@ export interface InvoiceTemplateProps {
   id?: string;
   invoiceNumber: string;
   invoiceDate: string;
-  dueDate: string;
+  dueDate?: string;
   
   senderName?: string;
   senderCompany?: string;
@@ -63,7 +63,6 @@ export function ModernInvoiceTemplate({
   id = "invoice-pdf-preview",
   invoiceNumber = "SXL-INV-2026-000001",
   invoiceDate,
-  dueDate,
   senderName = "Sahil Hode",
   senderCompany = "SevenX Labs",
   senderAddress = "SevenX Tech Park, HSR Layout, Sector 1, Bengaluru",
@@ -162,33 +161,29 @@ export function ModernInvoiceTemplate({
 
           {/* Top Right Black Header Panel */}
           <div className="relative w-[50%] bg-[#0a0a0a] text-white pt-10 pb-8 px-8 rounded-bl-[50px] shadow-2xl flex flex-col justify-between min-h-[200px]">
-            <div>
+            <div className="relative z-10">
               <h1 className="text-6xl font-black tracking-wider uppercase text-white mb-6">
                 INVOICE
               </h1>
               
-              {/* Metadata 3-Column Grid */}
-              <div className="grid grid-cols-3 gap-2 text-center text-xs font-medium border-t border-neutral-800 pt-4">
+              {/* Metadata 2-Column Grid */}
+              <div className="grid grid-cols-2 gap-4 text-left text-xs font-medium border-t border-neutral-800 pt-4">
                 <div>
                   <span className="text-[11px] text-neutral-400 block font-sans">Invoice No.</span>
-                  <span className="font-mono font-bold text-white text-xs block mt-0.5">{invoiceNumber}</span>
+                  <span className="font-mono font-bold text-white text-xs block mt-0.5 whitespace-nowrap">{invoiceNumber}</span>
                 </div>
                 <div>
                   <span className="text-[11px] text-neutral-400 block font-sans">Date</span>
-                  <span className="font-mono font-bold text-white text-xs block mt-0.5">{formatDate(invoiceDate)}</span>
-                </div>
-                <div>
-                  <span className="text-[11px] text-neutral-400 block font-sans">Due Date</span>
-                  <span className="font-mono font-bold text-white text-xs block mt-0.5">{formatDate(dueDate)}</span>
+                  <span className="font-mono font-bold text-white text-xs block mt-0.5 whitespace-nowrap">{formatDate(invoiceDate)}</span>
                 </div>
               </div>
             </div>
 
-            {/* Top Right Geometric Accent Triangles */}
-            <div className="absolute -bottom-6 -right-6 pointer-events-none">
+            {/* Top Right Geometric Accent Triangles Matching Reference Image Exactly */}
+            <div className="absolute -bottom-6 -right-6 pointer-events-none z-20">
               <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <polygon points="20,10 90,50 30,90" fill={accentShape} opacity="0.9" />
-                <polygon points="50,20 100,50 60,80" fill={accentShape} opacity="0.6" />
+                <polygon points="20,10 90,50 30,90" fill={accentShape} opacity="0.95" />
+                <polygon points="50,20 100,50 60,80" fill={accentShape} opacity="0.65" />
               </svg>
             </div>
           </div>
@@ -230,14 +225,14 @@ export function ModernInvoiceTemplate({
       </div>
 
       {/* Bottom Pinned Section: Payment Details (Left) + Totals & Signature (Right) */}
-      <div className="mt-auto px-10 pb-8 pt-6">
+      <div className="mt-auto px-10 pb-8 pt-6 relative z-10">
         <div className="grid grid-cols-12 gap-8 items-end">
           {/* Left Column: Clean Single Payment Details */}
           <div className="col-span-7 space-y-2">
-            <h3 className="text-xs font-black text-neutral-900 tracking-tight uppercase mb-1">
+            <h3 className="text-xs font-black text-neutral-900 tracking-tight uppercase mb-1 ml-1">
               {paymentMethod}
             </h3>
-            <div className="text-xs text-neutral-800 font-semibold space-y-1 bg-neutral-50/80 p-3.5 rounded-2xl border border-neutral-100 font-mono">
+            <div className="text-xs text-neutral-900 font-semibold space-y-1 bg-neutral-50/95 p-4 rounded-2xl border border-neutral-200/80 font-mono shadow-sm backdrop-blur-sm relative z-20">
               {paymentLines.map((line, i) => (
                 <p key={i}>{line}</p>
               ))}
@@ -285,16 +280,15 @@ export function ModernInvoiceTemplate({
         </div>
       </div>
 
-      {/* Bottom Geometric Accent (Bottom-Left) */}
-      <div className="absolute bottom-12 left-0 pointer-events-none">
-        <svg width="90" height="90" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <polygon points="0,90 80,50 20,0" fill={accentShape} opacity="0.85" />
-          <polygon points="0,60 50,30 10,0" fill={accentShape} opacity="0.5" />
+      {/* Bottom Geometric Accent Shifted Left Behind Payment Card */}
+      <div className="absolute bottom-10 -left-6 pointer-events-none z-0 opacity-40">
+        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="0,90 70,50 10,0" fill={accentShape} />
         </svg>
       </div>
 
       {/* Full-Width Black Footer Bar */}
-      <div className="relative w-full bg-[#0a0a0a] text-white px-8 py-4 flex justify-between items-center text-[10px] font-medium z-10">
+      <div className="relative w-full bg-[#0a0a0a] text-white px-8 py-4 flex justify-between items-center text-[10px] font-medium z-20">
         <div className="flex items-center gap-6 text-neutral-300">
           <div className="flex items-center gap-1.5">
             <Phone className="w-3 h-3 text-white shrink-0" />
