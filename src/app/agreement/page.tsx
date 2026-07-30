@@ -5,6 +5,7 @@ import { useDocumentExport } from "../../hooks/useDocumentExport";
 import { getProfileDB, getNextDocumentNumberDB, createAgreementDB } from "../actions";
 import { formatCurrency, formatDate } from "../../lib/utils";
 import { ExportDropdown } from "../../components/common/ExportDropdown";
+import { ModernAgreementTemplate } from "../../components/agreement/ModernAgreementTemplate";
 import {
   FileCheck,
   Save,
@@ -369,151 +370,42 @@ export default function AgreementPage() {
   };
 
   const agreementPreviewContent = (
-    <div
+    <ModernAgreementTemplate
       id="agreement-pdf-preview"
-      className="w-[210mm] min-h-[297mm] bg-white text-neutral-900 p-10 mx-auto flex flex-col justify-between select-none shadow-lg rounded-xl"
-      style={{ fontFamily: "Arial, sans-serif" }}
-    >
-      <div>
-        {/* Contract Header */}
-        <div className="border-b-2 border-neutral-900 pb-6 mb-6 flex justify-between items-start">
-          <div>
-            <h1 className="text-xl font-extrabold tracking-tight text-neutral-900 uppercase">
-              FREELANCE SERVICE AGREEMENT & CONTRACT
-            </h1>
-            <p className="text-xs text-neutral-500 mt-1 font-mono">Ref #: {formData.agreementNumber} | Version: {formData.version}</p>
-          </div>
-          <div className="text-right text-xs text-neutral-600 font-mono">
-            <p>Effective Date: {formatDate(formData.date)}</p>
-          </div>
-        </div>
-
-        {/* Parties Box */}
-        <div className="grid grid-cols-2 gap-4 mb-6 p-4 bg-neutral-50 rounded-lg border border-neutral-200 text-xs">
-          <div>
-            <span className="font-bold text-neutral-400 uppercase text-[10px] block mb-1">DEVELOPER (CONTRACTOR):</span>
-            <p className="font-extrabold text-neutral-900">{formData.freelancerName}</p>
-            {formData.freelancerCompany && <p className="text-neutral-600">{formData.freelancerCompany}</p>}
-            <p className="text-neutral-500">{formData.freelancerAddress}</p>
-            <p className="text-neutral-500">{formData.freelancerEmail} | {formData.freelancerPhone}</p>
-          </div>
-          <div>
-            <span className="font-bold text-neutral-400 uppercase text-[10px] block mb-1">CLIENT:</span>
-            <p className="font-extrabold text-neutral-900">{formData.clientName || "Client Name"}</p>
-            {formData.clientCompany && <p className="text-neutral-600">{formData.clientCompany}</p>}
-            <p className="text-neutral-500">{formData.clientAddress}</p>
-            <p className="text-neutral-500">{formData.clientEmail} | {formData.clientPhone}</p>
-          </div>
-        </div>
-
-        {/* Contract Core Clauses */}
-        <div className="space-y-4 text-xs text-neutral-800 leading-relaxed mb-6">
-          <div>
-            <h3 className="font-bold text-neutral-900 uppercase text-[11px] border-b border-neutral-200 pb-1 mb-1">
-              1. PROJECT OVERVIEW & GOALS
-            </h3>
-            <p className="font-bold text-neutral-900">{formData.projectTitle}</p>
-            <p className="text-neutral-600 mt-1">{formData.projectDescription}</p>
-            <p className="text-neutral-500 italic mt-0.5">Business Goal: {formData.businessGoal}</p>
-          </div>
-
-          <div>
-            <h3 className="font-bold text-neutral-900 uppercase text-[11px] border-b border-neutral-200 pb-1 mb-1">
-              2. SCOPE OF WORK & TECH STACK
-            </h3>
-            <p className="font-semibold text-neutral-900">Included Scope:</p>
-            <p className="whitespace-pre-line text-neutral-700 font-mono mb-2">{formData.includedScope}</p>
-            <p className="font-semibold text-neutral-900">Explicit Exclusions:</p>
-            <p className="whitespace-pre-line text-neutral-500 font-mono">{formData.excludedScope}</p>
-            <p className="mt-2 text-neutral-700"><strong>Tech Stack:</strong> {formData.techStack}</p>
-          </div>
-
-          <div>
-            <h3 className="font-bold text-neutral-900 uppercase text-[11px] border-b border-neutral-200 pb-1 mb-1">
-              3. DELIVERABLES & MILESTONE TIMELINE
-            </h3>
-            <p className="whitespace-pre-line text-neutral-700 font-mono mb-3">{formData.deliverablesList}</p>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-[11px] border-collapse border border-neutral-200">
-                <thead>
-                  <tr className="bg-neutral-100 font-bold uppercase text-[9px] text-neutral-600">
-                    <th className="p-2 border border-neutral-200">Phase / Milestone</th>
-                    <th className="p-2 border border-neutral-200">Description</th>
-                    <th className="p-2 border border-neutral-200 text-right">Deadline</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {formData.milestones.map((m) => (
-                    <tr key={m.id} className="border-b border-neutral-200">
-                      <td className="p-2 border border-neutral-200 font-bold text-neutral-900">{m.phaseName}</td>
-                      <td className="p-2 border border-neutral-200 text-neutral-600">{m.description}</td>
-                      <td className="p-2 border border-neutral-200 text-right font-mono">{formatDate(m.deadline)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div>
-            <h3 className="font-bold text-neutral-900 uppercase text-[11px] border-b border-neutral-200 pb-1 mb-1">
-              4. COMPENSATION & PAYMENT MILESTONES
-            </h3>
-            <p className="mb-2">Total Agreed Fee: <strong className="text-neutral-900 text-sm font-extrabold">{formatCurrency(formData.totalAmount, "₹")}</strong> ({formData.paymentStructure})</p>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-[11px] border-collapse border border-neutral-200">
-                <thead>
-                  <tr className="bg-neutral-100 font-bold uppercase text-[9px] text-neutral-600">
-                    <th className="p-2 border border-neutral-200">Milestone Label</th>
-                    <th className="p-2 border border-neutral-200 text-right">Percentage</th>
-                    <th className="p-2 border border-neutral-200 text-right">Amount (₹)</th>
-                    <th className="p-2 border border-neutral-200">Trigger / Due</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {formData.paymentRows.map((r) => (
-                    <tr key={r.id} className="border-b border-neutral-200">
-                      <td className="p-2 border border-neutral-200 font-bold text-neutral-900">{r.label}</td>
-                      <td className="p-2 border border-neutral-200 text-right font-mono">{r.percentage}%</td>
-                      <td className="p-2 border border-neutral-200 text-right font-mono font-bold text-neutral-900">{formatCurrency(r.amount, "₹")}</td>
-                      <td className="p-2 border border-neutral-200 text-neutral-600">{r.dueDate}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <p className="text-[10px] text-neutral-500 mt-2">Late Fee: {formData.lateFee} | {formData.workStoppageClause}</p>
-          </div>
-
-          <div>
-            <h3 className="font-bold text-neutral-900 uppercase text-[11px] border-b border-neutral-200 pb-1 mb-1">
-              5. IP TRANSFER, REVISIONS & WARRANTY
-            </h3>
-            <p>• <strong>IP Ownership:</strong> {formData.ipTransferCondition}</p>
-            <p>• <strong>Revision Limit:</strong> Up to {formData.revisionLimit} free rounds included.</p>
-            <p>• <strong>Warranty & Support:</strong> {formData.freeSupportPeriod} covered post-handover.</p>
-          </div>
-        </div>
-
-        {/* Digital Signatures Box */}
-        <div className="grid grid-cols-2 gap-8 pt-6 border-t-2 border-neutral-900 text-xs mt-6">
-          <div>
-            <p className="font-bold text-neutral-900">DEVELOPER SIGNATURE:</p>
-            <p className="text-neutral-600 font-mono mt-4 border-b border-neutral-400 pb-1">{formData.freelancerSignatureName}</p>
-            <p className="text-[10px] text-neutral-400 mt-0.5">Date: {formatDate(formData.freelancerSignDate)}</p>
-          </div>
-          <div>
-            <p className="font-bold text-neutral-900">CLIENT SIGNATURE:</p>
-            <p className="text-neutral-600 font-mono mt-4 border-b border-neutral-400 pb-1">{formData.clientSignatureName}</p>
-            <p className="text-[10px] text-neutral-400 mt-0.5">Date: {formatDate(formData.clientSignDate)}</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="border-t border-neutral-200 pt-4 text-center text-[10px] text-neutral-400">
-        <p>SevenX Labs Studio • Official Freelance Contract Ref #{formData.agreementNumber}</p>
-      </div>
-    </div>
+      agreementNumber={formData.agreementNumber}
+      effectiveDate={formData.date}
+      expiryDate={formData.deadline}
+      version={formData.version}
+      providerName={formData.freelancerName}
+      providerCompany={formData.freelancerCompany}
+      providerAddress={formData.freelancerAddress}
+      providerEmail={formData.freelancerEmail}
+      providerPhone={formData.freelancerPhone}
+      clientName={formData.clientName}
+      clientCompany={formData.clientCompany}
+      clientAddress={formData.clientAddress}
+      clientEmail={formData.clientEmail}
+      clientPhone={formData.clientPhone}
+      projectTitle={formData.projectTitle}
+      projectDescription={formData.projectDescription}
+      businessGoal={formData.businessGoal}
+      techStack={formData.techStack}
+      includedScope={formData.includedScope}
+      excludedScope={formData.excludedScope}
+      deliverables={formData.deliverablesList}
+      startDate={formData.startDate}
+      deliveryDate={formData.deadline}
+      totalAmount={formData.totalAmount}
+      advanceAmount={formData.totalAmount * 0.5}
+      balanceAmount={formData.totalAmount * 0.5}
+      paymentSchedule={`${formData.paymentStructure} payment structure.`}
+      ipClause={formData.ipTransferCondition}
+      confidentialityClause={formData.confidentialityClause}
+      warrantyPeriod={formData.freeSupportPeriod}
+      providerSignatory={formData.freelancerSignatureName}
+      clientSignatory={formData.clientSignatureName}
+      currencySymbol="₹"
+    />
   );
 
   return (
