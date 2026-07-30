@@ -11,26 +11,26 @@ export async function getProfileDB(): Promise<FreelancerProfile> {
     if (!profile) {
       const defaultProf = await prisma.profile.create({
         data: {
-          name: "SevenX Labs",
-          company: "SevenX Labs Studio",
-          email: "hello@sevenxlabs.com",
-          phone: "+91 98765 43210",
-          address: "SevenX Labs Tech Park, HSR Layout, Sector 1, Bengaluru, KA 560102",
+          name: "Sahil Hode",
+          company: "SevenX Labs",
+          email: "sevenxlabs07@gmail.com",
+          phone: "8652601566",
+          address: "Thane, Mumbai, Maharashtra",
           upiId: "sevenxlabs@upi",
           bankName: "HDFC Bank",
           bankAccount: "50100234567890",
           bankIfsc: "HDFC0001234",
-          paypalEmail: "billing@sevenxlabs.com",
+          paypalEmail: "sevenxlabs07@gmail.com",
           invoicePrefix: "SXL-INV-",
           currency: "₹",
         },
       });
       return {
         name: defaultProf.name,
-        company: defaultProf.company || "",
-        email: defaultProf.email,
-        phone: defaultProf.phone || "",
-        address: defaultProf.address || "",
+        company: "SevenX Labs",
+        email: "sevenxlabs07@gmail.com",
+        phone: "8652601566",
+        address: "Thane, Mumbai, Maharashtra",
         upiId: defaultProf.upiId || "",
         bankName: defaultProf.bankName || "",
         bankAccount: defaultProf.bankAccount || "",
@@ -41,11 +41,11 @@ export async function getProfileDB(): Promise<FreelancerProfile> {
     }
 
     return {
-      name: profile.name,
-      company: profile.company || "",
-      email: profile.email,
-      phone: profile.phone || "",
-      address: profile.address || "",
+      name: profile.name || "Sahil Hode",
+      company: "SevenX Labs",
+      email: "sevenxlabs07@gmail.com",
+      phone: "8652601566",
+      address: "Thane, Mumbai, Maharashtra",
       upiId: profile.upiId || "",
       bankName: profile.bankName || "",
       bankAccount: profile.bankAccount || "",
@@ -56,16 +56,16 @@ export async function getProfileDB(): Promise<FreelancerProfile> {
   } catch (err) {
     console.error("Error fetching profile:", err);
     return {
-      name: "SevenX Labs",
-      company: "SevenX Labs Studio",
-      email: "hello@sevenxlabs.com",
-      phone: "+91 98765 43210",
-      address: "SevenX Labs Tech Park, HSR Layout, Sector 1, Bengaluru, KA 560102",
-      upiId: "sevenxlabs@upi",
-      bankName: "HDFC Bank",
-      bankAccount: "50100234567890",
-      bankIfsc: "HDFC0001234",
-      paypalEmail: "billing@sevenxlabs.com",
+      name: "Sahil Hode",
+      company: "SevenX Labs",
+      email: "sevenxlabs07@gmail.com",
+      phone: "8652601566",
+      address: "Thane, Mumbai, Maharashtra",
+      upiId: "",
+      bankName: "",
+      bankAccount: "",
+      bankIfsc: "",
+      paypalEmail: "",
       invoicePrefix: "SXL-INV-",
     };
   }

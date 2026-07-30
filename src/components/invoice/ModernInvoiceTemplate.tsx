@@ -76,7 +76,7 @@ export function ModernInvoiceTemplate({
   clientPhone = "+123-456-7890",
   items = [],
   subtotal = 0,
-  taxPercent = 15,
+  taxPercent = 0,
   taxAmount = 0,
   discountPercent = 0,
   discountAmount = 0,

@@ -58,9 +58,9 @@ export default function InvoicePage() {
     subtotal: 7020,
     discountPercent: 0,
     discountAmount: 0,
-    taxPercent: 15,
-    taxAmount: 1053,
-    total: 8073,
+    taxPercent: 0,
+    taxAmount: 0,
+    total: 7020,
     
     note: "",
     status: "sent",
