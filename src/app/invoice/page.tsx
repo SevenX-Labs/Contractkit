@@ -4,8 +4,9 @@ import React, { useState, useEffect } from "react";
 import { useDocumentExport } from "../../hooks/useDocumentExport";
 import { getProfileDB, getNextInvoiceNumberDB, createInvoiceDB } from "../actions";
 import { InvoiceData, InvoiceItem, PaymentMethod } from "../../types";
-import { formatCurrency, formatDate, calculateInvoiceTotals } from "../../lib/utils";
+import { calculateInvoiceTotals } from "../../lib/utils";
 import { ExportDropdown } from "../../components/common/ExportDropdown";
+import { ModernInvoiceTemplate } from "../../components/invoice/ModernInvoiceTemplate";
 import {
   FileText,
   Plus,
@@ -16,11 +17,6 @@ import {
   CreditCard,
   Eye,
   X,
-  Phone,
-  Globe,
-  Mail,
-  MapPin,
-  CheckSquare,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -28,42 +24,45 @@ export default function InvoicePage() {
   const { exportToPDF, exportToDOCX, exportToImage, isExporting } = useDocumentExport();
   const [isSaving, setIsSaving] = useState(false);
   const [showFloatingPreview, setShowFloatingPreview] = useState(false);
+  const [accentTheme, setAccentTheme] = useState<"lime" | "purple" | "pink" | "emerald">("lime");
 
   const [formData, setFormData] = useState<InvoiceData>({
-    invoiceNumber: "SXL-INV-001",
+    invoiceNumber: "003979",
     invoiceDate: new Date().toISOString().split("T")[0],
-    dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+    dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
     
-    senderName: "Sahil Hode",
-    senderCompany: "SevenX Labs",
-    senderAddress: "123 Tech Park, HSR Layout, Sector 1, Bengaluru",
-    senderEmail: "hello@sevenxlabs.com",
-    senderPhone: "+91 98765 43210",
+    senderName: "Cool Creative Studio",
+    senderCompany: "Cool Creative Studio",
+    senderAddress: "69 Frank Helga, Rd, New York, US",
+    senderEmail: "yourmail@gmail.com",
+    senderPhone: "+49 0000 000 0000",
     
-    clientName: "Sandira Maulia",
-    clientCompany: "Acme Fashion & Tech",
-    clientAddress: "123 Your Address St., City Name",
-    clientEmail: "sandira@acme.com",
-    clientPhone: "+123-456-7890",
+    clientName: "Sophia Smith",
+    clientCompany: "Acme Global",
+    clientAddress: "Rosenstraße 12 Berlin",
+    clientEmail: "mail@mail.com",
+    clientPhone: "+49 0000 000 0000",
     
-    paymentMethod: "UPI",
-    paymentDetails: "UPI ID: sevenxlabs@upi | Bank: HDFC Bank",
+    paymentMethod: "Payment Method.",
+    paymentDetails: "Account Name: Cool Creative Studio | Account: 0000 0000 0000 | Bank: Commerz Bank",
     
     items: [
-      { id: "item-1", description: "T-Shirt UI/UX E-Commerce Development", quantity: 1, rate: 5000, amount: 5000 },
-      { id: "item-2", description: "Jacket Platform Architecture & Integration", quantity: 2, rate: 9000, amount: 18000 },
-      { id: "item-3", description: "Sweater Catalog & Checkout Module", quantity: 1, rate: 8000, amount: 8000 },
-      { id: "item-4", description: "Shoes Automated Payment Gateway", quantity: 1, rate: 10000, amount: 10000 },
+      { id: "item-1", description: "Website Design and Development", quantity: 1, rate: 1230, amount: 1230 },
+      { id: "item-2", description: "Custom Graphic Design", quantity: 3, rate: 300, amount: 900 },
+      { id: "item-3", description: "Content Management System (CMS) Integration", quantity: 5, rate: 190, amount: 950 },
+      { id: "item-4", description: "SEO Friendly Design", quantity: 2, rate: 790, amount: 1580 },
+      { id: "item-5", description: "E-commerce Integration", quantity: 3, rate: 673.33, amount: 2020 },
+      { id: "item-6", description: "Site Maintenance and Updates", quantity: 4, rate: 85, amount: 340 },
     ],
     
-    subtotal: 41000,
+    subtotal: 7020,
     discountPercent: 0,
     discountAmount: 0,
-    taxPercent: 0,
-    taxAmount: 0,
-    total: 41000,
+    taxPercent: 15,
+    taxAmount: 1053,
+    total: 8073,
     
-    note: "Thanks For Order",
+    note: "Web Design is the Digital face of your brand shaping user perceptions and driving engagement.",
     status: "sent",
     createdAt: new Date().toISOString(),
   });
@@ -72,14 +71,14 @@ export default function InvoicePage() {
     Promise.all([getProfileDB(), getNextInvoiceNumberDB()]).then(([profile, invNum]) => {
       setFormData((prev: InvoiceData) => ({
         ...prev,
-        invoiceNumber: invNum,
-        senderName: profile.name || "Sahil Hode",
+        invoiceNumber: invNum.replace("SXL-INV-", "00"),
+        senderName: profile.name || "Cool Creative Studio",
         senderCompany: profile.company || "SevenX Labs",
-        senderAddress: profile.address || "123 Tech Park, HSR Layout, Bengaluru",
-        senderEmail: profile.email || "hello@sevenxlabs.com",
-        senderPhone: profile.phone || "+91 98765 43210",
-        paymentMethod: "UPI",
-        paymentDetails: `UPI ID: ${profile.upiId || "sevenxlabs@upi"} | Bank: ${profile.bankAccount || "Account Details"}`,
+        senderAddress: profile.address || "69 Frank Helga, Rd, New York, US",
+        senderEmail: profile.email || "yourmail@gmail.com",
+        senderPhone: profile.phone || "+49 0000 000 0000",
+        paymentMethod: "Payment Method.",
+        paymentDetails: `Account Name: ${profile.name || "Cool Creative Studio"} | Account 0000 0000 0000 | ${profile.bankName || "Commerz Bank"}`,
       }));
     });
   }, []);
@@ -187,143 +186,36 @@ export default function InvoicePage() {
   };
 
   const invoicePreviewContent = (
-    <div
+    <ModernInvoiceTemplate
       id="invoice-pdf-preview"
-      className="relative w-[210mm] min-h-[297mm] bg-white text-neutral-900 p-10 mx-auto flex flex-col justify-between select-none shadow-2xl rounded-2xl overflow-hidden"
-      style={{ fontFamily: "'Plus Jakarta Sans', Arial, sans-serif" }}
-    >
-      {/* Background Soft Peach/Orange Gradient Aura Blur Circles */}
-      <div className="absolute -top-16 -right-16 w-80 h-80 rounded-full bg-gradient-to-br from-orange-300/50 via-pink-200/40 to-transparent blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-16 -left-16 w-80 h-80 rounded-full bg-gradient-to-tr from-orange-300/40 via-pink-200/30 to-transparent blur-3xl pointer-events-none" />
-
-      <div className="relative z-10">
-        {/* Header Row */}
-        <div className="flex justify-between items-start mb-8">
-          <div>
-            <h2 className="text-sm font-extrabold text-neutral-900 tracking-wider uppercase">
-              {formData.senderCompany || formData.senderName || "SevenX Labs"}
-            </h2>
-            <p className="text-xs italic text-neutral-600 font-serif mt-1">
-              &quot;Elevate Your Style: Unleash Fashion.&quot;
-            </p>
-          </div>
-
-          <div className="text-right flex flex-col items-end">
-            <h1 className="text-5xl font-black text-neutral-900 tracking-tight leading-none mb-3">
-              Invoice
-            </h1>
-            <div className="inline-flex items-center gap-2 bg-[#1a1a1a] text-white px-4 py-1.5 rounded-full text-[10px] font-mono font-bold shadow-md">
-              <span>Invoice No: <strong>{formData.invoiceNumber}</strong></span>
-              <span className="text-neutral-500">|</span>
-              <span>Date: <strong>{formatDate(formData.invoiceDate)}</strong></span>
-            </div>
-          </div>
-        </div>
-
-        {/* Invoice To Section */}
-        <div className="mb-8">
-          <span className="text-[11px] font-bold text-neutral-400 block mb-1">Invoice To</span>
-          <div className="flex items-center gap-2 mb-1.5">
-            <div className="w-3 h-3 rounded-full bg-gradient-to-r from-orange-500 to-pink-500" />
-            <h3 className="text-2xl font-black text-neutral-900 tracking-tight">
-              {formData.clientName || "Sandira Maulia"}
-            </h3>
-          </div>
-          <div className="flex items-center gap-4 text-xs text-neutral-600 font-medium ml-5">
-            {formData.clientPhone && <span>📞 {formData.clientPhone}</span>}
-            {formData.clientAddress && <span>📍 {formData.clientAddress}</span>}
-          </div>
-        </div>
-
-        {/* Items Table */}
-        <div className="mb-8 overflow-hidden rounded-xl border border-neutral-200/80 shadow-sm">
-          <table className="w-full text-left text-xs">
-            <thead>
-              <tr className="bg-neutral-100/80 text-neutral-600 font-extrabold uppercase text-[9px] tracking-wider border-b border-neutral-200">
-                <th className="py-3 px-4">ITEM DESCRIPTION</th>
-                <th className="py-3 px-4 text-right">UNIT PRICE</th>
-                <th className="py-3 px-4 text-center">QUANTITY</th>
-                <th className="py-3 px-4 text-right">AMOUNT</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-neutral-100">
-              {formData.items.map((item: InvoiceItem, index: number) => (
-                <tr key={item.id} className={index % 2 === 0 ? "bg-white" : "bg-neutral-50/50"}>
-                  <td className="py-3.5 px-4 font-bold text-neutral-800">{item.description || "Service Item"}</td>
-                  <td className="py-3.5 px-4 text-right text-neutral-600 font-mono">{formatCurrency(item.rate, "₹")}</td>
-                  <td className="py-3.5 px-4 text-center text-neutral-700 font-bold font-mono">{String(item.quantity).padStart(2, "0")}</td>
-                  <td className="py-3.5 px-4 text-right font-extrabold text-neutral-900 font-mono">{formatCurrency(item.amount, "₹")}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Totals Section */}
-        <div className="flex justify-end mb-10 pr-2">
-          <div className="flex flex-col items-end gap-1">
-            <div className="flex items-center gap-6 text-xs text-neutral-500 font-bold uppercase tracking-wider">
-              <span>SUB TOTAL</span>
-              <span className="font-mono text-neutral-800">{formatCurrency(formData.subtotal, "₹")}</span>
-            </div>
-            <div className="flex items-center gap-6 mt-2">
-              <span className="text-xs font-black text-neutral-900 uppercase tracking-widest">TOTAL</span>
-              <span className="text-3xl font-black text-neutral-900 font-mono tracking-tight">
-                {formatCurrency(formData.total, "₹")}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer Row: Left Black Banner + Right Terms & Signatory */}
-        <div className="grid grid-cols-12 gap-4 items-center pt-4">
-          {/* Left Dark Slate Banner Block */}
-          <div className="col-span-6 bg-[#1a1a1a] text-white p-5 rounded-2xl shadow-xl flex flex-col gap-2">
-            <h4 className="text-xs font-black tracking-widest uppercase text-white border-b border-neutral-800 pb-2">
-              THANKS FOR YOUR BUSINESS
-            </h4>
-            <div className="grid grid-cols-2 gap-2 text-[10px] text-neutral-300 font-medium pt-1">
-              <div>📞 {formData.senderPhone || "+91 98765 43210"}</div>
-              <div>🌐 www.sevenxlabs.com</div>
-              <div>✉️ {formData.senderEmail || "hello@sevenxlabs.com"}</div>
-              <div>📍 {formData.senderAddress || "123 Your Address St."}</div>
-            </div>
-          </div>
-
-          {/* Right Terms & Signature Block */}
-          <div className="col-span-6 pl-4 flex flex-col justify-between h-full">
-            <div>
-              <h4 className="text-[11px] font-extrabold text-neutral-900 uppercase tracking-wider mb-2">
-                TERM & CONDITIONS
-              </h4>
-              <ul className="text-[10px] text-neutral-600 space-y-1">
-                <li className="flex items-start gap-1.5">
-                  <CheckSquare className="w-3 h-3 text-neutral-900 shrink-0 mt-0.5" />
-                  <span>Payment is required as per agreed milestone terms.</span>
-                </li>
-                <li className="flex items-start gap-1.5">
-                  <CheckSquare className="w-3 h-3 text-neutral-900 shrink-0 mt-0.5" />
-                  <span>Includes standard warranty for agreed specifications.</span>
-                </li>
-              </ul>
-            </div>
-
-            <div className="flex flex-col items-end mt-4">
-              <span className="text-xs font-bold text-neutral-900 font-mono">{formData.senderName || "Sahil Hode"}</span>
-              <span className="inline-block px-3 py-0.5 bg-[#1a1a1a] text-white text-[9px] font-black uppercase tracking-widest rounded-full mt-1">
-                MANAGER
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom Script Signature */}
-      <div className="relative z-10 pt-4 flex justify-between items-center text-xs italic font-serif text-neutral-500 border-t border-neutral-200/60 mt-6">
-        <span>{formData.note || "Thanks For Order"}</span>
-        <span className="not-italic text-[10px] font-mono text-neutral-400">SevenX Labs Studio</span>
-      </div>
-    </div>
+      invoiceNumber={formData.invoiceNumber}
+      invoiceDate={formData.invoiceDate}
+      dueDate={formData.dueDate}
+      senderName={formData.senderName}
+      senderCompany={formData.senderCompany}
+      senderAddress={formData.senderAddress}
+      senderEmail={formData.senderEmail}
+      senderPhone={formData.senderPhone}
+      clientName={formData.clientName}
+      clientCompany={formData.clientCompany}
+      clientAddress={formData.clientAddress}
+      clientEmail={formData.clientEmail}
+      clientPhone={formData.clientPhone}
+      items={formData.items}
+      subtotal={formData.subtotal}
+      taxPercent={formData.taxPercent}
+      taxAmount={formData.taxAmount}
+      discountPercent={formData.discountPercent}
+      discountAmount={formData.discountAmount}
+      total={formData.total}
+      paymentMethod={formData.paymentMethod}
+      paymentDetails={formData.paymentDetails}
+      terms={formData.note || "Web Design is the Digital face of your brand shaping user perceptions and driving engagement."}
+      signatureName={formData.clientName || "Sophia Smith"}
+      signatureTitle="Manager"
+      currencySymbol="₹"
+      accentColor={accentTheme}
+    />
   );
 
   return (
@@ -335,12 +227,31 @@ export default function InvoicePage() {
             <FileText className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-xl font-extrabold text-neutral-900 tracking-tight">Invoice Generator</h1>
-            <p className="text-xs text-neutral-600 font-medium">Fill out details on the left to see instant A4 preview on the right</p>
+            <h1 className="text-xl font-extrabold text-neutral-900 tracking-tight">Enterprise Invoice Studio</h1>
+            <p className="text-xs text-neutral-600 font-medium">Recreated matching Dribbble & Behance premium corporate template</p>
           </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          {/* Accent Color Switcher */}
+          <div className="flex items-center gap-1 bg-[#F4F0E6] p-1 rounded-full border border-[#E2DDD0] mr-2">
+            <button
+              onClick={() => setAccentTheme("lime")}
+              className={`w-6 h-6 rounded-full bg-[#c5e158] border-2 ${accentTheme === "lime" ? "border-black scale-110" : "border-transparent"}`}
+              title="Lime Green Theme"
+            />
+            <button
+              onClick={() => setAccentTheme("purple")}
+              className={`w-6 h-6 rounded-full bg-purple-400 border-2 ${accentTheme === "purple" ? "border-black scale-110" : "border-transparent"}`}
+              title="Purple Theme"
+            />
+            <button
+              onClick={() => setAccentTheme("emerald")}
+              className={`w-6 h-6 rounded-full bg-emerald-400 border-2 ${accentTheme === "emerald" ? "border-black scale-110" : "border-transparent"}`}
+              title="Emerald Theme"
+            />
+          </div>
+
           <button
             onClick={() => setShowFloatingPreview(true)}
             className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-purple-600 text-white font-bold text-xs shadow hover:bg-purple-700 transition cursor-pointer"
@@ -374,7 +285,7 @@ export default function InvoicePage() {
           {/* Invoice Meta Section */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="text-xs font-bold text-neutral-700 block mb-1.5">Invoice #</label>
+              <label className="text-xs font-bold text-neutral-700 block mb-1.5">Invoice No.</label>
               <input
                 type="text"
                 value={formData.invoiceNumber}
@@ -408,21 +319,21 @@ export default function InvoicePage() {
           <div className="flex flex-col gap-3">
             <h3 className="text-xs font-extrabold text-neutral-900 uppercase tracking-wider flex items-center gap-1.5">
               <User className="w-3.5 h-3.5 text-pink-600" />
-              <span>Your Details (Sender)</span>
+              <span>Company Branding & Studio (Sender)</span>
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <input
                 type="text"
-                placeholder="Your Name / Studio Name"
-                value={formData.senderName}
-                onChange={(e) => setFormData({ ...formData, senderName: e.target.value })}
-                className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium focus:outline-none"
+                placeholder="Company Name *"
+                value={formData.senderCompany}
+                onChange={(e) => setFormData({ ...formData, senderCompany: e.target.value })}
+                className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-bold focus:outline-none"
               />
               <input
                 type="text"
-                placeholder="Company Name (Optional)"
-                value={formData.senderCompany}
-                onChange={(e) => setFormData({ ...formData, senderCompany: e.target.value })}
+                placeholder="Sender Name"
+                value={formData.senderName}
+                onChange={(e) => setFormData({ ...formData, senderName: e.target.value })}
                 className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium focus:outline-none"
               />
               <input
@@ -441,7 +352,7 @@ export default function InvoicePage() {
               />
             </div>
             <textarea
-              placeholder="Studio Address"
+              placeholder="Address"
               rows={2}
               value={formData.senderAddress}
               onChange={(e) => setFormData({ ...formData, senderAddress: e.target.value })}
@@ -455,21 +366,21 @@ export default function InvoicePage() {
           <div className="flex flex-col gap-3">
             <h3 className="text-xs font-extrabold text-neutral-900 uppercase tracking-wider flex items-center gap-1.5">
               <Building className="w-3.5 h-3.5 text-blue-600" />
-              <span>Client Details (Billed To)</span>
+              <span>Client Details (INVOICE TO.)</span>
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <input
                 type="text"
-                placeholder="Client Name *"
+                placeholder="Client Full Name *"
                 value={formData.clientName}
                 onChange={(e) => setFormData({ ...formData, clientName: e.target.value })}
-                className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium focus:outline-none"
+                className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-bold focus:outline-none"
               />
               <input
                 type="text"
-                placeholder="Client Company"
-                value={formData.clientCompany}
-                onChange={(e) => setFormData({ ...formData, clientCompany: e.target.value })}
+                placeholder="Client Phone"
+                value={formData.clientPhone}
+                onChange={(e) => setFormData({ ...formData, clientPhone: e.target.value })}
                 className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium focus:outline-none"
               />
               <input
@@ -481,9 +392,9 @@ export default function InvoicePage() {
               />
               <input
                 type="text"
-                placeholder="Client Phone"
-                value={formData.clientPhone}
-                onChange={(e) => setFormData({ ...formData, clientPhone: e.target.value })}
+                placeholder="Client Company"
+                value={formData.clientCompany}
+                onChange={(e) => setFormData({ ...formData, clientCompany: e.target.value })}
                 className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium focus:outline-none"
               />
             </div>
@@ -558,27 +469,25 @@ export default function InvoicePage() {
 
           <hr className="border-[#D5CEBC]" />
 
-          {/* Payment Method & Calculations */}
+          {/* Payment Details & Calculations */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-3">
               <h3 className="text-xs font-bold text-neutral-700 uppercase tracking-wider flex items-center gap-1.5">
                 <CreditCard className="w-3.5 h-3.5" />
-                <span>Payment Details</span>
+                <span>Payment Details & Terms</span>
               </h3>
-              <select
-                value={formData.paymentMethod}
-                onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value as PaymentMethod })}
-                className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 focus:outline-none"
-              >
-                <option value="UPI">UPI Payment</option>
-                <option value="Bank Transfer">Bank Transfer</option>
-                <option value="PayPal">PayPal</option>
-              </select>
               <textarea
-                placeholder="Payment Details (UPI ID / Account No / IFSC)"
-                rows={3}
+                placeholder="Payment Details (Bank, Account No, UPI)"
+                rows={2}
                 value={formData.paymentDetails}
                 onChange={(e) => setFormData({ ...formData, paymentDetails: e.target.value })}
+                className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium focus:outline-none resize-none"
+              />
+              <textarea
+                placeholder="Terms & Conditions"
+                rows={2}
+                value={formData.note}
+                onChange={(e) => setFormData({ ...formData, note: e.target.value })}
                 className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium focus:outline-none resize-none"
               />
             </div>
@@ -586,22 +495,11 @@ export default function InvoicePage() {
             {/* Calculations Summary */}
             <div className="flex flex-col gap-2 bg-[#F4F0E6] p-4 rounded-2xl border border-[#E2DDD0] text-xs text-neutral-800">
               <div className="flex justify-between py-1">
-                <span>Subtotal:</span>
-                <span className="font-bold text-neutral-900">{formatCurrency(formData.subtotal, "₹")}</span>
+                <span>Sub Total:</span>
+                <span className="font-bold text-neutral-900">₹{formData.subtotal}</span>
               </div>
               <div className="flex justify-between items-center py-1">
-                <span>Discount (%):</span>
-                <input
-                  type="number"
-                  min={0}
-                  max={100}
-                  value={formData.discountPercent}
-                  onChange={(e) => handleDiscountTaxChange("discountPercent", Number(e.target.value))}
-                  className="w-16 bg-[#EBE7DC] border border-[#E2DDD0] rounded px-2 py-0.5 text-right text-xs font-bold text-neutral-900"
-                />
-              </div>
-              <div className="flex justify-between items-center py-1">
-                <span>Tax (%):</span>
+                <span>Tax Vat (%):</span>
                 <input
                   type="number"
                   min={0}
@@ -613,8 +511,8 @@ export default function InvoicePage() {
               </div>
               <hr className="border-[#D5CEBC] my-1" />
               <div className="flex justify-between py-1 text-sm font-extrabold text-neutral-900">
-                <span>Grand Total:</span>
-                <span className="text-pink-700">{formatCurrency(formData.total, "₹")}</span>
+                <span>Total :</span>
+                <span className="text-pink-700">₹{formData.total}</span>
               </div>
             </div>
           </div>
@@ -623,7 +521,7 @@ export default function InvoicePage() {
         {/* Right Live Preview Panel */}
         <div className="lg:col-span-6 flex flex-col gap-4">
           <div className="flex items-center justify-between px-2">
-            <span className="text-xs font-bold text-neutral-700 uppercase tracking-wider">Live A4 PDF Preview</span>
+            <span className="text-xs font-bold text-neutral-700 uppercase tracking-wider">Live A4 Pixel-Perfect Preview</span>
             <span className="text-[11px] text-neutral-500 font-semibold">Updates dynamically</span>
           </div>
 
