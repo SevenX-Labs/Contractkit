@@ -613,18 +613,56 @@ export async function createAgreementDB(data: AgreementData) {
   });
 }
 
-export async function createNDADB(data: NDAData) {
-  const clientName = data.receivingName || data.clientName || "Receiving Party";
-  const clientEmail = data.receivingEmail || data.disclosingEmail || "nda@client.com";
+export async function getNextCertificateNumberDB(): Promise<string> {
+  try {
+    const year = new Date().getFullYear();
+    const count = await prisma.documentSuite.count({ where: { type: "CERTIFICATE" } });
+    const num = (count + 1).toString().padStart(6, "0");
+    return `SXL-CC-${year}-${num}`;
+  } catch (err) {
+    const year = new Date().getFullYear();
+    return `SXL-CC-${year}-000101`;
+  }
+}
+
+export async function getNextReceiptNumberDB(): Promise<string> {
+  try {
+    const year = new Date().getFullYear();
+    const count = await prisma.documentSuite.count({ where: { type: "PAYMENT_RECEIPT" } });
+    const num = (count + 1).toString().padStart(6, "0");
+    return `SXL-RC-${year}-${num}`;
+  } catch (err) {
+    const year = new Date().getFullYear();
+    return `SXL-RC-${year}-000201`;
+  }
+}
+
+export async function createCertificateDB(data: any) {
+  const clientName = data.clientName || "Client";
 
   return createDocumentSuiteDB({
-    documentNumber: data.ndaNumber,
-    title: `Mutual NDA - ${clientName}`,
-    type: "NDA",
+    documentNumber: data.certificateNumber,
+    title: `Completion Certificate - ${data.projectTitle || clientName}`,
+    type: "CERTIFICATE",
     totalAmount: 0,
-    date: data.effectiveDate,
+    date: data.date,
     clientName: clientName,
-    clientEmail: clientEmail,
+    clientEmail: "certificate@client.com",
+    contentJson: JSON.stringify(data),
+  });
+}
+
+export async function createReceiptDB(data: any) {
+  const clientName = data.clientName || "Client";
+
+  return createDocumentSuiteDB({
+    documentNumber: data.receiptNumber,
+    title: `Payment Receipt #${data.receiptNumber} - ${clientName}`,
+    type: "PAYMENT_RECEIPT",
+    totalAmount: data.totalReceived || data.amountReceived || 0,
+    date: data.date,
+    clientName: clientName,
+    clientEmail: "receipt@client.com",
     contentJson: JSON.stringify(data),
   });
 }

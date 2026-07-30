@@ -11,10 +11,10 @@ import {
   FileText,
   FileCheck,
   ShieldCheck,
+  Award,
+  Receipt,
   History,
   Settings,
-  Sparkles,
-  Wand2,
   X,
 } from "lucide-react";
 import { SevenXLogo } from "../logo/SevenXLogo";
@@ -38,6 +38,8 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
     { name: "Invoices & Bills", href: "/invoice", icon: FileText },
     { name: "Agreements", href: "/agreement", icon: FileCheck },
     { name: "NDAs", href: "/nda", icon: ShieldCheck },
+    { name: "Completion Certificates", href: "/certificate", icon: Award },
+    { name: "Payment Receipts", href: "/receipt", icon: Receipt },
     { name: "History & Vault", href: "/history", icon: History },
   ];
 
