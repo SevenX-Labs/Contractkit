@@ -42,6 +42,7 @@ export interface InvoiceTemplateProps {
   total: number;
   
   paymentMethod?: string;
+  paymentDetails?: string;
   holderName?: string;
   bankName?: string;
   accountNumber?: string;
@@ -83,6 +84,7 @@ export function ModernInvoiceTemplate({
   shippingAmount = 0,
   total = 0,
   paymentMethod = "Payment Method.",
+  paymentDetails,
   holderName = "Sahil Hode (SevenX Labs)",
   bankName = "HDFC Bank",
   accountNumber = "50100234567890",
@@ -134,9 +136,9 @@ export function ModernInvoiceTemplate({
               <Image
                 src="/logo.png"
                 alt="SevenX Labs"
-                width={180}
-                height={60}
-                className="h-14 w-auto object-contain"
+                width={260}
+                height={90}
+                className="h-24 w-auto object-contain max-w-[220px]"
                 priority
               />
             </div>
@@ -225,28 +227,36 @@ export function ModernInvoiceTemplate({
       {/* Bottom Pinned Section: Payment Details (Left) + Totals & Signature (Right) */}
       <div className="mt-auto px-10 pb-8 pt-6 relative z-10">
         <div className="grid grid-cols-12 gap-8 items-end">
-          {/* Left Column: Clean Payment Details Structure (NO UPI ID) */}
+          {/* Left Column: Real-Time Dynamic Payment Details */}
           <div className="col-span-7 space-y-2">
             <h3 className="text-xs font-black text-neutral-900 tracking-tight uppercase mb-1.5 ml-1">
               {paymentMethod}
             </h3>
             <div className="text-xs text-neutral-900 font-semibold space-y-1.5 bg-neutral-50/95 p-4 rounded-2xl border border-neutral-200/80 shadow-sm backdrop-blur-sm relative z-20">
-              <div className="flex items-center gap-2">
-                <span className="text-neutral-500 font-medium min-w-[90px]">Holder Name:</span>
-                <span className="font-bold text-neutral-900">{holderName}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-neutral-500 font-medium min-w-[90px]">Bank Name:</span>
-                <span className="font-bold text-neutral-900">{bankName}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-neutral-500 font-medium min-w-[90px]">Account No:</span>
-                <span className="font-mono font-extrabold text-neutral-900 tracking-wide">{accountNumber}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-neutral-500 font-medium min-w-[90px]">IFSC Code:</span>
-                <span className="font-mono font-bold text-neutral-900">{ifscCode}</span>
-              </div>
+              {paymentDetails ? (
+                paymentDetails.split("|").map((line, i) => (
+                  <p key={i} className="text-neutral-900 font-bold font-mono">{line.trim()}</p>
+                ))
+              ) : (
+                <>
+                  <div className="flex items-center gap-2">
+                    <span className="text-neutral-500 font-medium min-w-[90px]">Holder Name:</span>
+                    <span className="font-bold text-neutral-900">{holderName}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-neutral-500 font-medium min-w-[90px]">Bank Name:</span>
+                    <span className="font-bold text-neutral-900">{bankName}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-neutral-500 font-medium min-w-[90px]">Account No:</span>
+                    <span className="font-mono font-extrabold text-neutral-900 tracking-wide">{accountNumber}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-neutral-500 font-medium min-w-[90px]">IFSC Code:</span>
+                    <span className="font-mono font-bold text-neutral-900">{ifscCode}</span>
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
@@ -298,7 +308,7 @@ export function ModernInvoiceTemplate({
         </svg>
       </div>
 
-      {/* Full-Width Black Footer Bar (Phone, Email, Address only - NO WEBSITE) */}
+      {/* Full-Width Black Footer Bar */}
       <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-4 flex justify-between items-center text-xs font-semibold z-20">
         <div className="flex items-center gap-2">
           <Phone className="w-3.5 h-3.5 text-white shrink-0" />
