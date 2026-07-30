@@ -26,6 +26,13 @@ export default function InvoicePage() {
   const [showFloatingPreview, setShowFloatingPreview] = useState(false);
   const [accentTheme, setAccentTheme] = useState<"lime" | "purple" | "pink" | "emerald">("lime");
 
+  const [bankDetails, setBankDetails] = useState({
+    holderName: "Sahil Hode (SevenX Labs)",
+    bankName: "HDFC Bank",
+    accountNumber: "50100234567890",
+    ifscCode: "HDFC0001234",
+  });
+
   const [formData, setFormData] = useState<InvoiceData>({
     invoiceNumber: "SXL-INV-2026-000001",
     invoiceDate: new Date().toISOString().split("T")[0],
@@ -69,19 +76,40 @@ export default function InvoicePage() {
 
   useEffect(() => {
     Promise.all([getProfileDB(), getNextInvoiceNumberDB()]).then(([profile, invNum]) => {
+      const hName = profile.name ? `${profile.name} (SevenX Labs)` : "Sahil Hode (SevenX Labs)";
+      const bName = profile.bankName || "HDFC Bank";
+      const accNo = profile.bankAccount || "50100234567890";
+      const ifsc = profile.bankIfsc || "HDFC0001234";
+
+      setBankDetails({
+        holderName: hName,
+        bankName: bName,
+        accountNumber: accNo,
+        ifscCode: ifsc,
+      });
+
       setFormData((prev: InvoiceData) => ({
         ...prev,
         invoiceNumber: invNum,
         senderName: profile.name || "Sahil Hode",
-        senderCompany: profile.company || "SevenX Labs",
+        senderCompany: "SevenX Labs",
         senderAddress: profile.address || "Thane, Mumbai, Maharashtra",
         senderEmail: profile.email || "sevenxlabs07@gmail.com",
         senderPhone: profile.phone || "8652601566",
         paymentMethod: "Payment Method.",
-        paymentDetails: `Holder Name: ${profile.name || "Sahil Hode (SevenX Labs)"} | Bank Name: ${profile.bankName || "HDFC Bank"} | Account No: ${profile.bankAccount || "50100234567890"} | IFSC Code: HDFC0001234`,
+        paymentDetails: `Holder Name: ${hName} | Bank Name: ${bName} | Account No: ${accNo} | IFSC Code: ${ifsc}`,
       }));
     });
   }, []);
+
+  const handleBankDetailChange = (field: keyof typeof bankDetails, value: string) => {
+    const updated = { ...bankDetails, [field]: value };
+    setBankDetails(updated);
+    setFormData((prev) => ({
+      ...prev,
+      paymentDetails: `Holder Name: ${updated.holderName} | Bank Name: ${updated.bankName} | Account No: ${updated.accountNumber} | IFSC Code: ${updated.ifscCode}`,
+    }));
+  };
 
   const updateItem = (id: string, field: keyof InvoiceItem, value: string | number) => {
     setFormData((prev: InvoiceData) => {
@@ -209,10 +237,12 @@ export default function InvoicePage() {
       discountAmount={formData.discountAmount}
       total={formData.total}
       paymentMethod={formData.paymentMethod}
-      paymentDetails={formData.paymentDetails}
-      terms={formData.note || "Web Design is the Digital face of your brand shaping user perceptions and driving engagement."}
-      signatureName={formData.clientName || "Sophia Smith"}
-      signatureTitle="Manager"
+      holderName={bankDetails.holderName}
+      bankName={bankDetails.bankName}
+      accountNumber={bankDetails.accountNumber}
+      ifscCode={bankDetails.ifscCode}
+      signatureName={formData.senderName || "Sahil Hode"}
+      signatureTitle="Founder & Manager"
       currencySymbol="₹"
       accentColor={accentTheme}
     />
@@ -283,7 +313,7 @@ export default function InvoicePage() {
         {/* Left Form Panel */}
         <div className="lg:col-span-6 flex flex-col gap-6 bg-[#EBE7DC] border border-[#E2DDD0] p-6 md:p-8 rounded-3xl shadow-sm">
           {/* Invoice Meta Section */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-bold text-neutral-700 block mb-1.5">Invoice No.</label>
               <input
@@ -299,15 +329,6 @@ export default function InvoicePage() {
                 type="date"
                 value={formData.invoiceDate}
                 onChange={(e) => setFormData({ ...formData, invoiceDate: e.target.value })}
-                className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium focus:outline-none"
-              />
-            </div>
-            <div>
-              <label className="text-xs font-bold text-neutral-700 block mb-1.5">Due Date</label>
-              <input
-                type="date"
-                value={formData.dueDate}
-                onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
                 className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium focus:outline-none"
               />
             </div>
@@ -469,49 +490,70 @@ export default function InvoicePage() {
 
           <hr className="border-[#D5CEBC]" />
 
-          {/* Payment Details & Calculations */}
+          {/* Payment Details 4 Separate Boxes & Calculations */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-3">
+            {/* 4 Separate Clean Input Boxes for Payment Details */}
+            <div className="flex flex-col gap-2.5">
               <h3 className="text-xs font-bold text-neutral-700 uppercase tracking-wider flex items-center gap-1.5">
                 <CreditCard className="w-3.5 h-3.5" />
-                <span>Payment Details & Terms</span>
+                <span>Payment Details</span>
               </h3>
-              <textarea
-                placeholder="Payment Details (Bank, Account No, UPI)"
-                rows={2}
-                value={formData.paymentDetails}
-                onChange={(e) => setFormData({ ...formData, paymentDetails: e.target.value })}
-                className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium focus:outline-none resize-none"
-              />
-              <textarea
-                placeholder="Terms & Conditions"
-                rows={2}
-                value={formData.note}
-                onChange={(e) => setFormData({ ...formData, note: e.target.value })}
-                className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium focus:outline-none resize-none"
-              />
+
+              <div>
+                <label className="text-[10px] font-bold text-neutral-500 block mb-0.5">Holder Name</label>
+                <input
+                  type="text"
+                  placeholder="Holder Name"
+                  value={bankDetails.holderName}
+                  onChange={(e) => handleBankDetailChange("holderName", e.target.value)}
+                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold text-neutral-500 block mb-0.5">Bank Name</label>
+                <input
+                  type="text"
+                  placeholder="Bank Name"
+                  value={bankDetails.bankName}
+                  onChange={(e) => handleBankDetailChange("bankName", e.target.value)}
+                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold text-neutral-500 block mb-0.5">Account Number</label>
+                <input
+                  type="text"
+                  placeholder="Account Number"
+                  value={bankDetails.accountNumber}
+                  onChange={(e) => handleBankDetailChange("accountNumber", e.target.value)}
+                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-mono font-bold text-neutral-900 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold text-neutral-500 block mb-0.5">IFSC Code</label>
+                <input
+                  type="text"
+                  placeholder="IFSC Code"
+                  value={bankDetails.ifscCode}
+                  onChange={(e) => handleBankDetailChange("ifscCode", e.target.value)}
+                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-mono text-neutral-900 focus:outline-none"
+                />
+              </div>
             </div>
 
             {/* Calculations Summary */}
-            <div className="flex flex-col gap-2 bg-[#F4F0E6] p-4 rounded-2xl border border-[#E2DDD0] text-xs text-neutral-800">
-              <div className="flex justify-between py-1">
-                <span>Sub Total:</span>
-                <span className="font-bold text-neutral-900">₹{formData.subtotal}</span>
+            <div className="flex flex-col justify-between bg-[#F4F0E6] p-4 rounded-2xl border border-[#E2DDD0] text-xs text-neutral-800">
+              <div className="space-y-2">
+                <div className="flex justify-between py-1">
+                  <span>Sub Total:</span>
+                  <span className="font-bold text-neutral-900">₹{formData.subtotal}</span>
+                </div>
               </div>
-              <div className="flex justify-between items-center py-1">
-                <span>Tax Vat (%):</span>
-                <input
-                  type="number"
-                  min={0}
-                  max={100}
-                  value={formData.taxPercent}
-                  onChange={(e) => handleDiscountTaxChange("taxPercent", Number(e.target.value))}
-                  className="w-16 bg-[#EBE7DC] border border-[#E2DDD0] rounded px-2 py-0.5 text-right text-xs font-bold text-neutral-900"
-                />
-              </div>
-              <hr className="border-[#D5CEBC] my-1" />
-              <div className="flex justify-between py-1 text-sm font-extrabold text-neutral-900">
-                <span>Total :</span>
+              <div className="flex justify-between py-2 border-t border-[#D5CEBC] text-sm font-extrabold text-neutral-900">
+                <span>Grand Total:</span>
                 <span className="text-pink-700">₹{formData.total}</span>
               </div>
             </div>
