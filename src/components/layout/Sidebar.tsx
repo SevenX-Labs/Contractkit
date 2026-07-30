@@ -29,43 +29,19 @@ interface SidebarProps {
 export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
   const pathname = usePathname();
 
-  const navSections = [
-    {
-      title: null, // Top Standalone
-      items: [{ name: "Dashboard", href: "/", icon: LayoutDashboard }],
-    },
-    {
-      title: "CLIENTS",
-      items: [
-        { name: "Clients", href: "/clients", icon: Users },
-        { name: "Quotations", href: "/quotation", icon: FileSignature },
-        { name: "Agreements", href: "/agreement", icon: FileCheck },
-        { name: "NDAs", href: "/nda", icon: ShieldCheck },
-      ],
-    },
-    {
-      title: "PROJECTS",
-      items: [{ name: "Projects", href: "/projects", icon: FolderKanban }],
-    },
-    {
-      title: "FINANCE",
-      items: [
-        { name: "Invoices", href: "/invoice", icon: FileText },
-        { name: "Receipts", href: "/receipt", icon: Receipt },
-        { name: "Completion Certificates", href: "/certificate", icon: Award },
-      ],
-    },
-    {
-      title: "DOCUMENTS",
-      items: [
-        { name: "Clause Library", href: "/clauses", icon: Scale },
-        { name: "History & Vault", href: "/history", icon: History },
-      ],
-    },
-    {
-      title: "SYSTEM",
-      items: [{ name: "Settings", href: "/settings", icon: Settings }],
-    },
+  const navItems = [
+    { name: "Dashboard", href: "/", icon: LayoutDashboard },
+    { name: "Clients", href: "/clients", icon: Users },
+    { name: "Projects", href: "/projects", icon: FolderKanban },
+    { name: "Quotations", href: "/quotation", icon: FileSignature },
+    { name: "Agreements", href: "/agreement", icon: FileCheck },
+    { name: "NDAs", href: "/nda", icon: ShieldCheck },
+    { name: "Invoices", href: "/invoice", icon: FileText },
+    { name: "Receipts", href: "/receipt", icon: Receipt },
+    { name: "Completion Certificates", href: "/certificate", icon: Award },
+    { name: "Clause Library", href: "/clauses", icon: Scale },
+    { name: "History & Vault", href: "/history", icon: History },
+    { name: "Settings", href: "/settings", icon: Settings },
   ];
 
   const navContent = (
@@ -86,42 +62,31 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
           )}
         </div>
 
-        {/* Navigation Sections */}
-        <div className="flex flex-col gap-5">
-          {navSections.map((section, idx) => (
-            <div key={idx} className="flex flex-col gap-1.5">
-              {section.title && (
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-neutral-500 px-3">
-                  {section.title}
-                </span>
-              )}
-              <nav className="flex flex-col gap-1">
-                {section.items.map((item) => {
-                  const isActive = pathname === item.href;
-                  const Icon = item.icon;
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={onMobileClose}
-                      className={`flex items-center gap-3 px-3.5 py-2.5 rounded-full text-xs font-bold transition ${
-                        isActive
-                          ? "bg-white text-neutral-900 shadow-md"
-                          : "text-neutral-400 hover:text-white hover:bg-neutral-800/60"
-                      }`}
-                    >
-                      <Icon className={`w-4 h-4 ${isActive ? "text-neutral-900" : ""}`} />
-                      <span>{item.name}</span>
-                    </Link>
-                  );
-                })}
-              </nav>
-            </div>
-          ))}
-        </div>
+        {/* Flat Sequential Navigation List */}
+        <nav className="flex flex-col gap-1">
+          {navItems.map((item) => {
+            const isActive = pathname === item.href;
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={onMobileClose}
+                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-full text-xs font-bold transition ${
+                  isActive
+                    ? "bg-white text-neutral-900 shadow-md"
+                    : "text-neutral-400 hover:text-white hover:bg-neutral-800/60"
+                }`}
+              >
+                <Icon className={`w-4 h-4 ${isActive ? "text-neutral-900" : ""}`} />
+                <span>{item.name}</span>
+              </Link>
+            );
+          })}
+        </nav>
       </div>
 
-      {/* Upgrade Pro Card / Footer */}
+      {/* SevenX Studio Footer Card */}
       <div className="pt-6 mt-6 border-t border-neutral-800">
         <div className="bg-neutral-900 border border-neutral-800 p-3 rounded-2xl flex items-center justify-between">
           <div className="flex items-center gap-2">
