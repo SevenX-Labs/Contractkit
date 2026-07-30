@@ -287,10 +287,13 @@ export function ModernReceiptTemplate({
           <div className="border-x border-b border-neutral-200 rounded-b-xl overflow-hidden">
             {items.map((item, index) => {
               const srNo = String(index + 1).padStart(2, "0");
+              const isFirst = index === 0;
               return (
                 <div
                   key={item.id || index}
-                  className={`flex justify-between items-center py-3 px-5 text-xs font-semibold ${accentBadgeBg}`}
+                  className={`flex justify-between items-center py-3 px-5 text-xs font-semibold ${
+                    isFirst ? accentBadgeBg : "bg-white text-neutral-900 border-t border-neutral-100"
+                  }`}
                 >
                   <span className="w-16 text-center font-mono">{srNo}</span>
                   <span className="flex-1 px-4">{item.description}</span>
