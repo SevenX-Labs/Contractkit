@@ -11,6 +11,9 @@ import {
   Calendar,
   IndianRupee,
   FileCheck,
+  ShieldCheck,
+  Code,
+  Lock,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -159,47 +162,47 @@ export function ModernAgreementTemplate({
       style={{ fontFamily: "'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" }}
     >
       {/* PAGE 1 */}
-      <div className="relative w-full min-h-[297mm] flex flex-col justify-between pb-10 page-break-after-always" style={{ breakAfter: "page" }}>
+      <div className="relative w-full min-h-[297mm] flex flex-col justify-between pb-0 page-break-after-always" style={{ breakAfter: "page" }}>
         <div>
           {/* Top Header Row with Black Block on Right */}
           <div className="flex justify-between items-start w-full relative">
             {/* Top Left Branding */}
-            <div className="pt-10 pl-10 pr-4 max-w-sm">
+            <div className="pt-8 pl-10 pr-4 max-w-sm">
               <div className="flex flex-col items-start gap-1 mb-2">
                 <Image
                   src="/logo.png"
                   alt="SevenX Labs"
                   width={220}
                   height={70}
-                  className="h-14 w-auto object-contain"
+                  className="h-12 w-auto object-contain"
                   priority
                 />
-                <div className="flex items-center gap-1.5 mt-1 font-extrabold tracking-tight text-xl uppercase">
+                <div className="flex items-center gap-1.5 mt-0.5 font-extrabold tracking-tight text-xl uppercase">
                   <span className="text-neutral-900 font-black">SevenX</span>
                   <span className="text-[#a6ce39] font-black">Labs</span>
                 </div>
-                <p className="text-[11px] italic font-medium text-neutral-400">Innovate. Create. Elevate.</p>
+                <p className="text-[10px] italic font-medium text-neutral-400">Innovate. Create. Elevate.</p>
               </div>
 
-              <div className="mt-6">
-                <span className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-widest block mb-0.5">
+              <div className="mt-4">
+                <span className="text-[9px] font-extrabold text-neutral-400 uppercase tracking-widest block mb-0.5">
                   AGREEMENT TO.
                 </span>
-                <h2 className="text-xl font-black text-neutral-900 tracking-tight leading-snug">
+                <h2 className="text-lg font-black text-neutral-900 tracking-tight leading-snug">
                   {projectTitle}
                 </h2>
               </div>
             </div>
 
             {/* Top Right Black Header Panel */}
-            <div className="relative w-[50%] bg-[#0a0a0a] text-white pt-10 pb-8 px-8 rounded-bl-[50px] shadow-2xl flex flex-col justify-between min-h-[200px]">
+            <div className="relative w-[50%] bg-[#0a0a0a] text-white pt-8 pb-6 px-8 rounded-bl-[50px] shadow-2xl flex flex-col justify-between min-h-[180px]">
               <div className="relative z-10">
-                <h1 className="text-5xl font-black tracking-wider uppercase text-white mb-6">
+                <h1 className="text-4xl font-black tracking-wider uppercase text-white mb-4">
                   AGREEMENT
                 </h1>
                 
                 {/* Metadata 3-Column Grid */}
-                <div className="grid grid-cols-3 gap-2 text-center text-xs font-medium border-t border-neutral-800 pt-4">
+                <div className="grid grid-cols-3 gap-2 text-center text-xs font-medium border-t border-neutral-800 pt-3">
                   <div>
                     <span className="text-[10px] text-neutral-400 block font-sans">Agreement No.</span>
                     <span className="font-mono font-bold text-white text-[11px] block mt-0.5 whitespace-nowrap">{agreementNumber}</span>
@@ -217,7 +220,7 @@ export function ModernAgreementTemplate({
 
               {/* Top Right Geometric Accent Triangles */}
               <div className="absolute -bottom-6 -right-6 pointer-events-none z-20">
-                <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="90" height="90" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <polygon points="20,10 90,50 30,90" fill={accentShape} opacity="0.95" />
                   <polygon points="50,20 100,50 60,80" fill={accentShape} opacity="0.65" />
                 </svg>
@@ -226,7 +229,7 @@ export function ModernAgreementTemplate({
           </div>
 
           {/* Intro Paragraph */}
-          <div className="px-10 mt-6 text-xs text-neutral-700 font-medium leading-relaxed">
+          <div className="px-10 mt-4 text-xs text-neutral-700 font-medium leading-relaxed">
             <p>
               This IT Development Agreement (&quot;Agreement&quot;) is made and entered into on{" "}
               <strong className="text-neutral-900 font-bold">{formatDate(effectiveDate)}</strong> (&quot;Effective Date&quot;), by and between the parties mentioned below.
@@ -234,54 +237,52 @@ export function ModernAgreementTemplate({
           </div>
 
           {/* Parties Pill Header & 2-Column Grid */}
-          <div className="px-10 mt-6" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
-            <div className="bg-[#0a0a0a] text-white rounded-full py-3 px-6 flex justify-between items-center text-xs font-black uppercase tracking-wider mb-3 shadow-md">
+          <div className="px-10 mt-4" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+            <div className="bg-[#0a0a0a] text-white rounded-full py-2.5 px-6 flex justify-between items-center text-xs font-black uppercase tracking-wider mb-2 shadow-md">
               <span className="w-1/2 text-left pl-2">1. SERVICE PROVIDER</span>
               <span className="w-1/2 text-left pl-4">2. CLIENT</span>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 bg-neutral-50/80 p-5 rounded-2xl border border-neutral-200/80 text-xs">
+            <div className="grid grid-cols-2 gap-4 bg-neutral-50/80 p-4 rounded-2xl border border-neutral-200/80 text-xs">
               {/* Service Provider */}
-              <div className="space-y-1.5 pr-3 border-r border-neutral-200">
-                <h3 className="text-sm font-black text-neutral-900">{providerCompany || providerName}</h3>
-                <p className="text-neutral-600 font-medium text-[11px]">{providerAddress}</p>
-                <div className="pt-1 space-y-1 text-[11px]">
+              <div className="space-y-1 pr-3 border-r border-neutral-200">
+                <h3 className="text-xs font-black text-neutral-900">{providerCompany || providerName}</h3>
+                <p className="text-neutral-600 font-medium text-[10px]">{providerAddress}</p>
+                <div className="pt-0.5 space-y-0.5 text-[10px]">
                   <p><strong className="text-neutral-500 font-medium">Phone:</strong> {providerPhone}</p>
                   <p><strong className="text-neutral-500 font-medium">Email:</strong> {providerEmail}</p>
-                  <p><strong className="text-neutral-500 font-medium">GST No:</strong> {providerGst}</p>
-                  <p><strong className="text-neutral-500 font-medium">PAN No:</strong> {providerPan}</p>
+                  <p><strong className="text-neutral-500 font-medium">GST / PAN:</strong> {providerGst} / {providerPan}</p>
                 </div>
               </div>
 
               {/* Client */}
-              <div className="space-y-1.5 pl-3">
-                <h3 className="text-sm font-black text-neutral-900">{clientName}</h3>
-                {clientCompany && <p className="text-neutral-700 font-bold text-[11px]">{clientCompany}</p>}
-                <p className="text-neutral-600 font-medium text-[11px]">{clientAddress}</p>
-                <div className="pt-1 space-y-1 text-[11px]">
+              <div className="space-y-1 pl-3">
+                <h3 className="text-xs font-black text-neutral-900">{clientName}</h3>
+                {clientCompany && <p className="text-neutral-700 font-bold text-[10px]">{clientCompany}</p>}
+                <p className="text-neutral-600 font-medium text-[10px]">{clientAddress}</p>
+                <div className="pt-0.5 space-y-0.5 text-[10px]">
                   <p><strong className="text-neutral-500 font-medium">Phone:</strong> {clientPhone}</p>
                   <p><strong className="text-neutral-500 font-medium">Email:</strong> {clientEmail}</p>
-                  <p><strong className="text-neutral-500 font-medium">GST No:</strong> {clientGst}</p>
-                  <p><strong className="text-neutral-500 font-medium">PAN No:</strong> {clientPan}</p>
+                  <p><strong className="text-neutral-500 font-medium">GST / PAN:</strong> {clientGst} / {clientPan}</p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Section 3 & 4 on Page 1 */}
-          <div className="px-10 mt-6 space-y-4">
+          {/* Sections 3, 4, 5, 6 on Page 1 (Fills Page 1 Completely!) */}
+          <div className="px-10 mt-4 space-y-3">
             {/* Section 3: Project Overview */}
-            <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
-              <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
-                <Briefcase className="w-5 h-5" />
+            <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+              <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
+                <Briefcase className="w-4 h-4" />
               </div>
-              <div className="flex-1 grid grid-cols-12 gap-4">
+              <div className="flex-1 grid grid-cols-12 gap-3">
                 <div className="col-span-5">
-                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">3. PROJECT OVERVIEW</h4>
-                  <p className="text-[11px] text-neutral-600 mt-1 leading-relaxed">{projectDescription}</p>
+                  <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">3. PROJECT OVERVIEW</h4>
+                  <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">{projectDescription}</p>
                 </div>
-                <div className="col-span-7 bg-neutral-50 p-3 rounded-xl border border-neutral-100 text-[11px] space-y-1 font-mono">
-                  <p><strong className="text-neutral-500">Project Type:</strong> {projectType}</p>
+                <div className="col-span-7 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-[10px] space-y-0.5 font-mono">
+                  <p><strong className="text-neutral-500">Type:</strong> {projectType}</p>
                   <p><strong className="text-neutral-500">Tech Stack:</strong> {techStack}</p>
                   <p><strong className="text-neutral-500">Platforms:</strong> {platforms}</p>
                 </div>
@@ -289,17 +290,53 @@ export function ModernAgreementTemplate({
             </div>
 
             {/* Section 4: Scope of Work */}
-            <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
-              <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
-                <Target className="w-5 h-5" />
+            <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+              <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
+                <Target className="w-4 h-4" />
               </div>
-              <div className="flex-1 grid grid-cols-12 gap-4">
+              <div className="flex-1 grid grid-cols-12 gap-3">
                 <div className="col-span-5">
-                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">4. SCOPE OF WORK</h4>
-                  <p className="text-[11px] text-neutral-600 mt-1 leading-relaxed">Full lifecycle engineering & code delivery as specified.</p>
+                  <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">4. SCOPE OF WORK</h4>
+                  <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">Full lifecycle engineering & code delivery as specified.</p>
                 </div>
-                <div className="col-span-7 bg-neutral-50 p-3 rounded-xl border border-neutral-100 text-[11px] whitespace-pre-line font-mono text-neutral-800">
+                <div className="col-span-7 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-[10px] whitespace-pre-line font-mono text-neutral-800">
                   {includedScope}
+                </div>
+              </div>
+            </div>
+
+            {/* Section 5: Timeline & Milestones */}
+            <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+              <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
+                <Calendar className="w-4 h-4" />
+              </div>
+              <div className="flex-1 grid grid-cols-12 gap-3">
+                <div className="col-span-5">
+                  <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">5. TIMELINE & MILESTONES</h4>
+                  <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">Execution according to agreed milestone deadlines.</p>
+                </div>
+                <div className="col-span-7 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-[10px] space-y-0.5 font-mono">
+                  <p><strong className="text-neutral-500">Start Date:</strong> {formatDate(startDate)}</p>
+                  <p><strong className="text-neutral-500">Estimated Completion:</strong> {formatDate(deliveryDate)}</p>
+                  <p><strong className="text-neutral-500">Duration:</strong> {durationDays} Days</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Section 6: Payment Terms */}
+            <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+              <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
+                <IndianRupee className="w-4 h-4" />
+              </div>
+              <div className="flex-1 grid grid-cols-12 gap-3">
+                <div className="col-span-5">
+                  <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">6. PAYMENT TERMS</h4>
+                  <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">{paymentSchedule}</p>
+                </div>
+                <div className="col-span-7 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-[10px] space-y-0.5 font-mono">
+                  <p><strong className="text-neutral-500">Total Project Fee:</strong> <span className="font-extrabold text-neutral-900">{formatCurrency(totalAmount, currencySymbol)}</span></p>
+                  <p><strong className="text-neutral-500">Advance Deposit (50%):</strong> {formatCurrency(advanceAmount, currencySymbol)}</p>
+                  <p><strong className="text-neutral-500">Balance Handover (50%):</strong> {formatCurrency(balanceAmount, currencySymbol)}</p>
                 </div>
               </div>
             </div>
@@ -308,12 +345,12 @@ export function ModernAgreementTemplate({
 
         {/* Page 1 Full-Width Black Footer Bar */}
         <div>
-          <div className="px-10 py-1.5 flex justify-between items-center text-[10px] text-neutral-400 font-mono">
+          <div className="px-10 py-1 flex justify-between items-center text-[10px] text-neutral-400 font-mono">
             <span>SevenX Labs • Ref #{agreementNumber}</span>
             <span>Page 1 of 2</span>
           </div>
 
-          <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 flex justify-between items-center text-xs font-semibold z-20">
+          <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3 flex justify-between items-center text-xs font-semibold z-20">
             <div className="flex items-center gap-2">
               <Phone className="w-3.5 h-3.5 text-white shrink-0" />
               <span>{providerPhone || "8652601566"}</span>
@@ -335,63 +372,66 @@ export function ModernAgreementTemplate({
       {/* PAGE 2 */}
       <div className="relative w-full min-h-[297mm] flex flex-col justify-between pt-10 pb-0">
         <div className="px-10 space-y-4">
-          {/* Section 5: Timeline & Milestones */}
-          <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
-            <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
-              <Calendar className="w-5 h-5" />
-            </div>
-            <div className="flex-1 grid grid-cols-12 gap-4">
-              <div className="col-span-5">
-                <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">5. TIMELINE & MILESTONES</h4>
-                <p className="text-[11px] text-neutral-600 mt-1 leading-relaxed">Execution according to agreed milestone deadlines.</p>
-              </div>
-              <div className="col-span-7 bg-neutral-50 p-3 rounded-xl border border-neutral-100 text-[11px] space-y-1 font-mono">
-                <p><strong className="text-neutral-500">Project Start Date:</strong> {formatDate(startDate)}</p>
-                <p><strong className="text-neutral-500">Estimated Delivery:</strong> {formatDate(deliveryDate)}</p>
-                <p><strong className="text-neutral-500">Total Duration:</strong> {durationDays} Days</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Section 6: Payment Terms */}
-          <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
-            <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
-              <IndianRupee className="w-5 h-5" />
-            </div>
-            <div className="flex-1 grid grid-cols-12 gap-4">
-              <div className="col-span-5">
-                <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">6. PAYMENT TERMS</h4>
-                <p className="text-[11px] text-neutral-600 mt-1 leading-relaxed">{paymentSchedule}</p>
-              </div>
-              <div className="col-span-7 bg-neutral-50 p-3 rounded-xl border border-neutral-100 text-[11px] space-y-1 font-mono">
-                <p><strong className="text-neutral-500">Total Project Fee:</strong> <span className="font-extrabold text-neutral-900">{formatCurrency(totalAmount, currencySymbol)}</span></p>
-                <p><strong className="text-neutral-500">Advance Deposit (50%):</strong> {formatCurrency(advanceAmount, currencySymbol)}</p>
-                <p><strong className="text-neutral-500">Balance Handover (50%):</strong> {formatCurrency(balanceAmount, currencySymbol)}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Section 7: Intellectual Property & Terms */}
+          {/* Section 7: Intellectual Property Rights */}
           <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
             <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
               <FileCheck className="w-5 h-5" />
             </div>
             <div className="flex-1">
-              <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">7. INTELLECTUAL PROPERTY & GUARANTEE</h4>
+              <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">7. INTELLECTUAL PROPERTY & OWNERSHIP</h4>
               <p className="text-[11px] text-neutral-700 mt-1 leading-relaxed">{ipClause}</p>
             </div>
           </div>
 
-          {/* Section 8: Digital Signatures */}
-          <div className="pt-8 border-t border-neutral-200 grid grid-cols-2 gap-8 text-xs" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+          {/* Section 8: Deliverables & Code Handover */}
+          <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+            <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
+              <Code className="w-5 h-5" />
+            </div>
+            <div className="flex-1">
+              <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">8. DELIVERABLES & CODE HANDOVER</h4>
+              <p className="text-[11px] text-neutral-700 mt-1 leading-relaxed whitespace-pre-line">{deliverables}</p>
+            </div>
+          </div>
+
+          {/* Section 9: Confidentiality & Non-Disclosure */}
+          <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+            <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
+              <Lock className="w-5 h-5" />
+            </div>
+            <div className="flex-1">
+              <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">9. CONFIDENTIALITY & DATA SECURITY</h4>
+              <p className="text-[11px] text-neutral-700 mt-1 leading-relaxed">{confidentialityClause}</p>
+            </div>
+          </div>
+
+          {/* Section 10: Warranty, Support & Revision Policy */}
+          <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+            <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <div className="flex-1">
+              <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">10. WARRANTY, SUPPORT & REVISION POLICY</h4>
+              <p className="text-[11px] text-neutral-700 mt-1 leading-relaxed">
+                • <strong>Warranty Support:</strong> {warrantyPeriod}
+                <br />
+                • <strong>Revision Policy:</strong> {revisionPolicy}
+                <br />
+                • <strong>Termination & Refunds:</strong> {cancellationPolicy}
+              </p>
+            </div>
+          </div>
+
+          {/* Section 11: Digital Signatures Block */}
+          <div className="pt-10 border-t border-neutral-200 grid grid-cols-2 gap-8 text-xs" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
             <div>
               <p className="font-extrabold text-neutral-900 uppercase text-[10px] tracking-wider mb-2">DEVELOPER SIGNATURE:</p>
-              <p className="font-mono text-neutral-800 border-b border-neutral-300 pb-1">{providerSignatory}</p>
+              <p className="font-mono text-neutral-800 border-b border-neutral-300 pb-1 font-bold">{providerSignatory}</p>
               <p className="text-[10px] text-neutral-400 mt-1">Date: {formatDate(effectiveDate)}</p>
             </div>
             <div>
               <p className="font-extrabold text-neutral-900 uppercase text-[10px] tracking-wider mb-2">CLIENT SIGNATURE:</p>
-              <p className="font-mono text-neutral-800 border-b border-neutral-300 pb-1">{clientSignatory}</p>
+              <p className="font-mono text-neutral-800 border-b border-neutral-300 pb-1 font-bold">{clientSignatory}</p>
               <p className="text-[10px] text-neutral-400 mt-1">Date: {formatDate(effectiveDate)}</p>
             </div>
           </div>
@@ -399,13 +439,13 @@ export function ModernAgreementTemplate({
 
         {/* Bottom Pinned Footer & Geometric Accent on Page 2 */}
         <div>
-          <div className="px-10 py-2 flex justify-between items-center text-[10px] text-neutral-400 font-mono">
+          <div className="px-10 py-1 flex justify-between items-center text-[10px] text-neutral-400 font-mono">
             <span>SevenX Labs • Ref #{agreementNumber}</span>
             <span>Page 2 of 2</span>
           </div>
 
           {/* Full-Width Black Footer Bar */}
-          <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-4 flex justify-between items-center text-xs font-semibold z-20">
+          <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3 flex justify-between items-center text-xs font-semibold z-20">
             <div className="flex items-center gap-2">
               <Phone className="w-3.5 h-3.5 text-white shrink-0" />
               <span>{providerPhone || "8652601566"}</span>
