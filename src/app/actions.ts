@@ -551,7 +551,8 @@ export async function getNextInvoiceNumberDB(): Promise<string> {
     const num = (count + 1).toString().padStart(6, "0");
     return `SXL-INV-${year}-${num}`;
   } catch (err) {
-    return "SXL-INV-2026-000001";
+    const year = new Date().getFullYear();
+    return `SXL-INV-${year}-000001`;
   }
 }
 

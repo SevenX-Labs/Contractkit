@@ -119,8 +119,13 @@ export default function AgreementPage() {
     clientSignDate: new Date().toISOString().split("T")[0],
   });
 
+  const [agrSeq, setAgrSeq] = useState("000001");
+
   useEffect(() => {
     Promise.all([getProfileDB(), getNextDocumentNumberDB("AGREEMENT")]).then(([profile, num]) => {
+      const seq = num.split("-").pop() || "000001";
+      setAgrSeq(seq);
+
       setFormData((prev) => ({
         ...prev,
         agreementNumber: num,
@@ -363,12 +368,26 @@ export default function AgreementPage() {
                     <div className="grid grid-cols-3 gap-3">
                       <div>
                         <label className="text-[11px] font-bold text-neutral-700 block mb-1">Agreement #</label>
-                        <input
-                          type="text"
-                          value={formData.agreementNumber}
-                          onChange={(e) => setFormData({ ...formData, agreementNumber: e.target.value })}
-                          className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-mono font-bold text-neutral-900"
-                        />
+                        <div className="flex items-center bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl overflow-hidden shadow-xs">
+                          <span className="px-2.5 py-2 bg-[#DFD9C9] text-[11px] font-mono font-extrabold text-neutral-800 border-r border-[#E2DDD0] select-none whitespace-nowrap">
+                            SXL-AGR-{new Date().getFullYear()}-
+                          </span>
+                          <input
+                            type="text"
+                            value={agrSeq}
+                            onChange={(e) => {
+                              const val = e.target.value.replace(/[^0-9]/g, "");
+                              setAgrSeq(val);
+                              const year = new Date().getFullYear();
+                              setFormData((prev) => ({
+                                ...prev,
+                                agreementNumber: `SXL-AGR-${year}-${val.padStart(6, "0")}`,
+                              }));
+                            }}
+                            placeholder="000001"
+                            className="flex-1 bg-transparent px-2 py-2 text-xs font-mono font-bold text-neutral-900 focus:outline-none"
+                          />
+                        </div>
                       </div>
                       <div>
                         <label className="text-[11px] font-bold text-neutral-700 block mb-1">Date</label>

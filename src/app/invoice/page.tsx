@@ -34,8 +34,10 @@ export default function InvoicePage() {
     ifscCode: "HDFC0001234",
   });
 
+  const [invSeq, setInvSeq] = useState("000001");
+
   const [formData, setFormData] = useState<InvoiceData>({
-    invoiceNumber: "SXL-INV-2026-000001",
+    invoiceNumber: `SXL-INV-${new Date().getFullYear()}-000001`,
     invoiceDate: new Date().toISOString().split("T")[0],
     dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
     
@@ -81,6 +83,9 @@ export default function InvoicePage() {
       const bName = profile.bankName || "HDFC Bank";
       const accNo = profile.bankAccount || "50100234567890";
       const ifsc = profile.bankIfsc || "HDFC0001234";
+
+      const seq = invNum.split("-").pop() || "000001";
+      setInvSeq(seq);
 
       setBankDetails({
         holderName: hName,
@@ -304,12 +309,26 @@ export default function InvoicePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-bold text-neutral-700 block mb-1.5">Invoice No.</label>
-              <input
-                type="text"
-                value={formData.invoiceNumber}
-                onChange={(e) => setFormData({ ...formData, invoiceNumber: e.target.value })}
-                className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-mono font-bold focus:outline-none"
-              />
+              <div className="flex items-center bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl overflow-hidden shadow-xs">
+                <span className="px-3 py-2 bg-[#DFD9C9] text-xs font-mono font-extrabold text-neutral-800 border-r border-[#E2DDD0] select-none whitespace-nowrap">
+                  SXL-INV-{new Date().getFullYear()}-
+                </span>
+                <input
+                  type="text"
+                  value={invSeq}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/[^0-9]/g, "");
+                    setInvSeq(val);
+                    const year = new Date().getFullYear();
+                    setFormData((prev) => ({
+                      ...prev,
+                      invoiceNumber: `SXL-INV-${year}-${val.padStart(6, "0")}`,
+                    }));
+                  }}
+                  placeholder="000001"
+                  className="flex-1 bg-transparent px-3 py-2 text-xs font-mono font-bold text-neutral-900 focus:outline-none"
+                />
+              </div>
             </div>
             <div>
               <label className="text-xs font-bold text-neutral-700 block mb-1.5">Date</label>
