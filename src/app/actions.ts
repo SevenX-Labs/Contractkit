@@ -585,14 +585,17 @@ export async function createAgreementDB(data: AgreementData) {
 }
 
 export async function createNDADB(data: NDAData) {
+  const clientName = data.receivingName || data.clientName || "Receiving Party";
+  const clientEmail = data.receivingEmail || data.disclosingEmail || "nda@client.com";
+
   return createDocumentSuiteDB({
     documentNumber: data.ndaNumber,
-    title: `Mutual NDA - ${data.clientName}`,
+    title: `Mutual NDA - ${clientName}`,
     type: "NDA",
     totalAmount: 0,
     date: data.effectiveDate,
-    clientName: data.clientName,
-    clientEmail: "nda@client.com",
+    clientName: clientName,
+    clientEmail: clientEmail,
     contentJson: JSON.stringify(data),
   });
 }

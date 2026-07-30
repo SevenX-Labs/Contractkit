@@ -102,29 +102,54 @@ export interface NDAData {
   id?: string;
   ndaNumber: string;
   effectiveDate: string;
+  version?: string;
   
-  freelancerName: string;
-  freelancerCompany: string;
+  // Disclosing Party Details
+  disclosingName?: string;
+  disclosingCompany?: string;
+  disclosingAddress?: string;
+  disclosingEmail?: string;
+  disclosingPhone?: string;
+  disclosingWebsite?: string;
   
-  clientName: string;
-  clientCompany: string;
+  // Receiving Party Details
+  receivingName?: string;
+  receivingCompany?: string;
+  receivingAddress?: string;
+  receivingEmail?: string;
+  receivingPhone?: string;
+  receivingWebsite?: string;
   
-  projectContext: string;
-  confidentialInfoDefinition: string;
-  obligations: string;
-  duration: "1 Year" | "2 Years" | "3 Years" | "5 Years";
+  // Legacy / Alternate party naming fallback
+  freelancerName?: string;
+  freelancerCompany?: string;
+  clientName?: string;
+  clientCompany?: string;
   
-  returnDestroyClause: string;
-  breachPenalty: string;
-  additionalNotes: string;
+  // 18-Section Clauses
+  purpose?: string;
+  confidentialItems?: string;
+  obligations?: string;
+  exclusions?: string;
+  permittedDisclosure?: string;
+  termDuration?: string;
+  returnTerm?: string;
+  ipClause?: string;
+  dataProtection?: string;
+  limitationOfLiability?: string;
+  breachRemedies?: string;
+  terminationClause?: string;
+  entireAgreement?: string;
+  additionalTerms?: string;
   
-  freelancerSignature: string;
-  freelancerSignDate: string;
-  clientSignature: string;
-  clientSignDate: string;
+  // Signatures
+  disclosingSignatory?: string;
+  disclosingDesignation?: string;
+  receivingSignatory?: string;
+  receivingDesignation?: string;
   
-  status: DocumentStatus;
-  createdAt: string;
+  status?: DocumentStatus;
+  createdAt?: string;
 }
 
 export interface SavedDocument {
