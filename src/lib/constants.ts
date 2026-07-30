@@ -117,7 +117,7 @@ export const DEFAULT_NDA_DATA: NDAData = {
   
   returnDestroyClause: "Upon written request or termination of project discussions, all documents, prototypes, and electronic data containing Confidential Information must be returned or certified destroyed within 7 business days.",
   breachPenalty: "Any unauthorized disclosure or breach of confidentiality will entitle the Disclosing Party to seek immediate injunctive relief and monetary damages equal to actual proven financial loss.",
-  additionalNotes: "Governed by the laws of India and jurisdiction of Bengaluru.",
+  additionalTerms: "Governed by the laws of India and jurisdiction of Bengaluru.",
   
   freelancerSignature: DEFAULT_PROFILE.name,
   freelancerSignDate: new Date().toISOString().split("T")[0],

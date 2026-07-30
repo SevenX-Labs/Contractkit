@@ -119,6 +119,7 @@ export interface AgreementData {
   agreementNumber: string;
   date: string;
   version?: string;
+  includedScope?: string;
   excludedScope?: string;
   clientPhone?: string;
   clientAddress?: string;
@@ -133,6 +134,7 @@ export interface AgreementData {
   
   projectTitle: string;
   projectDescription: string;
+  techStack?: string;
   deliverables: string;
   
   startDate: string;
@@ -196,6 +198,7 @@ export interface NDAData {
   duration?: string;
   returnTerm?: string;
   returnDestroyClause?: string;
+  breachPenalty?: string;
   ipClause?: string;
   dataProtection?: string;
   limitationOfLiability?: string;

@@ -48,6 +48,10 @@ import {
   CheckCircle,
   AlertCircle,
   IndianRupee,
+  Calendar,
+  CheckSquare,
+  Hourglass,
+  TrendingUp,
 } from "lucide-react";
 import { formatCurrency, formatDate } from "../../lib/utils";
 import { useDocumentExport } from "../../hooks/useDocumentExport";
@@ -318,7 +322,7 @@ export default function ProjectsPage() {
   };
 
   // Open Milestone Modal for Creation
-  const handleOpenAddMilestone = (projectId: string, existingCount: number) => {
+  const handleOpenAddMilestone = (projectId: string) => {
     setMilestoneModalState({
       isOpen: true,
       mode: "CREATE",
@@ -657,7 +661,7 @@ export default function ProjectsPage() {
         />
       </div>
 
-      {/* Projects List (Compact, High-Density Cards) */}
+      {/* Projects Ultra-Compact High-Density List */}
       {isLoading ? (
         <div className="py-16 text-center text-xs text-neutral-500 font-medium">Loading projects & directory...</div>
       ) : filteredProjects.length === 0 ? (
@@ -694,13 +698,13 @@ export default function ProjectsPage() {
               totalMilestones > 0 ? Math.round((completedMilestones / totalMilestones) * 100) : 0;
 
             // Financial Summary calculated from Payment Status
-            const totalMilestoneAmount = p.payments.reduce((acc, pm) => acc + pm.amount, 0);
+            const totalMilestoneAmount = p.payments.reduce((acc, pm) => acc + pm.amount, 0) || p.totalValue || p.budget || 0;
             const totalPaidAmount = p.payments
               .filter((pm) => (pm.status || "").toUpperCase() === "PAID")
               .reduce((acc, pm) => acc + pm.amount, 0);
             const totalPartiallyPaidAmount = p.payments
               .filter((pm) => (pm.status || "").toUpperCase() === "PARTIALLY_PAID" || (pm.status || "").toUpperCase() === "PARTIALLY PAID")
-              .reduce((acc, pm) => acc + pm.amount * 0.5, 0); // 50% calculated for partial
+              .reduce((acc, pm) => acc + pm.amount * 0.5, 0);
 
             const effectivePaidAmount = totalPaidAmount + totalPartiallyPaidAmount;
             const totalPendingAmount = Math.max(0, totalMilestoneAmount - effectivePaidAmount);
@@ -722,9 +726,9 @@ export default function ProjectsPage() {
                 key={p.id}
                 className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-2xl p-4 shadow-sm hover:border-[#D5CEBC] transition flex flex-col gap-3"
               >
-                {/* Single Compact Row: Title, Client, Work Progress & Actions */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-                  {/* Left: Project Title + Badges + Client Name */}
+                {/* 1. SINGLE COMPACT ROW: Title, Client, Scope + Stats + Actions */}
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                  {/* Left: Project Title, Badges, Client & 1-Line Scope */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="text-sm font-extrabold text-neutral-900 tracking-tight truncate">
@@ -740,34 +744,27 @@ export default function ProjectsPage() {
 
                     <div className="flex items-center gap-2 mt-1 text-xs text-neutral-600 font-medium">
                       {p.client && (
-                        <span className="flex items-center gap-1">
-                          <Building className="w-3 h-3 text-neutral-500 shrink-0" />
+                        <span className="flex items-center gap-1 shrink-0">
+                          <Building className="w-3 h-3 text-neutral-500" />
                           <span>Client: <strong className="text-neutral-900">{p.client.name}</strong></span>
-                          {p.client.company && <span className="text-neutral-400">({p.client.company})</span>}
+                        </span>
+                      )}
+                      {p.description && (
+                        <span className="text-[11px] text-neutral-600 truncate border-l border-[#D5CEBC] pl-2 font-normal">
+                          <strong className="text-neutral-800 font-semibold">Scope:</strong> {p.description}
                         </span>
                       )}
                     </div>
-
-                    {/* Scope / Description (Compact Line) */}
-                    {p.description && (
-                      <p className="text-[11px] text-neutral-600 font-medium leading-tight mt-1 line-clamp-1">
-                        <strong className="text-neutral-800 font-bold">Project Summary:</strong> {p.description}
-                      </p>
-                    )}
                   </div>
 
-                  {/* Right: Work Progress Bar + Stats + Financial Summary + Action Buttons */}
-                  <div className="flex items-center gap-4 shrink-0">
-                    {/* Work Progress Calculation */}
+                  {/* Right: Inline Progress, Financials & Actions */}
+                  <div className="flex items-center gap-4 shrink-0 self-end lg:self-center">
+                    {/* Work Progress Pill */}
                     <div className="flex flex-col text-right">
                       <span className="text-[10px] text-neutral-500 font-bold">
-                        Project Progress: <strong className="text-neutral-900">{workProgressPct}%</strong> ({completedMilestones}/{totalMilestones} Milestones)
+                        Progress: <strong className="text-neutral-900">{workProgressPct}%</strong> ({completedMilestones}/{totalMilestones} Done)
                       </span>
-                      <span className="text-xs font-extrabold text-neutral-900 font-mono">
-                        Paid: {formatCurrency(effectivePaidAmount, "₹")} / Total: {formatCurrency(totalMilestoneAmount || p.totalValue || p.budget, "₹")}
-                      </span>
-                      {/* Progress Bar from Work Status */}
-                      <div className="w-36 bg-[#DFD9C9] h-2 rounded-full overflow-hidden mt-1 self-end border border-[#D5CEBC]">
+                      <div className="w-28 bg-[#DFD9C9] h-1.5 rounded-full overflow-hidden mt-1 self-end border border-[#D5CEBC]">
                         <div
                           className="bg-emerald-600 h-full rounded-full transition-all duration-300"
                           style={{ width: `${workProgressPct}%` }}
@@ -775,12 +772,22 @@ export default function ProjectsPage() {
                       </div>
                     </div>
 
-                    {/* Actions */}
+                    {/* Financial Stats */}
+                    <div className="flex flex-col text-right font-mono">
+                      <span className="text-[10px] text-neutral-500 font-bold">
+                        Paid: <strong className="text-emerald-700 font-sans">{formatCurrency(effectivePaidAmount, "₹")}</strong> / {formatCurrency(totalMilestoneAmount, "₹")}
+                      </span>
+                      <span className="text-[10px] text-pink-700 font-bold">
+                        Pending: {formatCurrency(totalPendingAmount, "₹")}
+                      </span>
+                    </div>
+
+                    {/* Action Buttons */}
                     <div className="flex items-center gap-1.5 border-l border-[#D5CEBC] pl-3">
                       <button
                         onClick={() => handleStartEditProject(p)}
                         className="p-1.5 rounded-full bg-blue-100 text-blue-900 hover:bg-blue-200 transition cursor-pointer"
-                        title="Edit Project Name & Scope"
+                        title="Edit Project"
                       >
                         <Pencil className="w-3.5 h-3.5" />
                       </button>
@@ -796,14 +803,11 @@ export default function ProjectsPage() {
                   </div>
                 </div>
 
-                {/* Bottom Toggle Bar: Documents Suite & Milestones Buttons */}
+                {/* 2. TOGGLE ACTION BAR (Documents Suite & Milestones Breakdown) */}
                 <div className="flex items-center justify-between pt-2 border-t border-[#D5CEBC] text-[11px]">
-                  <div className="flex items-center gap-3">
-                    {/* Documents Toggle */}
+                  <div className="flex items-center gap-2.5">
                     <button
-                      onClick={() =>
-                        setExpandedDocsProjectId(isDocsExpanded ? null : p.id)
-                      }
+                      onClick={() => setExpandedDocsProjectId(isDocsExpanded ? null : p.id)}
                       className={`flex items-center gap-1 px-3 py-1 rounded-full font-bold transition cursor-pointer ${
                         isDocsExpanded
                           ? "bg-[#121212] text-white"
@@ -811,39 +815,30 @@ export default function ProjectsPage() {
                       }`}
                     >
                       <Layers className="w-3 h-3 text-[#a6ce39]" />
-                      <span>Documents Suite ({p.documents?.length || 0})</span>
+                      <span>Documents ({p.documents?.length || 0})</span>
                       {isDocsExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                     </button>
 
-                    {/* Milestones Toggle */}
                     <button
-                      onClick={() =>
-                        setExpandedMilestonesProjectId(isMilestonesExpanded ? null : p.id)
-                      }
+                      onClick={() => setExpandedMilestonesProjectId(isMilestonesExpanded ? null : p.id)}
                       className={`flex items-center gap-1 px-3 py-1 rounded-full font-bold transition cursor-pointer ${
                         isMilestonesExpanded
                           ? "bg-[#121212] text-white"
                           : "bg-[#DFD9C9] text-neutral-800 hover:bg-[#D5CEBC]"
                       }`}
                     >
-                      <Clock className="w-3 h-3 text-amber-500" />
+                      <MapPin className="w-3 h-3 text-amber-500" />
                       <span>Milestones ({totalMilestones})</span>
                       {isMilestonesExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                     </button>
                   </div>
 
-                  {/* Real-time Financial Breakdown */}
-                  <div className="flex items-center gap-3 text-[10px] font-mono">
-                    <span className="text-neutral-600 font-bold">
-                      Completed: <strong className="text-emerald-800 font-sans">{completedMilestones}</strong> | Remaining: <strong className="text-amber-800 font-sans">{remainingMilestones}</strong>
-                    </span>
-                    <span className="text-pink-700 font-bold">
-                      Pending Payment: {formatCurrency(totalPendingAmount, "₹")}
-                    </span>
-                  </div>
+                  <span className="text-[10px] text-neutral-500 font-mono">
+                    {completedMilestones} Completed • {remainingMilestones} Remaining
+                  </span>
                 </div>
 
-                {/* Collapsible Documents Suite Grid */}
+                {/* 3. COLLAPSIBLE DOCUMENTS SUITE GRID */}
                 {isDocsExpanded && (
                   <div className="mt-1 bg-[#F4F0E6] p-3 rounded-2xl border border-[#E2DDD0] flex flex-col gap-2">
                     <div className="flex items-center justify-between">
@@ -897,20 +892,20 @@ export default function ProjectsPage() {
                   </div>
                 )}
 
-                {/* Collapsible Milestones Breakdown */}
+                {/* 4. COLLAPSIBLE MILESTONES BREAKDOWN */}
                 {isMilestonesExpanded && (
-                  <div className="mt-1 bg-[#F4F0E6] p-3 rounded-2xl border border-[#E2DDD0] flex flex-col gap-3">
+                  <div className="mt-1 bg-[#F4F0E6] p-3 rounded-2xl border border-[#E2DDD0] flex flex-col gap-2.5">
                     <div className="flex items-center justify-between border-b border-[#E2DDD0] pb-2">
                       <div className="flex items-center gap-2">
                         <MapPin className="w-4 h-4 text-purple-600" />
                         <span className="text-[11px] font-extrabold uppercase text-neutral-900 tracking-wider">
-                          Project Milestones ({totalMilestones})
+                          Project Milestones Breakdown ({totalMilestones})
                         </span>
                       </div>
 
                       <button
-                        onClick={() => handleOpenAddMilestone(p.id, totalMilestones)}
-                        className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#121212] text-white text-[11px] font-bold hover:bg-neutral-800 transition cursor-pointer shadow-xs"
+                        onClick={() => handleOpenAddMilestone(p.id)}
+                        className="flex items-center gap-1 px-3 py-1 rounded-full bg-[#121212] text-white text-[11px] font-bold hover:bg-neutral-800 transition cursor-pointer shadow-xs"
                       >
                         <Plus className="w-3.5 h-3.5 text-[#a6ce39]" />
                         <span>Add Project Milestone</span>
@@ -921,14 +916,16 @@ export default function ProjectsPage() {
                       {p.payments.map((pm) => {
                         const meta = parseMilestoneNote(pm.note, pm.status);
                         const isPaid = (pm.status || "").toUpperCase() === "PAID";
-                        const isPartiallyPaid = (pm.status || "").toUpperCase() === "PARTIALLY_PAID" || (pm.status || "").toUpperCase() === "PARTIALLY PAID";
+                        const isPartiallyPaid =
+                          (pm.status || "").toUpperCase() === "PARTIALLY_PAID" ||
+                          (pm.status || "").toUpperCase() === "PARTIALLY PAID";
 
                         return (
                           <div
                             key={pm.id}
-                            className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-2xl bg-[#EBE7DC] border border-[#E2DDD0] text-xs gap-3 shadow-xs hover:border-[#D5CEBC] transition"
+                            className="flex flex-col sm:flex-row sm:items-center justify-between p-2.5 rounded-xl bg-[#EBE7DC] border border-[#E2DDD0] text-xs gap-2 shadow-xs hover:border-[#D5CEBC] transition"
                           >
-                            {/* Left: Milestone Info & Badges */}
+                            {/* Left Info: Milestone Name & Badges */}
                             <div className="flex flex-col gap-1 flex-1 min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
                                 <span className="font-extrabold text-neutral-900 text-xs">
@@ -965,43 +962,43 @@ export default function ProjectsPage() {
                                       : "bg-pink-100 text-pink-900"
                                   }`}
                                 >
-                                  {isPaid ? "Payment: Paid" : isPartiallyPaid ? "Payment: Partially Paid" : "Payment: Pending"}
+                                  {isPaid ? "Paid" : isPartiallyPaid ? "Partially Paid" : "Pending"}
                                 </span>
                               </div>
 
                               {meta.description && (
-                                <p className="text-[11px] text-neutral-600 font-medium leading-relaxed line-clamp-2">
+                                <p className="text-[11px] text-neutral-600 font-medium leading-tight line-clamp-1">
                                   {meta.description}
                                 </p>
                               )}
 
                               {pm.dueDate && (
                                 <span className="text-[10px] text-neutral-500 font-mono">
-                                  Due Date: {formatDate(pm.dueDate as any)}
+                                  Due: {formatDate(pm.dueDate as any)}
                                 </span>
                               )}
                             </div>
 
-                            {/* Right: Payment Amount & Action Buttons */}
-                            <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
-                              <span className="font-mono font-extrabold text-neutral-900 text-sm">
+                            {/* Right Info: Financial Amount & Interactive Buttons */}
+                            <div className="flex items-center gap-2.5 shrink-0 self-end sm:self-center">
+                              <span className="font-mono font-extrabold text-neutral-900 text-xs">
                                 {formatCurrency(pm.amount, "₹")}
                               </span>
 
                               <button
                                 onClick={() => handleToggleMarkPaid(pm)}
-                                className={`px-3 py-1 rounded-full text-[10px] font-extrabold transition cursor-pointer ${
+                                className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold transition cursor-pointer ${
                                   isPaid
                                     ? "bg-emerald-200 text-emerald-900 hover:bg-emerald-300"
                                     : "bg-[#121212] text-white hover:bg-neutral-800"
                                 }`}
                               >
-                                {isPaid ? "✓ PAID" : "Mark Paid"}
+                                {isPaid ? "✓ Paid" : "Mark Paid"}
                               </button>
 
                               <button
                                 onClick={() => handleOpenEditMilestone(pm)}
-                                className="p-1.5 rounded-full bg-blue-100 text-blue-900 hover:bg-blue-200 transition cursor-pointer"
+                                className="p-1 rounded-full bg-blue-100 text-blue-900 hover:bg-blue-200 transition cursor-pointer"
                                 title="Edit Project Milestone"
                               >
                                 <Pencil className="w-3.5 h-3.5" />
@@ -1614,7 +1611,7 @@ export default function ProjectsPage() {
 
                 <button
                   onClick={handleNextDoc}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#DFD9C9] text-neutral-900 text-xs font-bold hover:bg-neutral-900 hover:text-white transition cursor-pointer"
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#DFD9C9] text-neutral-900 text-xs font-bold hover:bg-[#121212] hover:text-white transition cursor-pointer"
                 >
                   <span>Next Document</span>
                   <ChevronRight className="w-4 h-4" />
