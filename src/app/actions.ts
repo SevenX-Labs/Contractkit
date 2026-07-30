@@ -673,6 +673,40 @@ export async function createProjectDB(data: {
   }
 }
 
+export async function updateProjectDB(
+  id: string,
+  data: {
+    name?: string;
+    description?: string;
+    workType?: string;
+    budget?: number;
+    status?: string;
+    startDate?: string;
+    deliveryDate?: string;
+  }
+) {
+  try {
+    const updated = await prisma.project.update({
+      where: { id },
+      data: {
+        name: data.name,
+        description: data.description,
+        workType: data.workType,
+        budget: data.budget !== undefined ? data.budget : undefined,
+        totalValue: data.budget !== undefined ? data.budget : undefined,
+        status: data.status,
+        startDate: data.startDate ? new Date(data.startDate) : undefined,
+        deliveryDate: data.deliveryDate ? new Date(data.deliveryDate) : undefined,
+      },
+    });
+    revalidatePath("/projects");
+    revalidatePath("/clients");
+    return { success: true, project: updated };
+  } catch (err) {
+    return { success: false, error: String(err) };
+  }
+}
+
 export async function deleteProjectDB(id: string) {
   try {
     await prisma.project.delete({ where: { id } });
