@@ -840,13 +840,14 @@ export default function NDABuilderPage() {
             </div>
 
             {/* Document Preview Stage */}
-            <div className="w-full bg-[#DFD9C9] p-3 rounded-3xl border border-[#D5CEBC] shadow-inner overflow-hidden flex flex-col items-center">
+            <div className="w-full bg-[#DFD9C9] p-4 rounded-3xl border border-[#D5CEBC] shadow-inner overflow-hidden flex flex-col items-center">
               <div className="w-full flex justify-center overflow-hidden">
                 <div
-                  className="origin-top transition-transform duration-300 shadow-2xl rounded-2xl"
+                  className="origin-top transition-transform duration-300 shadow-2xl rounded-2xl shrink-0"
                   style={{
-                    transform: "scale(0.7)",
-                    marginBottom: "-260px",
+                    transform: "scale(0.52)",
+                    width: "210mm",
+                    marginBottom: "calc(-297mm * 0.48)",
                   }}
                 >
                   <ModernNDATemplate
