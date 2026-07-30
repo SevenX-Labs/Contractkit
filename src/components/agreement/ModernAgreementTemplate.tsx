@@ -11,20 +11,20 @@ import {
   Calendar,
   IndianRupee,
   FileCheck,
-  ShieldCheck,
   Code,
   Lock,
+  ShieldCheck,
 } from "lucide-react";
 import Image from "next/image";
 
 export interface AgreementTemplateProps {
   id?: string;
-  activePage?: number; // 1 or 2 (or undefined to render all pages)
+  activePage?: number; // 1 or 2 (or undefined for all pages)
   agreementNumber: string;
   effectiveDate: string;
-  expiryDate?: string;
   version?: string;
-  
+  projectTitle?: string;
+
   // Service Provider Details
   providerName?: string;
   providerCompany?: string;
@@ -33,7 +33,7 @@ export interface AgreementTemplateProps {
   providerPhone?: string;
   providerGst?: string;
   providerPan?: string;
-  
+
   // Client Details
   clientName: string;
   clientCompany?: string;
@@ -42,43 +42,36 @@ export interface AgreementTemplateProps {
   clientPhone?: string;
   clientGst?: string;
   clientPan?: string;
-  
-  // Project Details
-  projectTitle?: string;
+
+  // Project Specifications & Terms
   projectDescription?: string;
-  businessGoal?: string;
   projectType?: string;
   techStack?: string;
   platforms?: string;
-  
-  // Scope & Modules
   includedScope?: string;
-  excludedScope?: string;
-  deliverables?: string;
-  
-  // Timeline & Financials
+
   startDate?: string;
   deliveryDate?: string;
   durationDays?: number;
+
   totalAmount?: number;
   advanceAmount?: number;
   balanceAmount?: number;
+  currencySymbol?: string;
   paymentSchedule?: string;
-  
-  // Clauses & Terms
+
   ipClause?: string;
+  deliverables?: string;
   confidentialityClause?: string;
+
   warrantyPeriod?: string;
   revisionPolicy?: string;
   cancellationPolicy?: string;
-  governingLaw?: string;
-  jurisdiction?: string;
-  
+
   // Signatures
   providerSignatory?: string;
   clientSignatory?: string;
-  
-  currencySymbol?: string;
+
   accentColor?: "lime" | "purple" | "pink" | "emerald";
 }
 
@@ -87,56 +80,52 @@ export function ModernAgreementTemplate({
   activePage,
   agreementNumber = "SXL-AGR-2026-000001",
   effectiveDate = new Date().toISOString().split("T")[0],
-  expiryDate = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
   version = "1.0",
-  
+  projectTitle = "Custom Software & Mobile App Development",
+
   providerName = "Sahil Hode",
   providerCompany = "SevenX Labs",
   providerAddress = "Thane, Mumbai, Maharashtra",
   providerEmail = "sevenxlabs07@gmail.com",
   providerPhone = "8652601566",
-  providerGst = "27ABCDE1234F1Z5",
+  providerGst = "27AAAAA0000A1Z5",
   providerPan = "ABCDE1234F",
-  
+
   clientName = "Sophia Smith",
   clientCompany = "Smith Innovations Private Limited",
   clientAddress = "742 Evergreen Terrace, Springfield, IL 62704, USA",
   clientEmail = "sophia@smithinnovations.com",
   clientPhone = "+1 234 567 8900",
-  clientGst = "63ABCDE1234F1Z5",
-  clientPan = "ABCDF1234G",
-  
-  projectTitle = "IT DEVELOPMENT AGREEMENT",
-  projectDescription = "End-to-end architecture, design, development, testing, and cloud deployment of custom web application and administrative dashboard.",
-  businessGoal = "Automate client workflows, payment milestone tracking, and digital contract generation.",
-  projectType = "Web Application & Admin Dashboard",
-  techStack = "Next.js 16, React 19, Tailwind CSS v4, Prisma ORM, PostgreSQL",
-  platforms = "Web, iOS, Android, Admin Dashboard",
-  
-  includedScope = "• Custom dashboard & authentication\n• REST APIs development & integration\n• PostgreSQL database & migrations\n• High-performance PDF/DOCX/PNG export engine",
-  excludedScope = "• Third-party paid API subscription fees\n• Apple Developer & Google Play account registration fees",
-  deliverables = "1. Production Source Code Repository\n2. Database Schemas & Migrations\n3. Technical System Architecture Documentation",
-  
+  clientGst = "27BBBBB1111B2Z6",
+  clientPan = "FGHIJ5678K",
+
+  projectDescription = "Design, development, testing, and deployment of enterprise web application and mobile app solution.",
+  projectType = "Full-Stack Web & Cross-Platform Mobile App",
+  techStack = "Next.js, TypeScript, Tailwind CSS, Node.js, PostgreSQL, React Native",
+  platforms = "Web Browser, iOS App Store, Google Play Store",
+  includedScope = "• UI/UX Prototype Design & User Flow Architecture\n• Frontend & Backend API Development\n• Database Architecture & Cloud Infrastructure Setup\n• Quality Assurance Testing & Bug Fixes\n• Final Deployment & Code Handover",
+
   startDate = new Date().toISOString().split("T")[0],
-  deliveryDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
-  durationDays = 30,
-  totalAmount = 4500,
-  advanceAmount = 2250,
-  balanceAmount = 2250,
-  paymentSchedule = "50% Advance deposit before kickoff; 50% Balance upon final deployment.",
-  
-  ipClause = "Full intellectual property rights and source code ownership shall be transferred to the Client upon 100% full payment receipt.",
-  confidentialityClause = "Both parties agree to protect proprietary algorithms, source code, and commercial data under strict confidentiality for 2 years.",
-  warrantyPeriod = "30 Days post-launch warranty bug fix support included.",
-  revisionPolicy = "2 Free revision rounds included during active design phase.",
-  cancellationPolicy = "7 Calendar days written notice required for termination.",
-  governingLaw = "Laws of India",
-  jurisdiction = "Mumbai, Maharashtra",
-  
-  providerSignatory = "Sahil Hode (Founder)",
-  clientSignatory = "Sophia Smith (Managing Director)",
-  
+  deliveryDate = new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+  durationDays = 45,
+
+  totalAmount = 250000,
+  advanceAmount = 125000,
+  balanceAmount = 125000,
   currencySymbol = "₹",
+  paymentSchedule = "50% advance deposit upon contract signing; 50% balance payment upon project completion and code handover.",
+
+  ipClause = "Upon full and final payment, SevenX Labs assigns all intellectual property rights, source code ownership, and patent rights for custom software created under this agreement to the Client.",
+  deliverables = "• Complete Clean Source Code (GitHub Repository access)\n• Production Build Deployment Files & Environment Configs\n• Admin Dashboard & API Documentation\n• User Manual & System Walkthrough Video",
+  confidentialityClause = "Both parties agree to protect and keep strictly confidential all proprietary business logic, trade secrets, database schemas, customer data, and source code disclosed during the engagement.",
+
+  warrantyPeriod = "30 Days free bug fix support and warranty from deployment date.",
+  revisionPolicy = "2 Rounds of major UI/UX revisions included during design phase.",
+  cancellationPolicy = "Termination by written notice; work completed up to termination date shall be billed accordingly.",
+
+  providerSignatory = "Sahil Hode (SevenX Labs)",
+  clientSignatory = "Sophia Smith (Smith Innovations)",
+
   accentColor = "lime",
 }: AgreementTemplateProps) {
   const accentBadgeBg =
@@ -187,12 +176,12 @@ export function ModernAgreementTemplate({
                     <span className="text-neutral-900 font-black">SevenX</span>
                     <span className="text-[#a6ce39] font-black">Labs</span>
                   </div>
-                  <p className="text-[10px] italic font-medium text-neutral-400">Innovate. Create. Elevate.</p>
+                  <p className="text-xs italic font-medium text-neutral-400">Innovate. Create. Elevate.</p>
                 </div>
 
                 <div className="mt-4">
-                  <span className="text-[9px] font-extrabold text-neutral-400 uppercase tracking-widest block mb-0.5">
-                    AGREEMENT TO.
+                  <span className="text-xs font-extrabold text-neutral-400 uppercase tracking-widest block mb-0.5">
+                    AGREEMENT FOR
                   </span>
                   <h2 className="text-lg font-black text-neutral-900 tracking-tight leading-snug">
                     {projectTitle}
@@ -210,12 +199,12 @@ export function ModernAgreementTemplate({
                   {/* Metadata 2-Column Grid */}
                   <div className="grid grid-cols-2 gap-4 text-left text-xs font-medium border-t border-neutral-800 pt-3">
                     <div>
-                      <span className="text-[10px] text-neutral-400 block font-sans">Agreement No.</span>
-                      <span className="font-mono font-bold text-white text-[11px] block mt-0.5 whitespace-nowrap">{agreementNumber}</span>
+                      <span className="text-xs text-neutral-400 block font-sans">Agreement No.</span>
+                      <span className="font-mono font-bold text-white text-xs block mt-0.5 whitespace-nowrap">{agreementNumber}</span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-neutral-400 block font-sans">Effective Date</span>
-                      <span className="font-mono font-bold text-white text-[11px] block mt-0.5 whitespace-nowrap">{formatDate(effectiveDate)}</span>
+                      <span className="text-xs text-neutral-400 block font-sans">Effective Date</span>
+                      <span className="font-mono font-bold text-white text-xs block mt-0.5 whitespace-nowrap">{formatDate(effectiveDate)}</span>
                     </div>
                   </div>
                 </div>
@@ -231,7 +220,7 @@ export function ModernAgreementTemplate({
             </div>
 
             {/* Intro Paragraph */}
-            <div className="px-10 mt-4 text-xs text-neutral-700 font-medium leading-relaxed">
+            <div className="px-10 mt-4 text-xs text-neutral-800 font-medium leading-relaxed">
               <p>
                 This IT Development Agreement (&quot;Agreement&quot;) is made and entered into on{" "}
                 <strong className="text-neutral-900 font-bold">{formatDate(effectiveDate)}</strong> (&quot;Effective Date&quot;), by and between the parties mentioned below.
@@ -249,23 +238,23 @@ export function ModernAgreementTemplate({
                 {/* Service Provider */}
                 <div className="space-y-1 pr-3 border-r border-neutral-200">
                   <h3 className="text-xs font-black text-neutral-900">{providerCompany || providerName}</h3>
-                  <p className="text-neutral-600 font-medium text-[10px]">{providerAddress}</p>
-                  <div className="pt-0.5 space-y-0.5 text-[10px]">
-                    <p><strong className="text-neutral-500 font-medium">Phone:</strong> {providerPhone}</p>
-                    <p><strong className="text-neutral-500 font-medium">Email:</strong> {providerEmail}</p>
-                    <p><strong className="text-neutral-500 font-medium">GST / PAN:</strong> {providerGst} / {providerPan}</p>
+                  <p className="text-neutral-700 font-medium text-xs">{providerAddress}</p>
+                  <div className="pt-0.5 space-y-0.5 text-xs">
+                    <p><strong className="text-neutral-600 font-bold">Phone:</strong> {providerPhone}</p>
+                    <p><strong className="text-neutral-600 font-bold">Email:</strong> {providerEmail}</p>
+                    <p><strong className="text-neutral-600 font-bold">GST / PAN:</strong> {providerGst} / {providerPan}</p>
                   </div>
                 </div>
 
                 {/* Client */}
                 <div className="space-y-1 pl-3">
                   <h3 className="text-xs font-black text-neutral-900">{clientName}</h3>
-                  {clientCompany && <p className="text-neutral-700 font-bold text-[10px]">{clientCompany}</p>}
-                  <p className="text-neutral-600 font-medium text-[10px]">{clientAddress}</p>
-                  <div className="pt-0.5 space-y-0.5 text-[10px]">
-                    <p><strong className="text-neutral-500 font-medium">Phone:</strong> {clientPhone}</p>
-                    <p><strong className="text-neutral-500 font-medium">Email:</strong> {clientEmail}</p>
-                    <p><strong className="text-neutral-500 font-medium">GST / PAN:</strong> {clientGst} / {clientPan}</p>
+                  {clientCompany && <p className="text-neutral-800 font-bold text-xs">{clientCompany}</p>}
+                  <p className="text-neutral-700 font-medium text-xs">{clientAddress}</p>
+                  <div className="pt-0.5 space-y-0.5 text-xs">
+                    <p><strong className="text-neutral-600 font-bold">Phone:</strong> {clientPhone}</p>
+                    <p><strong className="text-neutral-600 font-bold">Email:</strong> {clientEmail}</p>
+                    <p><strong className="text-neutral-600 font-bold">GST / PAN:</strong> {clientGst} / {clientPan}</p>
                   </div>
                 </div>
               </div>
@@ -280,13 +269,13 @@ export function ModernAgreementTemplate({
                 </div>
                 <div className="flex-1 grid grid-cols-12 gap-3">
                   <div className="col-span-5">
-                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">3. PROJECT OVERVIEW</h4>
-                    <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">{projectDescription}</p>
+                    <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">3. PROJECT OVERVIEW</h4>
+                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium">{projectDescription}</p>
                   </div>
-                  <div className="col-span-7 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-[10px] space-y-0.5 font-mono">
-                    <p><strong className="text-neutral-500">Type:</strong> {projectType}</p>
-                    <p><strong className="text-neutral-500">Tech Stack:</strong> {techStack}</p>
-                    <p><strong className="text-neutral-500">Platforms:</strong> {platforms}</p>
+                  <div className="col-span-7 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs space-y-0.5 font-mono text-neutral-800">
+                    <p><strong className="text-neutral-600 font-bold">Type:</strong> {projectType}</p>
+                    <p><strong className="text-neutral-600 font-bold">Tech Stack:</strong> {techStack}</p>
+                    <p><strong className="text-neutral-600 font-bold">Platforms:</strong> {platforms}</p>
                   </div>
                 </div>
               </div>
@@ -298,10 +287,10 @@ export function ModernAgreementTemplate({
                 </div>
                 <div className="flex-1 grid grid-cols-12 gap-3">
                   <div className="col-span-5">
-                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">4. SCOPE OF WORK</h4>
-                    <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">Full lifecycle engineering & code delivery as specified.</p>
+                    <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">4. SCOPE OF WORK</h4>
+                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium">Full lifecycle engineering & code delivery as specified.</p>
                   </div>
-                  <div className="col-span-7 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-[10px] whitespace-pre-line font-mono text-neutral-800">
+                  <div className="col-span-7 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs whitespace-pre-line font-mono text-neutral-800 leading-normal">
                     {includedScope}
                   </div>
                 </div>
@@ -314,13 +303,13 @@ export function ModernAgreementTemplate({
                 </div>
                 <div className="flex-1 grid grid-cols-12 gap-3">
                   <div className="col-span-5">
-                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">5. TIMELINE & MILESTONES</h4>
-                    <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">Execution according to agreed milestone deadlines.</p>
+                    <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">5. TIMELINE & MILESTONES</h4>
+                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium">Execution according to agreed milestone deadlines.</p>
                   </div>
-                  <div className="col-span-7 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-[10px] space-y-0.5 font-mono">
-                    <p><strong className="text-neutral-500">Start Date:</strong> {formatDate(startDate)}</p>
-                    <p><strong className="text-neutral-500">Estimated Completion:</strong> {formatDate(deliveryDate)}</p>
-                    <p><strong className="text-neutral-500">Duration:</strong> {durationDays} Days</p>
+                  <div className="col-span-7 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs space-y-0.5 font-mono text-neutral-800">
+                    <p><strong className="text-neutral-600 font-bold">Start Date:</strong> {formatDate(startDate)}</p>
+                    <p><strong className="text-neutral-600 font-bold">Estimated Completion:</strong> {formatDate(deliveryDate)}</p>
+                    <p><strong className="text-neutral-600 font-bold">Duration:</strong> {durationDays} Days</p>
                   </div>
                 </div>
               </div>
@@ -332,13 +321,13 @@ export function ModernAgreementTemplate({
                 </div>
                 <div className="flex-1 grid grid-cols-12 gap-3">
                   <div className="col-span-5">
-                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">6. PAYMENT TERMS</h4>
-                    <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">{paymentSchedule}</p>
+                    <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">6. PAYMENT TERMS</h4>
+                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium">{paymentSchedule}</p>
                   </div>
-                  <div className="col-span-7 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-[10px] space-y-0.5 font-mono">
-                    <p><strong className="text-neutral-500">Total Project Fee:</strong> <span className="font-extrabold text-neutral-900">{formatCurrency(totalAmount, currencySymbol)}</span></p>
-                    <p><strong className="text-neutral-500">Advance Deposit (50%):</strong> {formatCurrency(advanceAmount, currencySymbol)}</p>
-                    <p><strong className="text-neutral-500">Balance Handover (50%):</strong> {formatCurrency(balanceAmount, currencySymbol)}</p>
+                  <div className="col-span-7 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs space-y-0.5 font-mono text-neutral-800">
+                    <p><strong className="text-neutral-600 font-bold">Total Project Fee:</strong> <span className="font-extrabold text-neutral-900">{formatCurrency(totalAmount, currencySymbol)}</span></p>
+                    <p><strong className="text-neutral-600 font-bold">Advance Deposit (50%):</strong> {formatCurrency(advanceAmount, currencySymbol)}</p>
+                    <p><strong className="text-neutral-600 font-bold">Balance Handover (50%):</strong> {formatCurrency(balanceAmount, currencySymbol)}</p>
                   </div>
                 </div>
               </div>
@@ -347,24 +336,24 @@ export function ModernAgreementTemplate({
 
           {/* Page 1 Full-Width Black Footer Bar */}
           <div>
-            <div className="px-10 py-1 flex justify-between items-center text-[10px] text-neutral-400 font-mono">
+            <div className="px-10 py-1 flex justify-between items-center text-xs text-neutral-400 font-mono">
               <span>SevenX Labs • Ref #{agreementNumber}</span>
               <span>Page 1 of 2</span>
             </div>
 
-            <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3 flex justify-between items-center text-xs font-semibold z-20">
+            <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 flex justify-between items-center text-xs font-semibold z-20">
               <div className="flex items-center gap-2">
-                <Phone className="w-3.5 h-3.5 text-white shrink-0" />
+                <Phone className="w-4 h-4 text-white shrink-0" />
                 <span>{providerPhone || "8652601566"}</span>
               </div>
 
               <div className="flex items-center gap-2">
-                <Mail className="w-3.5 h-3.5 text-white shrink-0" />
+                <Mail className="w-4 h-4 text-white shrink-0" />
                 <span>{providerEmail || "sevenxlabs07@gmail.com"}</span>
               </div>
 
               <div className="flex items-center gap-2">
-                <MapPin className="w-3.5 h-3.5 text-white shrink-0" />
+                <MapPin className="w-4 h-4 text-white shrink-0" />
                 <span>{providerAddress || "Thane, Mumbai, Maharashtra"}</span>
               </div>
             </div>
@@ -383,7 +372,7 @@ export function ModernAgreementTemplate({
               </div>
               <div className="flex-1">
                 <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">7. INTELLECTUAL PROPERTY & OWNERSHIP</h4>
-                <p className="text-[11px] text-neutral-700 mt-1 leading-relaxed">{ipClause}</p>
+                <p className="text-xs text-neutral-800 mt-1 leading-relaxed font-medium">{ipClause}</p>
               </div>
             </div>
 
@@ -394,7 +383,7 @@ export function ModernAgreementTemplate({
               </div>
               <div className="flex-1">
                 <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">8. DELIVERABLES & CODE HANDOVER</h4>
-                <p className="text-[11px] text-neutral-700 mt-1 leading-relaxed whitespace-pre-line">{deliverables}</p>
+                <p className="text-xs text-neutral-800 mt-1 leading-relaxed font-medium whitespace-pre-line">{deliverables}</p>
               </div>
             </div>
 
@@ -405,7 +394,7 @@ export function ModernAgreementTemplate({
               </div>
               <div className="flex-1">
                 <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">9. CONFIDENTIALITY & DATA SECURITY</h4>
-                <p className="text-[11px] text-neutral-700 mt-1 leading-relaxed">{confidentialityClause}</p>
+                <p className="text-xs text-neutral-800 mt-1 leading-relaxed font-medium">{confidentialityClause}</p>
               </div>
             </div>
 
@@ -416,7 +405,7 @@ export function ModernAgreementTemplate({
               </div>
               <div className="flex-1">
                 <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">10. WARRANTY, SUPPORT & REVISION POLICY</h4>
-                <p className="text-[11px] text-neutral-700 mt-1 leading-relaxed">
+                <p className="text-xs text-neutral-800 mt-1 leading-relaxed font-medium">
                   • <strong>Warranty Support:</strong> {warrantyPeriod}
                   <br />
                   • <strong>Revision Policy:</strong> {revisionPolicy}
@@ -432,36 +421,36 @@ export function ModernAgreementTemplate({
             {/* Section 11: Digital Signatures Block Pinned at the Very End */}
             <div className="px-10 pb-6 pt-4 border-t border-neutral-200 grid grid-cols-2 gap-8 text-xs bg-white" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
               <div>
-                <p className="font-extrabold text-neutral-900 uppercase text-[10px] tracking-wider mb-2">DEVELOPER SIGNATURE:</p>
-                <p className="font-mono text-neutral-800 border-b border-neutral-300 pb-1 font-bold">{providerSignatory}</p>
-                <p className="text-[10px] text-neutral-400 mt-1">Date: {formatDate(effectiveDate)}</p>
+                <p className="font-extrabold text-neutral-900 uppercase text-xs tracking-wider mb-2">DEVELOPER SIGNATURE:</p>
+                <p className="font-mono text-neutral-900 border-b border-neutral-300 pb-1 font-bold text-xs">{providerSignatory}</p>
+                <p className="text-xs text-neutral-500 font-medium mt-1">Date: {formatDate(effectiveDate)}</p>
               </div>
               <div>
-                <p className="font-extrabold text-neutral-900 uppercase text-[10px] tracking-wider mb-2">CLIENT SIGNATURE:</p>
-                <p className="font-mono text-neutral-800 border-b border-neutral-300 pb-1 font-bold">{clientSignatory}</p>
-                <p className="text-[10px] text-neutral-400 mt-1">Date: {formatDate(effectiveDate)}</p>
+                <p className="font-extrabold text-neutral-900 uppercase text-xs tracking-wider mb-2">CLIENT SIGNATURE:</p>
+                <p className="font-mono text-neutral-900 border-b border-neutral-300 pb-1 font-bold text-xs">{clientSignatory}</p>
+                <p className="text-xs text-neutral-500 font-medium mt-1">Date: {formatDate(effectiveDate)}</p>
               </div>
             </div>
 
-            <div className="px-10 py-1 flex justify-between items-center text-[10px] text-neutral-400 font-mono">
+            <div className="px-10 py-1 flex justify-between items-center text-xs text-neutral-400 font-mono">
               <span>SevenX Labs • Ref #{agreementNumber}</span>
               <span>Page 2 of 2</span>
             </div>
 
             {/* Full-Width Black Footer Bar */}
-            <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3 flex justify-between items-center text-xs font-semibold z-20">
+            <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 flex justify-between items-center text-xs font-semibold z-20">
               <div className="flex items-center gap-2">
-                <Phone className="w-3.5 h-3.5 text-white shrink-0" />
+                <Phone className="w-4 h-4 text-white shrink-0" />
                 <span>{providerPhone || "8652601566"}</span>
               </div>
 
               <div className="flex items-center gap-2">
-                <Mail className="w-3.5 h-3.5 text-white shrink-0" />
+                <Mail className="w-4 h-4 text-white shrink-0" />
                 <span>{providerEmail || "sevenxlabs07@gmail.com"}</span>
               </div>
 
               <div className="flex items-center gap-2">
-                <MapPin className="w-3.5 h-3.5 text-white shrink-0" />
+                <MapPin className="w-4 h-4 text-white shrink-0" />
                 <span>{providerAddress || "Thane, Mumbai, Maharashtra"}</span>
               </div>
             </div>
