@@ -209,7 +209,7 @@ export default function AgreementPage() {
       milestones: formData.milestones,
       ipTransferCondition: formData.ipTransferCondition,
       freeSupportPeriod: formData.freeSupportPeriod,
-      revisionLimit: formData.revisionLimit,
+      revisionLimit: String(formData.revisionLimit) as any,
       freelancerSignatureName: formData.freelancerSignatureName,
       clientSignatureName: formData.clientSignatureName,
     });

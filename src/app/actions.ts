@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "../lib/prisma";
-import { InvoiceData, AgreementData, NDAData, FreelancerProfile, SavedDocument } from "../types";
+import { InvoiceData, QuotationData, AgreementData, NDAData, FreelancerProfile, SavedDocument } from "../types";
 import { revalidatePath } from "next/cache";
 
 // ==================== PROFILE / SETTINGS ====================
@@ -609,6 +609,7 @@ export async function createAgreementDB(data: AgreementData) {
     dueDate: data.deadline,
     clientName: data.clientName,
     clientEmail: data.clientEmail,
+    contentJson: JSON.stringify(data),
   });
 }
 
@@ -624,6 +625,31 @@ export async function createNDADB(data: NDAData) {
     date: data.effectiveDate,
     clientName: clientName,
     clientEmail: clientEmail,
+    contentJson: JSON.stringify(data),
+  });
+}
+
+export async function getNextQuotationNumberDB(): Promise<string> {
+  try {
+    const year = new Date().getFullYear();
+    const count = await prisma.documentSuite.count({ where: { type: "QUOTATION" } });
+    const num = (count + 1).toString().padStart(6, "0");
+    return `SXL-QUO-${year}-${num}`;
+  } catch (err) {
+    const year = new Date().getFullYear();
+    return `SXL-QUO-${year}-000001`;
+  }
+}
+
+export async function createQuotationDB(data: QuotationData) {
+  return createDocumentSuiteDB({
+    documentNumber: data.quotationNumber,
+    title: `Quotation #${data.quotationNumber} - ${data.clientName}`,
+    type: "QUOTATION",
+    totalAmount: data.totalAmount,
+    date: data.quotationDate,
+    clientName: data.clientName,
+    clientEmail: data.clientEmail || "client@email.com",
     contentJson: JSON.stringify(data),
   });
 }

@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const invoices = await prisma.invoice.findMany({
       where: { isDeleted: false },
-      include: { items: true, client: true },
+      include: { items: true },
       orderBy: { createdAt: "desc" },
     });
     return NextResponse.json({ success: true, invoices });

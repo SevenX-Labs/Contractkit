@@ -56,7 +56,7 @@ export default function InvoicePage() {
     clientEmail: "mail@mail.com",
     clientPhone: "+123-456-7890",
     
-    paymentMethod: "Payment Method.",
+    paymentMethod: "Bank Transfer",
     paymentDetails: "Holder Name: SevenX Labs | Bank Name: HDFC Bank | Account No: 50100234567890 | IFSC Code: HDFC0001234",
     
     items: [
@@ -105,7 +105,7 @@ export default function InvoicePage() {
         senderAddress: profile.address || "Thane, Mumbai, Maharashtra",
         senderEmail: profile.email || "sevenxlabs07@gmail.com",
         senderPhone: profile.phone || "8652601566",
-        paymentMethod: "Payment Method.",
+        paymentMethod: "Bank Transfer",
         paymentDetails: `Holder Name: ${hName} | Bank Name: ${bName} | Account No: ${accNo} | IFSC Code: ${ifsc}`,
       }));
     });

@@ -17,6 +17,7 @@ import {
   Settings,
   Sparkles,
   X,
+  FileSignature,
 } from "lucide-react";
 import { SevenXLogo } from "../logo/SevenXLogo";
 
@@ -37,6 +38,7 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
 
   const toolsNav = [
     { name: "Invoices & Bills", href: "/invoice", icon: FileText },
+    { name: "Quotations", href: "/quotation", icon: FileSignature },
     { name: "Agreements", href: "/agreement", icon: FileCheck },
     { name: "NDAs", href: "/nda", icon: ShieldCheck },
     { name: "Completion Certificates", href: "/certificate", icon: Award },
@@ -83,8 +85,6 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
                   className={`flex items-center gap-3 px-3.5 py-2.5 rounded-full text-xs font-bold transition ${
                     isActive
                       ? "bg-white text-neutral-900 shadow-md"
-                      : item.highlight
-                      ? "bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow"
                       : "text-neutral-400 hover:text-white hover:bg-neutral-800/60"
                   }`}
                 >

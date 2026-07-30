@@ -135,7 +135,7 @@ function getInitialSampleDocuments(): SavedDocument[] {
       title: "Mutual NDA - Nexus AI Tech",
       documentNumber: DEFAULT_NDA_DATA.ndaNumber,
       type: "nda",
-      clientName: DEFAULT_NDA_DATA.clientName,
+      clientName: DEFAULT_NDA_DATA.clientName || "Nexus AI Tech India",
       date: DEFAULT_NDA_DATA.effectiveDate,
       status: "signed",
       updatedAt: new Date().toISOString(),

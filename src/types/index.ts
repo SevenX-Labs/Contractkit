@@ -1,4 +1,4 @@
-export type DocumentType = "invoice" | "agreement" | "nda";
+export type DocumentType = "invoice" | "agreement" | "nda" | "quotation" | "certificate" | "receipt";
 
 export type DocumentStatus = "draft" | "sent" | "paid" | "signed" | "pending";
 
@@ -7,6 +7,16 @@ export type PaymentMethod = "UPI" | "Bank Transfer" | "PayPal";
 export interface InvoiceItem {
   id: string;
   description: string;
+  quantity: number;
+  rate: number;
+  amount: number;
+}
+
+export interface QuotationItem {
+  id: string;
+  srNo?: string;
+  description: string;
+  miniDescription?: string;
   quantity: number;
   rate: number;
   amount: number;
@@ -63,6 +73,47 @@ export interface InvoiceData {
   createdAt: string;
 }
 
+export interface QuotationData {
+  id?: string;
+  quotationNumber: string;
+  quotationDate: string;
+  validityDays: number;
+  validUntilDate: string;
+
+  projectName: string;
+  preparedBy: string;
+  currency: string;
+  paymentTerms: string;
+  deliveryTime: string;
+
+  senderName: string;
+  senderCompany: string;
+  senderAddress: string;
+  senderEmail: string;
+  senderPhone: string;
+  senderWebsite: string;
+
+  clientName: string;
+  clientCompany?: string;
+  clientAddress: string;
+  clientEmail: string;
+  clientPhone: string;
+  clientWebsite?: string;
+  clientGstin?: string;
+
+  items: QuotationItem[];
+  subtotal: number;
+  gstPercent: number;
+  gstAmount: number;
+  totalAmount: number;
+
+  termsAndConditions: string[];
+  signatoryName: string;
+  designation: string;
+  status: DocumentStatus;
+  createdAt: string;
+}
+
 export interface AgreementData {
   id?: string;
   agreementNumber: string;
@@ -106,6 +157,7 @@ export interface NDAData {
   ndaNumber: string;
   effectiveDate: string;
   version?: string;
+  projectContext?: string;
   
   // Disclosing Party Details
   disclosingName?: string;
@@ -165,5 +217,6 @@ export interface SavedDocument {
   date: string;
   status: DocumentStatus;
   updatedAt: string;
-  data: InvoiceData | AgreementData | NDAData;
+  data: InvoiceData | QuotationData | AgreementData | NDAData | any;
 }
+

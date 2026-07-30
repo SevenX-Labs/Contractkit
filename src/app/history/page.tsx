@@ -16,6 +16,9 @@ import {
   X,
   RefreshCw,
   Download,
+  FileSignature,
+  Award,
+  Receipt as ReceiptIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -90,7 +93,7 @@ export default function HistoryPage() {
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-[#EBE7DC] border border-[#E2DDD0] p-4 rounded-2xl">
         {/* Type Tabs */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
-          {(["all", "invoice", "agreement", "nda"] as const).map((type) => (
+          {(["all", "invoice", "quotation", "agreement", "nda", "certificate", "receipt"] as const).map((type) => (
             <button
               key={type}
               onClick={() => setActiveType(type)}
@@ -144,7 +147,7 @@ export default function HistoryPage() {
           <div className="py-16 text-center text-neutral-500 flex flex-col items-center gap-2">
             <History className="w-8 h-8 text-neutral-400" />
             <p className="text-sm font-bold text-neutral-800">No documents found in vault.</p>
-            <p className="text-xs text-neutral-500">Create an invoice, agreement, or NDA to start saving!</p>
+            <p className="text-xs text-neutral-500">Create an invoice, quotation, agreement, or NDA to start saving!</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -173,8 +176,11 @@ export default function HistoryPage() {
                     <td className="py-4 px-4 capitalize">
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#DFD9C9] text-neutral-900">
                         {doc.type === "invoice" && <FileText className="w-3 h-3 text-pink-700" />}
+                        {doc.type === "quotation" && <FileSignature className="w-3 h-3 text-lime-700" />}
                         {doc.type === "agreement" && <FileCheck className="w-3 h-3 text-blue-700" />}
                         {doc.type === "nda" && <ShieldCheck className="w-3 h-3 text-emerald-700" />}
+                        {doc.type === "certificate" && <Award className="w-3 h-3 text-yellow-700" />}
+                        {doc.type === "receipt" && <ReceiptIcon className="w-3 h-3 text-cyan-700" />}
                         <span>{doc.type}</span>
                       </span>
                     </td>

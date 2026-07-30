@@ -88,7 +88,7 @@ export default function CertificateBuilderPage() {
         providerSignatory: profile.name || "Sahil Hode",
         phone: profile.phone || "+91 98765 43210",
         email: profile.email || "contact@sevenxlabs.com",
-        website: profile.website || "www.sevenxlabs.com",
+        website: (profile as any).website || "www.sevenxlabs.com",
       }));
     });
   }, []);

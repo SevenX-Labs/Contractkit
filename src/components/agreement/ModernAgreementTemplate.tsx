@@ -45,6 +45,7 @@ export interface AgreementTemplateProps {
 
   // Project Specifications & Terms
   projectDescription?: string;
+  businessGoal?: string;
   projectType?: string;
   techStack?: string;
   platforms?: string;
