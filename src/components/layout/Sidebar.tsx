@@ -32,7 +32,6 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
     { name: "Client CRM", href: "/clients", icon: Users },
     { name: "Projects", href: "/projects", icon: FolderKanban },
     { name: "Clause Library", href: "/clauses", icon: Scale },
-    { name: "Document Studio", href: "/builder", icon: Wand2, highlight: true },
   ];
 
   const toolsNav = [

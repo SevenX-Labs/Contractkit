@@ -114,13 +114,6 @@ export default function DashboardPage() {
             <Plus className="w-3.5 h-3.5 text-pink-400" />
             <span>Add Client & Work</span>
           </Link>
-          <Link
-            href="/builder"
-            className="px-4 py-2 rounded-full bg-[#EBE7DC] border border-[#E2DDD0] text-neutral-900 text-xs font-bold hover:bg-[#E2DDD0] transition flex items-center gap-1.5"
-          >
-            <FileCheck className="w-3.5 h-3.5" />
-            <span>Document Studio</span>
-          </Link>
         </div>
       </div>
 

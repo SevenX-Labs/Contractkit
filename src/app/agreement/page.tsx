@@ -306,10 +306,10 @@ export default function AgreementPage() {
           <button
             onClick={handleSave}
             disabled={isSaving}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#DFD9C9] text-neutral-900 font-bold text-xs hover:bg-[#D5CEBC] transition cursor-pointer"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#0a0a0a] hover:bg-neutral-800 text-white font-bold text-xs transition shadow-sm cursor-pointer disabled:opacity-50 whitespace-nowrap"
           >
-            <Save className="w-3.5 h-3.5 text-emerald-700" />
-            <span>{isSaving ? "Saving..." : "Save Draft"}</span>
+            <Save className="w-4 h-4 text-[#a6ce39]" />
+            <span>{isSaving ? "Saving..." : "Save"}</span>
           </button>
 
           <ExportDropdown

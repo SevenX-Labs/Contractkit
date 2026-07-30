@@ -172,21 +172,21 @@ export default function NDABuilderPage() {
             <span>Preview</span>
           </button>
 
-          {/* 2. Compulsory Save to DB Button */}
+          {/* 2. Save Button */}
           <button
             onClick={handleSaveToDB}
             disabled={isSaving}
-            className="flex items-center gap-1.5 px-4 py-2 bg-[#0a0a0a] hover:bg-neutral-800 text-white rounded-xl font-bold text-xs transition shadow-sm cursor-pointer disabled:opacity-50"
+            className="flex items-center gap-1.5 px-4 py-2 bg-[#0a0a0a] hover:bg-neutral-800 text-white rounded-xl font-bold text-xs transition shadow-sm cursor-pointer disabled:opacity-50 whitespace-nowrap"
           >
             <Save className="w-4 h-4 text-[#a6ce39]" />
-            <span>{isSaving ? "Saving..." : "Save to DB"}</span>
+            <span>{isSaving ? "Saving..." : "Save"}</span>
           </button>
 
           {/* 3. Export As Dropdown Button */}
           <div className="relative group">
             <button
               type="button"
-              className="flex items-center gap-1.5 px-4 py-2 bg-[#a6ce39] hover:bg-[#95bd2f] text-neutral-900 rounded-xl font-black text-xs transition shadow-sm cursor-pointer"
+              className="flex items-center gap-1.5 px-4 py-2 bg-[#a6ce39] hover:bg-[#95bd2f] text-neutral-900 rounded-xl font-extrabold text-xs transition shadow-sm cursor-pointer whitespace-nowrap"
             >
               <Download className="w-4 h-4" />
               <span>Export As</span>

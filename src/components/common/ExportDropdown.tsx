@@ -34,11 +34,11 @@ export function ExportDropdown({
       <button
         onClick={() => setIsOpen(!isOpen)}
         disabled={isExporting}
-        className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#121212] text-white font-bold text-xs shadow-md hover:bg-neutral-800 transition cursor-pointer disabled:opacity-50"
+        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#a6ce39] hover:bg-[#95bd2f] text-neutral-900 font-extrabold text-xs shadow-sm transition cursor-pointer disabled:opacity-50 whitespace-nowrap"
       >
-        <Download className="w-3.5 h-3.5 text-pink-400" />
-        <span>{isExporting ? "Exporting..." : "Export Document"}</span>
-        <ChevronDown className="w-3.5 h-3.5 text-neutral-400" />
+        <Download className="w-4 h-4 text-neutral-900" />
+        <span>{isExporting ? "Exporting..." : "Export As"}</span>
+        <ChevronDown className="w-3.5 h-3.5 text-neutral-900" />
       </button>
 
       {isOpen && (

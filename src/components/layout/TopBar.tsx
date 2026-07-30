@@ -53,13 +53,7 @@ export function TopBar({ onMenuClick }: TopBarProps) {
 
         {/* Right Icon Bubble Actions (shrink-0 ensures no cutoff) */}
         <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-          <Link
-            href="/builder"
-            className="hidden md:flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#121212] text-white text-xs font-bold shadow-md hover:bg-neutral-800 transition"
-          >
-            <Plus className="w-3.5 h-3.5 text-pink-400" />
-            <span>Studio</span>
-          </Link>
+
 
           <button className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#121212] text-white flex items-center justify-center shadow-md hover:bg-neutral-800 transition shrink-0">
             <Bell className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-pink-400" />
