@@ -239,27 +239,27 @@ export function ModernQuotationTemplate({
               </h2>
               <div className="space-y-1 text-[11px] text-neutral-700 font-medium leading-relaxed">
                 {clientAddress && (
-                  <div className="flex items-start gap-2">
-                    <MapPin className="w-3.5 h-3.5 text-[#8cc63f] shrink-0 mt-0.5" />
-                    <span>{clientAddress}</span>
+                  <div style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}>
+                    <MapPin style={{ width: "14px", height: "14px", color: "#8cc63f", flexShrink: 0, display: "block", marginTop: "2px" }} />
+                    <span style={{ lineHeight: "1.4" }}>{clientAddress}</span>
                   </div>
                 )}
                 {clientEmail && (
-                  <div className="flex items-center gap-2">
-                    <Mail className="w-3.5 h-3.5 text-[#8cc63f] shrink-0" />
-                    <span>{clientEmail}</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <Mail style={{ width: "14px", height: "14px", color: "#8cc63f", flexShrink: 0, display: "block" }} />
+                    <span style={{ lineHeight: "1.4" }}>{clientEmail}</span>
                   </div>
                 )}
                 {clientPhone && (
-                  <div className="flex items-center gap-2">
-                    <Phone className="w-3.5 h-3.5 text-[#8cc63f] shrink-0" />
-                    <span>{clientPhone}</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <Phone style={{ width: "14px", height: "14px", color: "#8cc63f", flexShrink: 0, display: "block" }} />
+                    <span style={{ lineHeight: "1.4" }}>{clientPhone}</span>
                   </div>
                 )}
                 {clientWebsite && (
-                  <div className="flex items-center gap-2">
-                    <Globe className="w-3.5 h-3.5 text-[#8cc63f] shrink-0" />
-                    <span>{clientWebsite}</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <Globe style={{ width: "14px", height: "14px", color: "#8cc63f", flexShrink: 0, display: "block" }} />
+                    <span style={{ lineHeight: "1.4" }}>{clientWebsite}</span>
                   </div>
                 )}
                 {clientGstin && (
@@ -308,38 +308,38 @@ export function ModernQuotationTemplate({
         <div className="px-10 mt-6 grid grid-cols-12 gap-6 items-start">
           {/* Left Column: Project Parameters List */}
           <div className="col-span-7 space-y-2 text-xs text-neutral-800">
-            <div className="flex items-center gap-2">
-              <Briefcase className="w-3.5 h-3.5 text-[#8cc63f] shrink-0" />
-              <span className="font-bold text-neutral-500 w-28 shrink-0">Project Name</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <Briefcase style={{ width: "14px", height: "14px", color: "#8cc63f", flexShrink: 0, display: "block" }} />
+              <span className="font-bold text-neutral-500" style={{ width: "112px", flexShrink: 0 }}>Project Name</span>
               <span className="font-bold text-neutral-900">: {projectName}</span>
             </div>
-            <div className="flex items-center gap-2">
-              <User className="w-3.5 h-3.5 text-[#8cc63f] shrink-0" />
-              <span className="font-bold text-neutral-500 w-28 shrink-0">Prepared By</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <User style={{ width: "14px", height: "14px", color: "#8cc63f", flexShrink: 0, display: "block" }} />
+              <span className="font-bold text-neutral-500" style={{ width: "112px", flexShrink: 0 }}>Prepared By</span>
               <span className="font-bold text-neutral-900">: {preparedBy}</span>
             </div>
-            <div className="flex items-center gap-2">
-              <CreditCard className="w-3.5 h-3.5 text-[#8cc63f] shrink-0" />
-              <span className="font-bold text-neutral-500 w-28 shrink-0">Currency</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <CreditCard style={{ width: "14px", height: "14px", color: "#8cc63f", flexShrink: 0, display: "block" }} />
+              <span className="font-bold text-neutral-500" style={{ width: "112px", flexShrink: 0 }}>Currency</span>
               <span className="font-bold text-neutral-900">: {currency}</span>
             </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-3.5 h-3.5 text-[#8cc63f] shrink-0" />
-              <span className="font-bold text-neutral-500 w-28 shrink-0">Payment Terms</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <CheckCircle2 style={{ width: "14px", height: "14px", color: "#8cc63f", flexShrink: 0, display: "block" }} />
+              <span className="font-bold text-neutral-500" style={{ width: "112px", flexShrink: 0 }}>Payment Terms</span>
               <span className="font-bold text-neutral-900">: {paymentTerms}</span>
             </div>
-            <div className="flex items-center gap-2">
-              <Clock className="w-3.5 h-3.5 text-[#8cc63f] shrink-0" />
-              <span className="font-bold text-neutral-500 w-28 shrink-0">Delivery Time</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <Clock style={{ width: "14px", height: "14px", color: "#8cc63f", flexShrink: 0, display: "block" }} />
+              <span className="font-bold text-neutral-500" style={{ width: "112px", flexShrink: 0 }}>Delivery Time</span>
               <span className="font-bold text-neutral-900">: {deliveryTime}</span>
             </div>
           </div>
 
           {/* Right Column: Green Validity Box */}
           <div className="col-span-5 flex justify-end">
-            <div className="bg-[#fafaf8] border border-neutral-200 rounded-2xl p-4 flex items-center gap-3.5 shadow-xs w-full max-w-[240px]">
-              <div className={`p-3 rounded-full shrink-0 shadow-xs ${accentBadge}`}>
-                <Calendar className="w-5 h-5" />
+            <div className="bg-[#fafaf8] border border-neutral-200 rounded-2xl p-4 shadow-xs" style={{ display: "flex", alignItems: "center", gap: "14px", width: "100%", maxWidth: "240px" }}>
+              <div className={`p-3 rounded-full shrink-0 shadow-xs ${accentBadge}`} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Calendar style={{ width: "20px", height: "20px", display: "block" }} />
               </div>
               <div>
                 <span className="text-[10px] font-black uppercase tracking-wider text-neutral-400 block">
@@ -359,12 +359,12 @@ export function ModernQuotationTemplate({
         {/* Itemized Line Items Table */}
         <div className="px-10 mt-6">
           {/* Black Full-Width Rounded Header Bar */}
-          <div className="bg-[#0a0a0a] text-white rounded-xl py-3 px-6 flex justify-between items-center text-xs font-black uppercase tracking-wider mb-2 shadow-md">
-            <span className="w-16 text-center">SR NO.</span>
-            <span className="flex-1 px-4">ITEM DESCRIPTION</span>
-            <span className="w-16 text-center">QTY.</span>
-            <span className="w-28 text-right">RATE ({currencySymbol})</span>
-            <span className="w-28 text-right">AMOUNT ({currencySymbol})</span>
+          <div className="bg-[#0a0a0a] text-white rounded-xl py-3 px-6 mb-2 shadow-md" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+            <span style={{ width: "64px", textAlign: "center" }}>SR NO.</span>
+            <span style={{ flex: 1, paddingLeft: "16px", paddingRight: "16px" }}>ITEM DESCRIPTION</span>
+            <span style={{ width: "64px", textAlign: "center" }}>QTY.</span>
+            <span style={{ width: "112px", textAlign: "right" }}>RATE ({currencySymbol})</span>
+            <span style={{ width: "112px", textAlign: "right" }}>AMOUNT ({currencySymbol})</span>
           </div>
 
           {/* Table Body Rows */}
@@ -376,19 +376,20 @@ export function ModernQuotationTemplate({
               return (
                 <div
                   key={item.id || index}
-                  className={`flex justify-between items-center py-3 px-6 text-xs transition rounded-xl ${
+                  className={`py-3 px-6 text-xs transition rounded-xl ${
                     isEven ? accentLightRow : "bg-white"
                   }`}
+                  style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
                 >
                   {/* SR NO Badge */}
-                  <div className="w-16 flex justify-center">
+                  <div style={{ width: "64px", display: "flex", justifyContent: "center" }}>
                     <span className={`font-mono font-bold text-xs px-2.5 py-1 rounded-md ${accentBadgeSr}`}>
                       {srNo}
                     </span>
                   </div>
 
                   {/* Description Title & Subtitle */}
-                  <div className="flex-1 px-4">
+                  <div style={{ flex: 1, paddingLeft: "16px", paddingRight: "16px" }}>
                     <p className="font-bold text-neutral-900 text-xs">{item.description}</p>
                     {item.miniDescription && (
                       <p className="text-[11px] text-neutral-500 font-medium mt-0.5 leading-snug">
@@ -398,15 +399,15 @@ export function ModernQuotationTemplate({
                   </div>
 
                   {/* Quantity */}
-                  <span className="w-16 text-center font-mono font-bold text-neutral-900">{item.quantity}</span>
+                  <span className="font-mono font-bold text-neutral-900" style={{ width: "64px", textAlign: "center" }}>{item.quantity}</span>
 
                   {/* Rate */}
-                  <span className="w-28 text-right font-mono text-neutral-700 font-semibold">
+                  <span className="font-mono text-neutral-700 font-semibold" style={{ width: "112px", textAlign: "right" }}>
                     {formatCurrency(item.rate, "")}
                   </span>
 
                   {/* Amount */}
-                  <span className="w-28 text-right font-mono font-bold text-neutral-900">
+                  <span className="font-mono font-bold text-neutral-900" style={{ width: "112px", textAlign: "right" }}>
                     {formatCurrency(item.amount, "")}
                   </span>
                 </div>
@@ -483,24 +484,24 @@ export function ModernQuotationTemplate({
       </div>
 
       {/* Full-Width Black Contact Footer Bar */}
-      <div className="mt-6 mb-6 mx-10 bg-[#0a0a0a] text-white px-8 py-3.5 rounded-full flex justify-between items-center text-xs font-semibold shadow-xl">
-        <div className="flex items-center gap-2">
-          <Phone className="w-3.5 h-3.5 text-white shrink-0" />
-          <span>{senderPhone}</span>
+      <div className="mt-6 mb-6 mx-10 bg-[#0a0a0a] text-white px-8 py-3.5 rounded-full shadow-xl" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px", fontWeight: 600 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <Phone style={{ width: "14px", height: "14px", color: "white", flexShrink: 0, display: "block" }} />
+          <span style={{ lineHeight: "1", display: "block" }}>{senderPhone}</span>
         </div>
 
-        <span className="text-neutral-600 font-normal">|</span>
+        <span className="text-neutral-600 font-normal" style={{ lineHeight: "1" }}>|</span>
 
-        <div className="flex items-center gap-2">
-          <Mail className="w-3.5 h-3.5 text-white shrink-0" />
-          <span>{senderEmail}</span>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <Mail style={{ width: "14px", height: "14px", color: "white", flexShrink: 0, display: "block" }} />
+          <span style={{ lineHeight: "1", display: "block" }}>{senderEmail}</span>
         </div>
 
-        <span className="text-neutral-600 font-normal">|</span>
+        <span className="text-neutral-600 font-normal" style={{ lineHeight: "1" }}>|</span>
 
-        <div className="flex items-center gap-2">
-          <Globe className="w-3.5 h-3.5 text-white shrink-0" />
-          <span>{senderWebsite}</span>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <Globe style={{ width: "14px", height: "14px", color: "white", flexShrink: 0, display: "block" }} />
+          <span style={{ lineHeight: "1", display: "block" }}>{senderWebsite}</span>
         </div>
       </div>
     </div>

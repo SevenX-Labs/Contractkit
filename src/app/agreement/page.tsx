@@ -195,30 +195,7 @@ export default function AgreementPage() {
     }
 
     setIsSaving(true);
-    const res = await createAgreementDB({
-      agreementNumber: formData.agreementNumber,
-      date: formData.date,
-      version: formData.version,
-      clientName: formData.clientName,
-      clientCompany: formData.clientCompany,
-      clientEmail: formData.clientEmail,
-      clientPhone: formData.clientPhone,
-      clientAddress: formData.clientAddress,
-      projectTitle: formData.projectTitle,
-      projectDescription: formData.projectDescription,
-      includedScope: formData.includedScope,
-      excludedScope: formData.excludedScope,
-      techStack: formData.techStack,
-      totalAmount: formData.totalAmount,
-      paymentStructure: formData.paymentStructure,
-      paymentRows: formData.paymentRows,
-      milestones: formData.milestones,
-      ipTransferCondition: formData.ipTransferCondition,
-      freeSupportPeriod: formData.freeSupportPeriod,
-      revisionLimit: String(formData.revisionLimit) as any,
-      freelancerSignatureName: formData.freelancerSignatureName,
-      clientSignatureName: formData.clientSignatureName,
-    });
+    const res = await createAgreementDB(formData as any);
     setIsSaving(false);
 
     if (res.success) {

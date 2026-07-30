@@ -243,9 +243,9 @@ export function ModernAgreementTemplate({
 
             {/* Parties Pill Header & 2-Column Grid */}
             <div className="px-10 mt-4" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
-              <div className="grid grid-cols-2 gap-4 bg-[#0a0a0a] text-white rounded-full py-2.5 px-4 text-xs font-black uppercase tracking-wider mb-2 shadow-md">
-                <span className="text-left pl-2">1. SERVICE PROVIDER</span>
-                <span className="text-left pl-3">2. CLIENT</span>
+              <div className="grid grid-cols-2 gap-4 bg-[#0a0a0a] text-white rounded-full py-3 px-6 text-xs font-black uppercase tracking-wider mb-2 shadow-md" style={{ lineHeight: "1.4" }}>
+                <span className="text-left pl-2" style={{ display: "block", lineHeight: "1.4" }}>1. SERVICE PROVIDER</span>
+                <span className="text-left pl-3" style={{ display: "block", lineHeight: "1.4" }}>2. CLIENT</span>
               </div>
 
               <div className="grid grid-cols-2 gap-4 bg-neutral-50 p-4 rounded-2xl border border-neutral-200 text-xs">
@@ -277,9 +277,9 @@ export function ModernAgreementTemplate({
             {/* Sections 3, 4, 5, 6 on Page 1 */}
             <div className="px-10 mt-4 space-y-3">
               {/* Section 3: Project Overview */}
-              <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
-                <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
-                  <Briefcase className="w-4 h-4" />
+              <div className="p-3 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
+                <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Briefcase style={{ width: "16px", height: "16px", display: "block" }} />
                 </div>
                 <div className="flex-1 grid grid-cols-12 gap-3">
                   <div className="col-span-5">
@@ -295,9 +295,9 @@ export function ModernAgreementTemplate({
               </div>
 
               {/* Section 4: Scope of Work */}
-              <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
-                <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
-                  <Target className="w-4 h-4" />
+              <div className="p-3 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
+                <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Target style={{ width: "16px", height: "16px", display: "block" }} />
                 </div>
                 <div className="flex-1 grid grid-cols-12 gap-3">
                   <div className="col-span-5">
@@ -315,9 +315,9 @@ export function ModernAgreementTemplate({
               </div>
 
               {/* Section 5: Timeline & Milestones */}
-              <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
-                <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
-                  <Calendar className="w-4 h-4" />
+              <div className="p-3 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
+                <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Calendar style={{ width: "16px", height: "16px", display: "block" }} />
                 </div>
                 <div className="flex-1 grid grid-cols-12 gap-3">
                   <div className="col-span-5">
@@ -333,9 +333,9 @@ export function ModernAgreementTemplate({
               </div>
 
               {/* Section 6: Payment Terms */}
-              <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
-                <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
-                  <IndianRupee className="w-4 h-4" />
+              <div className="p-3 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
+                <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <IndianRupee style={{ width: "16px", height: "16px", display: "block" }} />
                 </div>
                 <div className="flex-1 grid grid-cols-12 gap-3">
                   <div className="col-span-5">
@@ -359,20 +359,20 @@ export function ModernAgreementTemplate({
               <span>Page 1 of 2</span>
             </div>
 
-            <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 flex justify-between items-center text-xs font-semibold z-20">
-              <div className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-white shrink-0" />
-                <span>{providerPhone || "8652601566"}</span>
+            <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px", fontWeight: 600 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <Phone style={{ width: "16px", height: "16px", color: "white", flexShrink: 0, display: "block" }} />
+                <span style={{ lineHeight: "1", display: "block" }}>{providerPhone || "8652601566"}</span>
               </div>
 
-              <div className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-white shrink-0" />
-                <span>{providerEmail || "sevenxlabs07@gmail.com"}</span>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <Mail style={{ width: "16px", height: "16px", color: "white", flexShrink: 0, display: "block" }} />
+                <span style={{ lineHeight: "1", display: "block" }}>{providerEmail || "sevenxlabs07@gmail.com"}</span>
               </div>
 
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-white shrink-0" />
-                <span>{providerAddress || "Thane, Mumbai, Maharashtra"}</span>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <MapPin style={{ width: "16px", height: "16px", color: "white", flexShrink: 0, display: "block" }} />
+                <span style={{ lineHeight: "1", display: "block" }}>{providerAddress || "Thane, Mumbai, Maharashtra"}</span>
               </div>
             </div>
           </div>
@@ -396,9 +396,9 @@ export function ModernAgreementTemplate({
             {/* Sections 7, 8, 9, 10 on Page 2 */}
             <div className="px-10 mt-6 space-y-4">
               {/* Section 7: Intellectual Property & Ownership */}
-              <div className="flex items-start gap-3 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
-                <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
-                  <Code className="w-4 h-4" />
+              <div className="p-4 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
+                <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Code style={{ width: "16px", height: "16px", display: "block" }} />
                 </div>
                 <div className="flex-1">
                   <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1">7. INTELLECTUAL PROPERTY & OWNERSHIP</h4>
@@ -407,9 +407,9 @@ export function ModernAgreementTemplate({
               </div>
 
               {/* Section 8: Deliverables & Code Handover */}
-              <div className="flex items-start gap-3 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
-                <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
-                  <FileCheck className="w-4 h-4" />
+              <div className="p-4 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
+                <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <FileCheck style={{ width: "16px", height: "16px", display: "block" }} />
                 </div>
                 <div className="flex-1">
                   <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1">8. DELIVERABLES & CODE HANDOVER</h4>
@@ -418,9 +418,9 @@ export function ModernAgreementTemplate({
               </div>
 
               {/* Section 9: Confidentiality & Data Security */}
-              <div className="flex items-start gap-3 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
-                <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
-                  <Lock className="w-4 h-4" />
+              <div className="p-4 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
+                <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Lock style={{ width: "16px", height: "16px", display: "block" }} />
                 </div>
                 <div className="flex-1">
                   <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1">9. CONFIDENTIALITY & DATA SECURITY</h4>
@@ -429,9 +429,9 @@ export function ModernAgreementTemplate({
               </div>
 
               {/* Section 10: Warranty, Support & Revision Policy */}
-              <div className="flex items-start gap-3 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
-                <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
-                  <ShieldCheck className="w-4 h-4" />
+              <div className="p-4 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
+                <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <ShieldCheck style={{ width: "16px", height: "16px", display: "block" }} />
                 </div>
                 <div className="flex-1 space-y-1 text-xs">
                   <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1">10. WARRANTY, SUPPORT & REVISION POLICY</h4>
@@ -471,20 +471,20 @@ export function ModernAgreementTemplate({
             </div>
 
             {/* Full-Width Black Footer Bar */}
-            <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 flex justify-between items-center text-xs font-semibold z-20">
-              <div className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-white shrink-0" />
-                <span>{providerPhone || "8652601566"}</span>
+            <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px", fontWeight: 600 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <Phone style={{ width: "16px", height: "16px", color: "white", flexShrink: 0, display: "block" }} />
+                <span style={{ lineHeight: "1", display: "block" }}>{providerPhone || "8652601566"}</span>
               </div>
 
-              <div className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-white shrink-0" />
-                <span>{providerEmail || "sevenxlabs07@gmail.com"}</span>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <Mail style={{ width: "16px", height: "16px", color: "white", flexShrink: 0, display: "block" }} />
+                <span style={{ lineHeight: "1", display: "block" }}>{providerEmail || "sevenxlabs07@gmail.com"}</span>
               </div>
 
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-white shrink-0" />
-                <span>{providerAddress || "Thane, Mumbai, Maharashtra"}</span>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <MapPin style={{ width: "16px", height: "16px", color: "white", flexShrink: 0, display: "block" }} />
+                <span style={{ lineHeight: "1", display: "block" }}>{providerAddress || "Thane, Mumbai, Maharashtra"}</span>
               </div>
             </div>
           </div>

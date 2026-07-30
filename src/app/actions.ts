@@ -1049,7 +1049,7 @@ export async function createInvoiceDB(data: InvoiceData) {
   });
 }
 
-export async function createAgreementDB(data: AgreementData) {
+export async function createAgreementDB(data: AgreementData | any) {
   return createDocumentSuiteDB({
     documentNumber: data.agreementNumber,
     title: `Agreement - ${data.projectTitle}`,
