@@ -113,6 +113,15 @@ export function ModernReceiptTemplate({
       ? "bg-pink-600 text-white"
       : "bg-emerald-600 text-white";
 
+  const accentLightBg =
+    accentColor === "lime"
+      ? "bg-[#eef8ce] text-neutral-950"
+      : accentColor === "purple"
+      ? "bg-purple-100 text-purple-950"
+      : accentColor === "pink"
+      ? "bg-pink-100 text-pink-950"
+      : "bg-emerald-100 text-emerald-950";
+
   const accentShape =
     accentColor === "lime"
       ? "#a6ce39"
@@ -287,12 +296,12 @@ export function ModernReceiptTemplate({
           <div className="border-x border-b border-neutral-200 rounded-b-xl overflow-hidden">
             {items.map((item, index) => {
               const srNo = String(index + 1).padStart(2, "0");
-              const isFirst = index === 0;
+              const isGreenRow = index % 2 === 0;
               return (
                 <div
                   key={item.id || index}
                   className={`flex justify-between items-center py-3 px-5 text-xs font-semibold ${
-                    isFirst ? accentBadgeBg : "bg-white text-neutral-900 border-t border-neutral-100"
+                    isGreenRow ? `${accentLightBg} border-t border-neutral-100` : "bg-white text-neutral-900 border-t border-neutral-100"
                   }`}
                 >
                   <span className="w-16 text-center font-mono">{srNo}</span>
