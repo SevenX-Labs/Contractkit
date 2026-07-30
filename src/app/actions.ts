@@ -123,6 +123,8 @@ export async function createClientWorkTrackerDB(data: {
   phone?: string;
   billingAddress?: string;
   workType: string;
+  projectTitle?: string;
+  projectDescription?: string;
   projectValue: number;
   paymentStructure: "50/50" | "3-Way Split" | "Full Upfront" | "Full Payment After Work" | "Monthly Retainer" | "Milestone";
   customMilestones?: Array<{ label: string; percentage: number }>;
@@ -145,11 +147,14 @@ export async function createClientWorkTrackerDB(data: {
       },
     });
 
-    // 2. Create Project
+    // 2. Create Project with actual Project Title & Description
+    const projName = data.projectTitle || `${data.workType} Project`;
+    const projDesc = data.projectDescription || data.notes || `${data.workType} project for ${data.name}`;
+
     const project = await prisma.project.create({
       data: {
-        name: `${data.name} — ${data.workType}`,
-        description: data.notes || `${data.workType} project for ${data.name}`,
+        name: projName,
+        description: projDesc,
         workType: data.workType,
         budget: data.projectValue,
         totalValue: data.projectValue,
@@ -502,10 +507,48 @@ export async function createClientDB(data: {
 
 export async function deleteClientDB(id: string) {
   try {
+    const client = await prisma.client.findUnique({ where: { id } });
+    if (!client) {
+      return { success: true };
+    }
+
+    // 1. Find all projects for this client
+    const clientProjects = await prisma.project.findMany({
+      where: { clientId: id },
+      select: { id: true },
+    });
+    const projectIds = clientProjects.map((p) => p.id);
+
+    // 2. Delete all payment milestones for those projects
+    if (projectIds.length > 0) {
+      await prisma.projectPayment.deleteMany({
+        where: { projectId: { in: projectIds } },
+      });
+    }
+
+    // 3. Delete all document suites matching clientId, clientName, or clientEmail
+    const docOrConditions: any[] = [{ clientId: id }];
+    if (client.name) docOrConditions.push({ clientName: client.name });
+    if (client.email) docOrConditions.push({ clientEmail: client.email });
+
+    await prisma.documentSuite.deleteMany({
+      where: { OR: docOrConditions },
+    });
+
+    // 4. Delete all projects for this client
+    await prisma.project.deleteMany({
+      where: { clientId: id },
+    });
+
+    // 5. Delete the client record
     await prisma.client.delete({ where: { id } });
+
+    revalidatePath("/");
     revalidatePath("/clients");
+    revalidatePath("/projects");
     return { success: true };
   } catch (err) {
+    console.error("Error deleting client and related data:", err);
     return { success: false, error: String(err) };
   }
 }
@@ -533,6 +576,20 @@ export async function updateClientDB(
       where: { id },
       data,
     });
+
+    // Sync status to all linked projects
+    if (data.status) {
+      const projStatus =
+        data.status === "Active" || data.status === "In Progress"
+          ? "In Progress"
+          : data.status;
+
+      await prisma.project.updateMany({
+        where: { clientId: id },
+        data: { status: projStatus },
+      });
+    }
+
     revalidatePath("/clients");
     revalidatePath("/projects");
     return { success: true, client: updated };
@@ -580,8 +637,14 @@ export async function getProjectsDB() {
         return false;
       });
 
+      const effectiveStatus =
+        p.client && (p.client.status === "On Hold" || p.client.status === "Completed")
+          ? p.client.status
+          : p.status;
+
       return {
         ...p,
+        status: effectiveStatus,
         documents: [...(p.documents || []), ...matchingDocs],
       };
     });
@@ -699,6 +762,20 @@ export async function updateProjectDB(
         deliveryDate: data.deliveryDate ? new Date(data.deliveryDate) : undefined,
       },
     });
+
+    // If project status was updated and has a linked client, sync client's status
+    if (data.status && updated.clientId) {
+      const clientStatus =
+        data.status === "In Progress" || data.status === "Active"
+          ? "Active"
+          : data.status;
+
+      await prisma.client.update({
+        where: { id: updated.clientId },
+        data: { status: clientStatus },
+      });
+    }
+
     revalidatePath("/projects");
     revalidatePath("/clients");
     return { success: true, project: updated };
@@ -709,7 +786,10 @@ export async function updateProjectDB(
 
 export async function deleteProjectDB(id: string) {
   try {
+    await prisma.projectPayment.deleteMany({ where: { projectId: id } });
     await prisma.project.delete({ where: { id } });
+    revalidatePath("/");
+    revalidatePath("/clients");
     revalidatePath("/projects");
     return { success: true };
   } catch (err) {

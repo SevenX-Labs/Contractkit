@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { getClientsDB, createClientWorkTrackerDB, updateClientDB, deleteClientDB } from "../actions";
+import { getClientsDB, createClientDB, updateClientDB, deleteClientDB } from "../actions";
 import { Users, Plus, Search, Trash2, Pencil, X, FileText } from "lucide-react";
 import { formatCurrency } from "../../lib/utils";
 import Link from "next/link";
@@ -41,7 +41,7 @@ export default function ClientsPage() {
     notes: "",
   });
 
-  // Create Client State
+  // Create Client State (Client Info Only)
   const [formData, setFormData] = useState({
     name: "",
     company: "",
@@ -49,10 +49,6 @@ export default function ClientsPage() {
     phone: "",
     billingAddress: "",
     workType: "Web Dev",
-    projectValue: 250000,
-    paymentStructure: "50/50" as "50/50" | "3-Way Split" | "Full Upfront" | "Full Payment After Work" | "Monthly Retainer" | "Milestone",
-    startDate: new Date().toISOString().split("T")[0],
-    deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
     notes: "",
   });
 
@@ -74,9 +70,9 @@ export default function ClientsPage() {
       return;
     }
 
-    const res = await createClientWorkTrackerDB(formData);
+    const res = await createClientDB(formData);
     if (res.success) {
-      toast.success(`Client "${formData.name}" & Project Payments created!`);
+      toast.success(`Client "${formData.name}" created successfully!`);
       setIsModalOpen(false);
       setFormData({
         name: "",
@@ -85,10 +81,6 @@ export default function ClientsPage() {
         phone: "",
         billingAddress: "",
         workType: "Web Dev",
-        projectValue: 250000,
-        paymentStructure: "50/50",
-        startDate: new Date().toISOString().split("T")[0],
-        deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
         notes: "",
       });
       fetchClients();
@@ -134,7 +126,7 @@ export default function ClientsPage() {
     const res = await deleteClientDB(id);
     if (res.success) {
       setClients((prev) => prev.filter((c) => c.id !== id));
-      toast.success(`Deleted client "${name}"`);
+      toast.success(`Deleted client "${name}" and all associated data.`);
     } else {
       toast.error(`Error: ${res.error}`);
     }
@@ -157,8 +149,8 @@ export default function ClientsPage() {
             <Users className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-xl font-extrabold text-neutral-900 tracking-tight">Client Work & Profit Tracker</h1>
-            <p className="text-xs text-neutral-600 font-medium">Manage enterprise clients, edit client details, payment structures (50/50, Retainers, Milestones), and earnings</p>
+            <h1 className="text-xl font-extrabold text-neutral-900 tracking-tight">Client Directory & CRM</h1>
+            <p className="text-xs text-neutral-600 font-medium">Manage enterprise client profiles, contact information, billing addresses, and earnings</p>
           </div>
         </div>
 
@@ -191,7 +183,7 @@ export default function ClientsPage() {
           <div className="py-16 text-center p-8 flex flex-col items-center gap-3">
             <Users className="w-10 h-10 text-neutral-400" />
             <h3 className="text-sm font-bold text-neutral-800">No client records found</h3>
-            <p className="text-xs text-neutral-500 max-w-sm">Add a client to automatically track project milestones, paid earnings, and pending balances!</p>
+            <p className="text-xs text-neutral-500 max-w-sm">Add a client profile to manage client information and assign projects in the Project Hub!</p>
             <button
               onClick={() => setIsModalOpen(true)}
               className="px-4 py-2 rounded-full bg-[#121212] text-white text-xs font-bold shadow cursor-pointer"
@@ -240,11 +232,13 @@ export default function ClientsPage() {
                     </td>
                     <td className="py-4 px-4">
                       <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                        c.amountPending === 0 && c.totalValue > 0
+                        c.status === "On Hold"
+                          ? "bg-amber-200 text-amber-900"
+                          : c.amountPending === 0 && c.totalValue > 0
                           ? "bg-emerald-200 text-emerald-900"
                           : "bg-purple-200 text-purple-900"
                       }`}>
-                        {c.amountPending === 0 && c.totalValue > 0 ? "Fully Paid" : c.status}
+                        {c.status}
                       </span>
                     </td>
                     <td className="py-4 px-4 text-right">
@@ -259,14 +253,14 @@ export default function ClientsPage() {
                         <Link
                           href={`/projects`}
                           className="p-1.5 rounded-full bg-[#DFD9C9] text-neutral-800 hover:bg-[#121212] hover:text-white transition cursor-pointer"
-                          title="View Milestones"
+                          title="View Projects & Milestones"
                         >
                           <FileText className="w-3.5 h-3.5" />
                         </Link>
                         <button
                           onClick={() => handleDelete(c.id, c.name)}
                           className="p-1.5 rounded-full bg-pink-100 text-pink-800 hover:bg-pink-200 transition cursor-pointer"
-                          title="Delete Client"
+                          title="Delete Client & All Related Data"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -280,12 +274,15 @@ export default function ClientsPage() {
         )}
       </div>
 
-      {/* Add Client Modal */}
+      {/* Add Client Modal (Client Info Only) */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-6 max-w-lg w-full shadow-2xl flex flex-col gap-4">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-6 max-w-lg w-full shadow-2xl flex flex-col gap-4 my-auto">
             <div className="flex items-center justify-between border-b border-[#D5CEBC] pb-3">
-              <h3 className="text-base font-extrabold text-neutral-900">Add Client & Project Work Structure</h3>
+              <div>
+                <h3 className="text-base font-extrabold text-neutral-900">Add New Client Profile</h3>
+                <p className="text-[11px] text-neutral-500 font-medium">Add client details to CRM. Assign projects & milestones in Project Hub.</p>
+              </div>
               <button onClick={() => setIsModalOpen(false)} className="p-1 text-neutral-500 hover:text-neutral-900 cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
@@ -298,15 +295,17 @@ export default function ClientsPage() {
                   <input
                     type="text"
                     required
+                    placeholder="e.g. Vishal Aggarwal"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-bold"
                   />
                 </div>
                 <div>
-                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">Company</label>
+                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">Company Name</label>
                   <input
                     type="text"
+                    placeholder="e.g. YF Advisors"
                     value={formData.company}
                     onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                     className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900"
@@ -316,10 +315,11 @@ export default function ClientsPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">Email *</label>
+                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">Email Address *</label>
                   <input
                     type="email"
                     required
+                    placeholder="vishal@yfadvisors.com"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900"
@@ -329,6 +329,7 @@ export default function ClientsPage() {
                   <label className="text-[11px] font-bold text-neutral-700 block mb-1">Phone Number</label>
                   <input
                     type="text"
+                    placeholder="+91 98765 43210"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900"
@@ -336,71 +337,44 @@ export default function ClientsPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">Work Type</label>
-                  <select
-                    value={formData.workType}
-                    onChange={(e) => setFormData({ ...formData, workType: e.target.value })}
-                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900"
-                  >
-                    <option value="Web Dev">Web Development</option>
-                    <option value="App Dev">Mobile App Dev</option>
-                    <option value="Automation">Automation Platform</option>
-                    <option value="AI Agent">AI Solutions / Agents</option>
-                    <option value="UI/UX">UI/UX Design</option>
-                    <option value="SEO">SEO & Growth</option>
-                    <option value="E-Commerce">E-Commerce Store</option>
-                    <option value="Other">Other Consultancy</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">Project Value (₹) *</label>
-                  <input
-                    type="number"
-                    min={0}
-                    required
-                    value={formData.projectValue}
-                    onChange={(e) => setFormData({ ...formData, projectValue: Number(e.target.value) })}
-                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-extrabold text-neutral-900"
-                  />
-                </div>
-              </div>
-
               <div>
-                <label className="text-[11px] font-bold text-neutral-700 block mb-1">Payment Milestone Structure</label>
+                <label className="text-[11px] font-bold text-neutral-700 block mb-1">Work Type Category</label>
                 <select
-                  value={formData.paymentStructure}
-                  onChange={(e) => setFormData({ ...formData, paymentStructure: e.target.value as any })}
+                  value={formData.workType}
+                  onChange={(e) => setFormData({ ...formData, workType: e.target.value })}
                   className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900"
                 >
-                  <option value="50/50">50/50 (50% Advance + 50% Final Delivery)</option>
-                  <option value="3-Way Split">3-Way Split (30% Advance + 30% Milestone 2 + 40% Final)</option>
-                  <option value="Full Upfront">Full Upfront (100% Advance Payment)</option>
-                  <option value="Full Payment After Work">Full Payment After Work (100% Upon Completion)</option>
-                  <option value="Monthly Retainer">Monthly Retainer Billing</option>
+                  <option value="Web Dev">Web Development</option>
+                  <option value="App Dev">Mobile App Dev</option>
+                  <option value="Automation">Automation Platform</option>
+                  <option value="AI Agent">AI Solutions / Agents</option>
+                  <option value="UI/UX">UI/UX Design</option>
+                  <option value="SEO">SEO & Growth</option>
+                  <option value="E-Commerce">E-Commerce Store</option>
+                  <option value="Other">Other Consultancy</option>
                 </select>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">Start Date</label>
-                  <input
-                    type="date"
-                    value={formData.startDate}
-                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900"
-                  />
-                </div>
-                <div>
-                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">Deadline</label>
-                  <input
-                    type="date"
-                    value={formData.deadline}
-                    onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
-                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900"
-                  />
-                </div>
+              <div>
+                <label className="text-[11px] font-bold text-neutral-700 block mb-1">Billing Address</label>
+                <input
+                  type="text"
+                  placeholder="Street, City, State, Pincode"
+                  value={formData.billingAddress}
+                  onChange={(e) => setFormData({ ...formData, billingAddress: e.target.value })}
+                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium"
+                />
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-neutral-700 block mb-1">Notes / Preferences</label>
+                <textarea
+                  rows={2}
+                  placeholder="Add any internal client notes, preferences, or tax details..."
+                  value={formData.notes}
+                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium resize-none"
+                />
               </div>
 
               <div className="flex justify-end gap-3 mt-3">
@@ -415,7 +389,7 @@ export default function ClientsPage() {
                   type="submit"
                   className="px-5 py-2 rounded-full bg-[#121212] text-white text-xs font-bold hover:bg-neutral-800 transition cursor-pointer"
                 >
-                  Create Client & Payments
+                  Save Client Profile
                 </button>
               </div>
             </form>
@@ -509,8 +483,9 @@ export default function ClientsPage() {
                     className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900"
                   >
                     <option value="Active">Active</option>
-                    <option value="Completed">Completed</option>
+                    <option value="In Progress">In Progress</option>
                     <option value="On Hold">On Hold</option>
+                    <option value="Completed">Completed</option>
                   </select>
                 </div>
               </div>

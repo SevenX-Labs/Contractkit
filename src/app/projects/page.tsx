@@ -5,6 +5,7 @@ import {
   getProjectsDB,
   getClientsDB,
   createProjectDB,
+  updateProjectDB,
   updatePaymentStatusDB,
   updateProjectPaymentDB,
   addProjectPaymentDB,
@@ -40,6 +41,8 @@ import {
   FileQuestion,
   Building,
   Sparkles,
+  Layers,
+  UserCheck,
 } from "lucide-react";
 import { formatCurrency, formatDate } from "../../lib/utils";
 import { useDocumentExport } from "../../hooks/useDocumentExport";
@@ -81,6 +84,8 @@ interface ClientItem {
   name: string;
   company?: string | null;
   email: string;
+  phone?: string | null;
+  workType?: string | null;
 }
 
 interface ProjectItem {
@@ -105,7 +110,11 @@ export default function ProjectsPage() {
   const [projects, setProjects] = useState<ProjectItem[]>([]);
   const [clients, setClients] = useState<ClientItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [expandedProjectId, setExpandedProjectId] = useState<string | null>(null);
+
+  // Collapsible toggle states
+  const [expandedDocsProjectId, setExpandedDocsProjectId] = useState<string | null>(null);
+  const [expandedMilestonesProjectId, setExpandedMilestonesProjectId] = useState<string | null>(null);
+
   const [isLoading, setIsLoading] = useState(true);
 
   // Add Project Modal State
@@ -120,6 +129,16 @@ export default function ProjectsPage() {
     clientId: "",
     startDate: new Date().toISOString().split("T")[0],
     deliveryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+  });
+
+  // Edit Project Details State
+  const [editingProject, setEditingProject] = useState<ProjectItem | null>(null);
+  const [projectEditForm, setProjectEditForm] = useState({
+    name: "",
+    description: "",
+    workType: "Web Dev",
+    status: "In Progress",
+    budget: 0,
   });
 
   // Edit Payment Milestone State
@@ -162,6 +181,15 @@ export default function ProjectsPage() {
     fetchInitialData();
   }, []);
 
+  const handleSelectClient = (clientId: string) => {
+    const matched = clients.find((c) => c.id === clientId);
+    setNewProject((prev) => ({
+      ...prev,
+      clientId,
+      workType: matched?.workType || prev.workType || "Web Dev",
+    }));
+  };
+
   const handleCreateProject = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newProject.name) {
@@ -198,6 +226,43 @@ export default function ProjectsPage() {
       fetchInitialData();
     } else {
       toast.error(`Error creating project: ${res.error}`);
+    }
+  };
+
+  const handleStartEditProject = (project: ProjectItem) => {
+    setEditingProject(project);
+    setProjectEditForm({
+      name: project.name || "",
+      description: project.description || "",
+      workType: project.workType || "Web Dev",
+      status: project.status || "In Progress",
+      budget: project.budget || project.totalValue || 0,
+    });
+  };
+
+  const handleSaveProjectEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingProject) return;
+
+    if (!projectEditForm.name) {
+      toast.error("Project Name is required.");
+      return;
+    }
+
+    const res = await updateProjectDB(editingProject.id, {
+      name: projectEditForm.name,
+      description: projectEditForm.description,
+      workType: projectEditForm.workType,
+      status: projectEditForm.status,
+      budget: Number(projectEditForm.budget),
+    });
+
+    if (res.success) {
+      toast.success(`Project "${projectEditForm.name}" updated successfully!`);
+      setEditingProject(null);
+      fetchInitialData();
+    } else {
+      toast.error(`Error updating project: ${res.error}`);
     }
   };
 
@@ -365,9 +430,13 @@ export default function ProjectsPage() {
   const filteredProjects = projects.filter(
     (p) =>
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (p.description && p.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (p.client && p.client.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (p.workType && p.workType.toLowerCase().includes(searchQuery.toLowerCase()))
   );
+
+  // Selected Client Object inside Add Project modal
+  const selectedClientObj = clients.find((c) => c.id === newProject.clientId);
 
   // Helper to render parsed document template inside modal
   const renderTemplateComponent = (doc: DocumentItem) => {
@@ -407,20 +476,20 @@ export default function ProjectsPage() {
   const getDocTypeIcon = (typeKey: string) => {
     switch (typeKey.toUpperCase()) {
       case "QUOTATION":
-        return <FileSignature className="w-4 h-4 text-lime-600" />;
+        return <FileSignature className="w-3.5 h-3.5 text-lime-600" />;
       case "AGREEMENT":
-        return <FileCheck className="w-4 h-4 text-blue-600" />;
+        return <FileCheck className="w-3.5 h-3.5 text-blue-600" />;
       case "NDA":
-        return <ShieldCheck className="w-4 h-4 text-emerald-600" />;
+        return <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />;
       case "INVOICE":
-        return <FileText className="w-4 h-4 text-pink-600" />;
+        return <FileText className="w-3.5 h-3.5 text-pink-600" />;
       case "PAYMENT_RECEIPT":
       case "RECEIPT":
-        return <Receipt className="w-4 h-4 text-cyan-600" />;
+        return <Receipt className="w-3.5 h-3.5 text-cyan-600" />;
       case "CERTIFICATE":
-        return <Award className="w-4 h-4 text-amber-600" />;
+        return <Award className="w-3.5 h-3.5 text-amber-600" />;
       default:
-        return <FileText className="w-4 h-4 text-purple-600" />;
+        return <FileText className="w-3.5 h-3.5 text-purple-600" />;
     }
   };
 
@@ -445,19 +514,19 @@ export default function ProjectsPage() {
   };
 
   return (
-    <div className="flex flex-col gap-6 pb-12">
+    <div className="flex flex-col gap-5 pb-12">
       {/* Top Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-[#EBE7DC] border border-[#E2DDD0] p-6 rounded-3xl shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-[#EBE7DC] border border-[#E2DDD0] p-5 rounded-3xl shadow-sm">
         <div className="flex items-center gap-3">
           <div className="p-3 rounded-2xl bg-purple-100 text-purple-700">
             <FolderKanban className="w-6 h-6" />
           </div>
           <div>
             <h1 className="text-xl font-extrabold text-neutral-900 tracking-tight">
-              Project Milestone Tracker & Related Documents
+              Projects & Milestone Hub
             </h1>
             <p className="text-xs text-neutral-600 font-medium">
-              Track project progress bars, edit payment milestone amounts & statuses, and preview related documents
+              Create projects, select client to auto-fetch details, set payment structure, and track milestones
             </p>
           </div>
         </div>
@@ -472,26 +541,26 @@ export default function ProjectsPage() {
       </div>
 
       {/* Search Bar */}
-      <div className="flex items-center gap-3 bg-[#EBE7DC] border border-[#E2DDD0] p-3 rounded-2xl">
+      <div className="flex items-center gap-3 bg-[#EBE7DC] border border-[#E2DDD0] p-2.5 rounded-2xl">
         <Search className="w-4 h-4 text-neutral-500 ml-2" />
         <input
           type="text"
-          placeholder="Search projects by title, client name, or work type..."
+          placeholder="Search projects by title, scope description, client name, or work type..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-full px-4 py-2 text-xs text-neutral-900 focus:outline-none"
+          className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-full px-4 py-1.5 text-xs text-neutral-900 focus:outline-none"
         />
       </div>
 
-      {/* Projects List */}
+      {/* Projects List (Compact, High-Density Cards) */}
       {isLoading ? (
-        <div className="py-16 text-center text-xs text-neutral-500 font-medium">Loading projects & tracker...</div>
+        <div className="py-16 text-center text-xs text-neutral-500 font-medium">Loading projects & directory...</div>
       ) : filteredProjects.length === 0 ? (
         <div className="py-16 bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl text-center p-8 flex flex-col items-center gap-3">
           <FolderKanban className="w-10 h-10 text-neutral-400" />
           <h3 className="text-sm font-bold text-neutral-800">No projects found</h3>
           <p className="text-xs text-neutral-500 max-w-sm">
-            Create your first project or add a client in the Client CRM to auto-track milestones & related documents!
+            Create your first project or select a client to auto-fetch details and set milestone payments!
           </p>
           <button
             onClick={() => setShowAddProjectModal(true)}
@@ -501,11 +570,12 @@ export default function ProjectsPage() {
           </button>
         </div>
       ) : (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-3">
           {filteredProjects.map((p) => {
             const totalVal = p.totalValue || p.budget || 1;
             const progressPct = Math.min(100, Math.round((p.amountPaid / totalVal) * 100));
-            const isExpanded = expandedProjectId === p.id;
+            const isDocsExpanded = expandedDocsProjectId === p.id;
+            const isMilestonesExpanded = expandedMilestonesProjectId === p.id;
 
             const docTypes = [
               { key: "QUOTATION", label: "Quotation" },
@@ -513,148 +583,191 @@ export default function ProjectsPage() {
               { key: "NDA", label: "NDA" },
               { key: "INVOICE", label: "Invoice" },
               { key: "PAYMENT_RECEIPT", label: "Receipt" },
-              { key: "CERTIFICATE", label: "Completion Certificate" },
+              { key: "CERTIFICATE", label: "Certificate" },
             ];
 
             return (
-              <div key={p.id} className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-6 shadow-sm flex flex-col gap-5">
-                {/* Card Top Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-base font-extrabold text-neutral-900">{p.name}</h3>
-                      <span className="px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-900 text-[10px] font-bold">
+              <div
+                key={p.id}
+                className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-2xl p-4 shadow-sm hover:border-[#D5CEBC] transition flex flex-col gap-3"
+              >
+                {/* Single Compact Row: Title, Client, Budget Progress & Actions */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                  {/* Left: Project Title + Badges + Client Name */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="text-sm font-extrabold text-neutral-900 tracking-tight truncate">
+                        {p.name}
+                      </h3>
+                      <span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-900 text-[10px] font-bold">
                         {p.workType || "Web Dev"}
                       </span>
-                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 text-[10px] font-extrabold uppercase">
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 text-[10px] font-extrabold uppercase">
                         {p.status || "In Progress"}
                       </span>
                     </div>
-                    {p.client && (
-                      <p className="text-xs text-neutral-600 font-medium mt-1 flex items-center gap-1.5">
-                        <Building className="w-3.5 h-3.5 text-neutral-500" />
-                        <span>Client: <strong className="text-neutral-900">{p.client.name}</strong></span>
-                        {p.client.company && <span className="text-neutral-400">({p.client.company})</span>}
+
+                    <div className="flex items-center gap-2 mt-1 text-xs text-neutral-600 font-medium">
+                      {p.client && (
+                        <span className="flex items-center gap-1">
+                          <Building className="w-3 h-3 text-neutral-500 shrink-0" />
+                          <span>Client: <strong className="text-neutral-900">{p.client.name}</strong></span>
+                          {p.client.company && <span className="text-neutral-400">({p.client.company})</span>}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Scope / Description (Compact Line) */}
+                    {p.description && (
+                      <p className="text-[11px] text-neutral-600 font-medium leading-tight mt-1 line-clamp-1">
+                        <strong className="text-neutral-800 font-bold">Scope:</strong> {p.description}
                       </p>
                     )}
                   </div>
 
-                  <div className="flex items-center gap-4">
-                    <div className="text-right">
-                      <span className="text-[11px] text-neutral-500 font-bold block">Paid / Total Budget</span>
-                      <span className="text-sm font-extrabold text-neutral-900 font-mono">
+                  {/* Right: Inline Progress Bar + Financial Stats + Action Buttons */}
+                  <div className="flex items-center gap-4 shrink-0">
+                    {/* Inline Progress */}
+                    <div className="flex flex-col text-right">
+                      <span className="text-[10px] text-neutral-500 font-bold">
+                        Paid / Total Budget ({progressPct}%)
+                      </span>
+                      <span className="text-xs font-extrabold text-neutral-900 font-mono">
                         {formatCurrency(p.amountPaid, "₹")} / {formatCurrency(totalVal, "₹")}
+                      </span>
+                      {/* Mini Bar */}
+                      <div className="w-28 bg-[#DFD9C9] h-1.5 rounded-full overflow-hidden mt-1 self-end border border-[#D5CEBC]">
+                        <div
+                          className="bg-emerald-600 h-full rounded-full"
+                          style={{ width: `${progressPct}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-1.5 border-l border-[#D5CEBC] pl-3">
+                      <button
+                        onClick={() => handleStartEditProject(p)}
+                        className="p-1.5 rounded-full bg-blue-100 text-blue-900 hover:bg-blue-200 transition cursor-pointer"
+                        title="Edit Project Name & Scope"
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                      </button>
+
+                      <button
+                        onClick={() => handleDelete(p.id, p.name)}
+                        className="p-1.5 rounded-full bg-pink-100 text-pink-800 hover:bg-pink-200 transition cursor-pointer"
+                        title="Delete Project"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom Toggle Bar: Documents Suite & Milestones Buttons */}
+                <div className="flex items-center justify-between pt-2 border-t border-[#D5CEBC] text-[11px]">
+                  <div className="flex items-center gap-3">
+                    {/* Documents Toggle */}
+                    <button
+                      onClick={() =>
+                        setExpandedDocsProjectId(isDocsExpanded ? null : p.id)
+                      }
+                      className={`flex items-center gap-1 px-3 py-1 rounded-full font-bold transition cursor-pointer ${
+                        isDocsExpanded
+                          ? "bg-[#121212] text-white"
+                          : "bg-[#DFD9C9] text-neutral-800 hover:bg-[#D5CEBC]"
+                      }`}
+                    >
+                      <Layers className="w-3 h-3 text-[#a6ce39]" />
+                      <span>Documents Suite ({p.documents?.length || 0})</span>
+                      {isDocsExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                    </button>
+
+                    {/* Milestones Toggle */}
+                    <button
+                      onClick={() =>
+                        setExpandedMilestonesProjectId(isMilestonesExpanded ? null : p.id)
+                      }
+                      className={`flex items-center gap-1 px-3 py-1 rounded-full font-bold transition cursor-pointer ${
+                        isMilestonesExpanded
+                          ? "bg-[#121212] text-white"
+                          : "bg-[#DFD9C9] text-neutral-800 hover:bg-[#D5CEBC]"
+                      }`}
+                    >
+                      <Clock className="w-3 h-3 text-amber-500" />
+                      <span>Milestones ({p.payments.length})</span>
+                      {isMilestonesExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                    </button>
+                  </div>
+
+                  <span className="text-[10px] text-pink-700 font-bold font-mono">
+                    Pending: {formatCurrency(p.amountPending, "₹")}
+                  </span>
+                </div>
+
+                {/* Collapsible Documents Suite Grid */}
+                {isDocsExpanded && (
+                  <div className="mt-1 bg-[#F4F0E6] p-3 rounded-2xl border border-[#E2DDD0] flex flex-col gap-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-extrabold uppercase text-neutral-700 tracking-wider">
+                        Related Documents Suite
+                      </span>
+                      <span className="text-[10px] text-neutral-500">
+                        Click eye icon to view live preview
                       </span>
                     </div>
 
-                    <button
-                      onClick={() => handleDelete(p.id, p.name)}
-                      className="p-2 rounded-full bg-pink-100 text-pink-800 hover:bg-pink-200 transition cursor-pointer"
-                      title="Delete Project"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+                      {docTypes.map((dt) => {
+                        const matchedDoc = (p.documents || []).find(
+                          (d) =>
+                            d.type.toUpperCase() === dt.key ||
+                            d.type.toLowerCase() === dt.label.toLowerCase()
+                        );
 
-                {/* Progress Bar */}
-                <div className="flex flex-col gap-1.5 bg-[#F4F0E6] p-4 rounded-2xl border border-[#E2DDD0]">
-                  <div className="flex items-center justify-between text-[11px] font-bold">
-                    <span className="text-neutral-700">Financial Progress ({progressPct}%)</span>
-                    <span className="text-pink-700">Pending Balance: {formatCurrency(p.amountPending, "₹")}</span>
-                  </div>
-                  <div className="w-full bg-[#EBE7DC] h-3 rounded-full overflow-hidden border border-[#E2DDD0]">
-                    <div
-                      className="bg-gradient-to-r from-emerald-500 to-teal-600 h-full rounded-full transition-all duration-500"
-                      style={{ width: `${progressPct}%` }}
-                    />
-                  </div>
-                </div>
-
-                {/* Related Documents Grid Section */}
-                <div className="flex flex-col gap-2.5 pt-1 border-t border-[#D5CEBC]">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-extrabold uppercase tracking-wider text-neutral-700">
-                      Related Documents Suite
-                    </span>
-                    <span className="text-[10px] text-neutral-500 font-bold">
-                      Click View icon to trigger live floating preview
-                    </span>
-                  </div>
-
-                  {/* 6 Document Type Cards */}
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
-                    {docTypes.map((dt) => {
-                      const matchedDoc = (p.documents || []).find(
-                        (d) => d.type.toUpperCase() === dt.key || d.type.toLowerCase() === dt.label.toLowerCase()
-                      );
-
-                      return (
-                        <div
-                          key={dt.key}
-                          className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl p-2.5 flex flex-col justify-between gap-2 shadow-xs hover:border-purple-300 transition"
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-1.5">
+                        return (
+                          <div
+                            key={dt.key}
+                            className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-xl p-2 flex items-center justify-between gap-1 shadow-xs"
+                          >
+                            <div className="flex items-center gap-1.5 truncate">
                               {getDocTypeIcon(dt.key)}
-                              <span className="text-[11px] font-bold text-neutral-900 truncate max-w-[80px]">
+                              <span className="text-[11px] font-bold text-neutral-900 truncate">
                                 {dt.label}
                               </span>
                             </div>
 
-                            {matchedDoc ? (
-                              <button
-                                onClick={() => openDocPreview(p, dt.key, dt.label)}
-                                className="p-1 rounded-md bg-[#DFD9C9] text-neutral-900 hover:bg-[#121212] hover:text-white transition cursor-pointer"
-                                title={`Preview ${dt.label} (${matchedDoc.documentNumber})`}
-                              >
-                                <Eye className="w-3.5 h-3.5" />
-                              </button>
-                            ) : (
-                              <button
-                                onClick={() => openDocPreview(p, dt.key, dt.label)}
-                                className="p-1 rounded-md bg-neutral-200 text-neutral-500 hover:bg-purple-600 hover:text-white transition cursor-pointer"
-                                title={`View status for ${dt.label}`}
-                              >
-                                <Eye className="w-3.5 h-3.5" />
-                              </button>
-                            )}
+                            <button
+                              onClick={() => openDocPreview(p, dt.key, dt.label)}
+                              className={`p-1 rounded-md transition cursor-pointer shrink-0 ${
+                                matchedDoc
+                                  ? "bg-[#DFD9C9] text-neutral-900 hover:bg-[#121212] hover:text-white"
+                                  : "bg-neutral-200 text-neutral-500 hover:bg-purple-600 hover:text-white"
+                              }`}
+                              title={
+                                matchedDoc
+                                  ? `Preview ${dt.label} (${matchedDoc.documentNumber})`
+                                  : `Generate ${dt.label}`
+                              }
+                            >
+                              <Eye className="w-3 h-3" />
+                            </button>
                           </div>
-
-                          {matchedDoc ? (
-                            <div>
-                              <span className="font-mono text-[10px] font-bold text-neutral-800 block truncate">
-                                {matchedDoc.documentNumber}
-                              </span>
-                              <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded bg-emerald-200 text-emerald-900 inline-block mt-0.5">
-                                {matchedDoc.status}
-                              </span>
-                            </div>
-                          ) : (
-                            <span className="text-[10px] text-neutral-400 font-medium italic block">
-                              Not generated
-                            </span>
-                          )}
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
+                )}
 
-                {/* Milestone Breakdown Section */}
-                <div className="pt-1">
-                  <div className="flex items-center justify-between">
-                    <button
-                      onClick={() => setExpandedProjectId(isExpanded ? null : p.id)}
-                      className="flex items-center gap-1.5 text-xs font-bold text-neutral-900 hover:text-purple-700 transition cursor-pointer"
-                    >
-                      {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                      <span>
-                        {isExpanded ? "Hide Milestone Breakdown" : `View ${p.payments.length} Milestone Payments`}
+                {/* Collapsible Milestones Breakdown */}
+                {isMilestonesExpanded && (
+                  <div className="mt-1 bg-[#F4F0E6] p-3 rounded-2xl border border-[#E2DDD0] flex flex-col gap-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-extrabold uppercase text-neutral-700 tracking-wider">
+                        Milestone Payment Breakdown
                       </span>
-                    </button>
 
-                    {isExpanded && (
                       <button
                         onClick={() => {
                           setAddingPaymentProjectId(p.id);
@@ -665,92 +778,172 @@ export default function ProjectsPage() {
                             status: "PENDING",
                           });
                         }}
-                        className="flex items-center gap-1 text-[11px] font-bold text-blue-700 hover:text-blue-900 transition cursor-pointer"
+                        className="flex items-center gap-1 text-[11px] font-bold text-blue-700 hover:text-blue-900 cursor-pointer"
                       >
-                        <Plus className="w-3.5 h-3.5" />
+                        <Plus className="w-3 h-3" />
                         <span>Add Milestone</span>
                       </button>
-                    )}
-                  </div>
-
-                  {isExpanded && (
-                    <div className="mt-3 flex flex-col gap-3 bg-[#F4F0E6] p-4 rounded-2xl border border-[#E2DDD0]">
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-xs font-extrabold text-neutral-900 uppercase tracking-wider">
-                          Milestone Breakdown & Payment Status
-                        </h4>
-                        <span className="text-[10px] text-neutral-500 font-bold">
-                          Click Pencil icon to edit milestone label, amount, due date or status
-                        </span>
-                      </div>
-
-                      <div className="flex flex-col gap-2">
-                        {p.payments.map((pm) => (
-                          <div
-                            key={pm.id}
-                            className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-xl bg-[#EBE7DC] border border-[#E2DDD0] gap-2"
-                          >
-                            <div className="flex items-center gap-3">
-                              {pm.status === "PAID" ? (
-                                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                              ) : (
-                                <Clock className="w-4 h-4 text-amber-600 shrink-0" />
-                              )}
-                              <div>
-                                <span className="text-xs font-bold text-neutral-900 block">{pm.label}</span>
-                                <span className="text-[10px] text-neutral-500 font-mono">
-                                  {pm.status === "PAID"
-                                    ? `Paid on ${formatDate(pm.paidDate as any)}`
-                                    : pm.dueDate
-                                    ? `Due: ${formatDate(pm.dueDate as any)}`
-                                    : "Pending"}
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="flex items-center gap-2 justify-between sm:justify-end">
-                              <span className="text-xs font-extrabold text-neutral-900 font-mono mr-2">
-                                {formatCurrency(pm.amount, "₹")}
-                              </span>
-
-                              <button
-                                onClick={() => handleStartEditPayment(pm)}
-                                className="p-1.5 rounded-full bg-blue-100 text-blue-900 hover:bg-blue-200 transition cursor-pointer"
-                                title="Edit Milestone Payment"
-                              >
-                                <Pencil className="w-3.5 h-3.5" />
-                              </button>
-
-                              {pm.status !== "PAID" ? (
-                                <button
-                                  onClick={() => handleMarkPaid(pm.id, pm.label)}
-                                  className="px-3 py-1 rounded-full bg-emerald-700 text-white text-[10px] font-extrabold shadow hover:bg-emerald-800 transition cursor-pointer"
-                                >
-                                  Mark PAID
-                                </button>
-                              ) : (
-                                <span className="px-2.5 py-0.5 rounded-full bg-emerald-200 text-emerald-900 text-[10px] font-extrabold uppercase">
-                                  PAID
-                                </span>
-                              )}
-
-                              <button
-                                onClick={() => handleDeletePayment(pm.id, pm.label)}
-                                className="p-1 rounded-full bg-pink-100 text-pink-800 hover:bg-pink-200 transition cursor-pointer"
-                                title="Delete Milestone"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
                     </div>
-                  )}
-                </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      {p.payments.map((pm) => (
+                        <div
+                          key={pm.id}
+                          className="flex items-center justify-between p-2 rounded-xl bg-[#EBE7DC] border border-[#E2DDD0] text-xs gap-2"
+                        >
+                          <div className="flex items-center gap-2">
+                            {pm.status === "PAID" ? (
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                            ) : (
+                              <Clock className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                            )}
+                            <span className="font-bold text-neutral-900">{pm.label}</span>
+                            {pm.dueDate && (
+                              <span className="text-[10px] text-neutral-500 font-mono">
+                                (Due: {formatDate(pm.dueDate as any)})
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono font-extrabold text-neutral-900 text-xs">
+                              {formatCurrency(pm.amount, "₹")}
+                            </span>
+
+                            <button
+                              onClick={() => handleStartEditPayment(pm)}
+                              className="p-1 rounded-full bg-blue-100 text-blue-900 hover:bg-blue-200 transition cursor-pointer"
+                              title="Edit Milestone"
+                            >
+                              <Pencil className="w-3 h-3" />
+                            </button>
+
+                            {pm.status !== "PAID" ? (
+                              <button
+                                onClick={() => handleMarkPaid(pm.id, pm.label)}
+                                className="px-2.5 py-0.5 rounded-full bg-emerald-700 text-white text-[9px] font-extrabold hover:bg-emerald-800 transition cursor-pointer"
+                              >
+                                Mark PAID
+                              </button>
+                            ) : (
+                              <span className="px-2 py-0.2 rounded-full bg-emerald-200 text-emerald-900 text-[9px] font-extrabold uppercase">
+                                PAID
+                              </span>
+                            )}
+
+                            <button
+                              onClick={() => handleDeletePayment(pm.id, pm.label)}
+                              className="p-1 rounded-full bg-pink-100 text-pink-800 hover:bg-pink-200 transition cursor-pointer"
+                              title="Delete Milestone"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Edit Project Modal */}
+      {editingProject && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-6 max-w-lg w-full shadow-2xl flex flex-col gap-4">
+            <div className="flex items-center justify-between border-b border-[#D5CEBC] pb-3">
+              <div className="flex items-center gap-2">
+                <Pencil className="w-4 h-4 text-blue-600" />
+                <h3 className="text-base font-extrabold text-neutral-900">Edit Project Details & Scope</h3>
+              </div>
+              <button
+                onClick={() => setEditingProject(null)}
+                className="p-1 rounded-full bg-[#DFD9C9] text-neutral-800 hover:bg-neutral-900 hover:text-white transition cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveProjectEdit} className="flex flex-col gap-3">
+              <div>
+                <label className="text-xs font-bold text-neutral-700 block mb-1">Project Name *</label>
+                <input
+                  type="text"
+                  required
+                  value={projectEditForm.name}
+                  onChange={(e) => setProjectEditForm({ ...projectEditForm, name: e.target.value })}
+                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 focus:outline-none"
+                  placeholder="e.g. Website Redesign & SEO"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-bold text-neutral-700 block mb-1">Work Type</label>
+                  <input
+                    type="text"
+                    value={projectEditForm.workType}
+                    onChange={(e) => setProjectEditForm({ ...projectEditForm, workType: e.target.value })}
+                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-neutral-700 block mb-1">Project Status</label>
+                  <select
+                    value={projectEditForm.status}
+                    onChange={(e) => setProjectEditForm({ ...projectEditForm, status: e.target.value })}
+                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 focus:outline-none cursor-pointer"
+                  >
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                    <option value="On Hold">On Hold</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-neutral-700 block mb-1">Total Budget (₹)</label>
+                <input
+                  type="number"
+                  min={0}
+                  value={projectEditForm.budget}
+                  onChange={(e) => setProjectEditForm({ ...projectEditForm, budget: Number(e.target.value) })}
+                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-mono font-extrabold text-neutral-900 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-neutral-700 block mb-1">Project Description & Scope</label>
+                <textarea
+                  rows={3}
+                  placeholder="Detailed project requirements, scope summary..."
+                  value={projectEditForm.description}
+                  onChange={(e) => setProjectEditForm({ ...projectEditForm, description: e.target.value })}
+                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium focus:outline-none resize-none"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-2 border-t border-[#D5CEBC] mt-2">
+                <button
+                  type="button"
+                  onClick={() => setEditingProject(null)}
+                  className="px-4 py-2 rounded-full bg-[#DFD9C9] text-neutral-800 text-xs font-bold hover:bg-[#D5CEBC] transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition shadow-md cursor-pointer"
+                >
+                  Save Project Changes
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 
@@ -927,7 +1120,7 @@ export default function ProjectsPage() {
         </div>
       )}
 
-      {/* Add New Project Modal */}
+      {/* Add New Project Modal with Auto-Fetched Client */}
       {showAddProjectModal && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-6 max-w-lg w-full shadow-2xl flex flex-col gap-4 my-auto">
@@ -936,7 +1129,7 @@ export default function ProjectsPage() {
                 <div className="p-2 rounded-xl bg-purple-100 text-purple-700">
                   <FolderKanban className="w-5 h-5" />
                 </div>
-                <h3 className="text-base font-extrabold text-neutral-900">Create New Project</h3>
+                <h3 className="text-base font-extrabold text-neutral-900">Create New Project & Payments</h3>
               </div>
               <button
                 onClick={() => setShowAddProjectModal(false)}
@@ -946,12 +1139,45 @@ export default function ProjectsPage() {
               </button>
             </div>
 
-            <form onSubmit={handleCreateProject} className="flex flex-col gap-4">
+            <form onSubmit={handleCreateProject} className="flex flex-col gap-3">
               <div>
-                <label className="text-xs font-bold text-neutral-700 block mb-1">Project Name *</label>
+                <label className="text-xs font-bold text-neutral-700 block mb-1">Select Client (Auto-Fetches Info) *</label>
+                <select
+                  value={newProject.clientId}
+                  onChange={(e) => handleSelectClient(e.target.value)}
+                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 focus:outline-none cursor-pointer"
+                  required
+                >
+                  <option value="">-- Select Client from Directory --</option>
+                  {clients.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name} {c.company ? `(${c.company})` : ""} — {c.email}
+                    </option>
+                  ))}
+                </select>
+
+                {/* Auto-Fetched Client Summary Card */}
+                {selectedClientObj && (
+                  <div className="mt-2 bg-[#F4F0E6] p-3 rounded-2xl border border-[#E2DDD0] text-xs font-medium text-neutral-700 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <UserCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <div>
+                        <span className="font-extrabold text-neutral-900 block">{selectedClientObj.name} {selectedClientObj.company ? `(${selectedClientObj.company})` : ""}</span>
+                        <span className="text-[11px] text-neutral-500 font-mono">{selectedClientObj.email} {selectedClientObj.phone ? `• ${selectedClientObj.phone}` : ""}</span>
+                      </div>
+                    </div>
+                    <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-900 text-[10px] font-extrabold uppercase">
+                      {selectedClientObj.workType || "Web Dev"}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-neutral-700 block mb-1">Project Title / Name *</label>
                 <input
                   type="text"
-                  placeholder="e.g. E-Commerce Website Redesign"
+                  placeholder="e.g. E-Commerce Website & Admin Portal"
                   value={newProject.name}
                   onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
                   className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-bold focus:outline-none"
@@ -959,23 +1185,18 @@ export default function ProjectsPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-bold text-neutral-700 block mb-1">Link Client</label>
-                  <select
-                    value={newProject.clientId}
-                    onChange={(e) => setNewProject({ ...newProject, clientId: e.target.value })}
-                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 focus:outline-none cursor-pointer"
-                  >
-                    <option value="">-- Select Client --</option>
-                    {clients.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.name} {c.company ? `(${c.company})` : ""}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+              <div>
+                <label className="text-xs font-bold text-neutral-700 block mb-1">Project Description & Scope</label>
+                <textarea
+                  rows={2}
+                  placeholder="Describe key features, deliverables, tech stack..."
+                  value={newProject.description}
+                  onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
+                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium focus:outline-none resize-none"
+                />
+              </div>
 
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs font-bold text-neutral-700 block mb-1">Work Type</label>
                   <input
@@ -983,36 +1204,47 @@ export default function ProjectsPage() {
                     placeholder="e.g. Web Dev, App Dev, UI/UX"
                     value={newProject.workType}
                     onChange={(e) => setNewProject({ ...newProject, workType: e.target.value })}
-                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium focus:outline-none"
+                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-bold focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-neutral-700 block mb-1">Total Budget / Project Value (₹) *</label>
+                  <input
+                    type="number"
+                    min={0}
+                    required
+                    value={newProject.budget}
+                    onChange={(e) => setNewProject({ ...newProject, budget: Number(e.target.value) })}
+                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-mono font-extrabold text-neutral-900 focus:outline-none"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div>
-                  <label className="text-xs font-bold text-neutral-700 block mb-1">Total Budget (₹)</label>
-                  <input
-                    type="number"
-                    min={0}
-                    value={newProject.budget}
-                    onChange={(e) => setNewProject({ ...newProject, budget: Number(e.target.value) })}
-                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-mono font-bold text-neutral-900 focus:outline-none"
-                  />
-                </div>
+              <div>
+                <label className="text-xs font-bold text-neutral-700 block mb-1">Payment Milestone Structure</label>
+                <select
+                  value={newProject.paymentStructure}
+                  onChange={(e) => setNewProject({ ...newProject, paymentStructure: e.target.value })}
+                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 focus:outline-none cursor-pointer"
+                >
+                  <option value="50/50">50/50 (50% Advance + 50% Final)</option>
+                  <option value="3-Way Split">3-Way Split (30% + 30% + 40%)</option>
+                  <option value="Full Upfront">Full Upfront (100% Advance)</option>
+                  <option value="Full Payment After Work">Full Payment After Work (100% Post-Completion)</option>
+                  <option value="Monthly Retainer">Monthly Retainer</option>
+                </select>
+              </div>
 
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-bold text-neutral-700 block mb-1">Payment Structure</label>
-                  <select
-                    value={newProject.paymentStructure}
-                    onChange={(e) => setNewProject({ ...newProject, paymentStructure: e.target.value })}
-                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 focus:outline-none cursor-pointer"
-                  >
-                    <option value="50/50">50/50 (50% Advance + 50% Final)</option>
-                    <option value="3-Way Split">3-Way Split (30% + 30% + 40%)</option>
-                    <option value="Full Upfront">Full Upfront (100% Advance)</option>
-                    <option value="Full Payment After Work">Full Payment After Work (100% Post-Completion)</option>
-                    <option value="Monthly Retainer">Monthly Retainer</option>
-                  </select>
+                  <label className="text-xs font-bold text-neutral-700 block mb-1">Start Date</label>
+                  <input
+                    type="date"
+                    value={newProject.startDate}
+                    onChange={(e) => setNewProject({ ...newProject, startDate: e.target.value })}
+                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium focus:outline-none"
+                  />
                 </div>
 
                 <div>
@@ -1026,18 +1258,7 @@ export default function ProjectsPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="text-xs font-bold text-neutral-700 block mb-1">Notes / Description</label>
-                <textarea
-                  rows={2}
-                  placeholder="Project scope summary..."
-                  value={newProject.description}
-                  onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
-                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium focus:outline-none resize-none"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-3 pt-2 border-t border-[#D5CEBC]">
+              <div className="flex items-center justify-end gap-3 pt-2 border-t border-[#D5CEBC] mt-2">
                 <button
                   type="button"
                   onClick={() => setShowAddProjectModal(false)}
@@ -1050,7 +1271,7 @@ export default function ProjectsPage() {
                   disabled={isSubmitting}
                   className="px-5 py-2 rounded-full bg-[#121212] hover:bg-neutral-800 text-white text-xs font-bold transition shadow-md cursor-pointer disabled:opacity-50"
                 >
-                  {isSubmitting ? "Creating..." : "Save Project"}
+                  {isSubmitting ? "Creating..." : "Save Project & Milestones"}
                 </button>
               </div>
             </form>
