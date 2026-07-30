@@ -840,8 +840,8 @@ export default function NDABuilderPage() {
             </div>
 
             {/* Document Preview Stage */}
-            <div className="bg-[#DFD9C9] p-3 rounded-2xl border border-[#D5CEBC] shadow-inner overflow-x-auto flex justify-center items-start">
-              <div className="scale-[0.65] sm:scale-[0.7] lg:scale-[0.6] xl:scale-[0.7] 2xl:scale-[0.75] origin-top transform transition-all duration-300 -mb-[260px] xl:-mb-[180px]">
+            <div className="overflow-x-auto shadow-xl rounded-3xl bg-[#EBE7DC] p-3 border border-[#E2DDD0] flex justify-center">
+              <div className="min-w-[210mm] max-w-full">
                 <ModernNDATemplate
                   {...formData}
                   activePage={activePreviewPage}

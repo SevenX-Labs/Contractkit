@@ -142,16 +142,16 @@ export function ModernNDATemplate({
       {showPage1 && (
         <div className="relative w-full min-h-[297mm] flex flex-col justify-between pb-0 page-break-after-always" style={{ breakAfter: "page" }}>
           <div>
-            {/* Top Header Row with Black Block on Right */}
+            {/* Top Header Row with Black Curved Block on Right */}
             <div className="flex justify-between items-start w-full relative">
-              {/* Top Left Branding */}
+              {/* Top Left Branding & Document Title */}
               <div className="pt-8 pl-10 pr-4 max-w-sm">
-                <div className="flex flex-col items-start gap-1 mb-2">
+                <div className="flex flex-col items-start gap-1 mb-3">
                   <Image
                     src="/logo.png"
                     alt="SevenX Labs"
-                    width={220}
-                    height={70}
+                    width={200}
+                    height={60}
                     className="h-12 w-auto object-contain"
                     priority
                   />
@@ -166,14 +166,14 @@ export function ModernNDATemplate({
                   <span className="text-xs font-extrabold text-neutral-400 uppercase tracking-widest block mb-0.5">
                     NON-DISCLOSURE AGREEMENT
                   </span>
-                  <h2 className="text-lg font-black text-neutral-900 tracking-tight leading-snug">
-                    FREELANCE NON-DISCLOSURE AGREEMENT
+                  <h2 className="text-xl font-black text-neutral-900 tracking-tight leading-snug">
+                    MUTUAL FREELANCE CONFIDENTIALITY AGREEMENT (NDA)
                   </h2>
                 </div>
               </div>
 
-              {/* Top Right Black Header Panel */}
-              <div className="relative w-[50%] bg-[#0a0a0a] text-white pt-8 pb-6 px-8 rounded-bl-[50px] shadow-2xl flex flex-col justify-between min-h-[180px]">
+              {/* Top Right Black Header Panel with Curved Bottom-Left Edge */}
+              <div className="relative w-[50%] bg-[#0a0a0a] text-white pt-8 pb-6 px-8 rounded-bl-[50px] shadow-2xl flex flex-col justify-between min-h-[180px] overflow-hidden">
                 <div className="relative z-10">
                   <h1 className="text-5xl font-black tracking-wider uppercase text-white mb-4">
                     NDA
@@ -192,9 +192,9 @@ export function ModernNDATemplate({
                   </div>
                 </div>
 
-                {/* Top Right Geometric Accent Triangles */}
-                <div className="absolute -bottom-6 -right-6 pointer-events-none z-20">
-                  <svg width="90" height="90" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {/* Geometric Accent Triangles strictly contained within black panel */}
+                <div className="absolute -bottom-4 -right-4 pointer-events-none z-20">
+                  <svg width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <polygon points="20,10 90,50 30,90" fill={accentShape} opacity="0.95" />
                     <polygon points="50,20 100,50 60,80" fill={accentShape} opacity="0.65" />
                   </svg>
@@ -203,7 +203,7 @@ export function ModernNDATemplate({
             </div>
 
             {/* Intro Paragraph */}
-            <div className="px-10 mt-3.5 text-xs text-neutral-800 font-medium leading-relaxed">
+            <div className="px-10 mt-4 text-xs text-neutral-800 font-medium leading-relaxed">
               <p>
                 This Non-Disclosure Agreement (&quot;Agreement&quot;) is entered into on{" "}
                 <strong className="text-neutral-900 font-bold">{formatDate(effectiveDate)}</strong> (&quot;Effective Date&quot;) by and between the Disclosing Party and Receiving Party listed below to safeguard proprietary project information and assets.
@@ -251,8 +251,8 @@ export function ModernNDATemplate({
                     <FileText className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">3. PURPOSE OF DISCLOSURE</h4>
-                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium">{purpose}</p>
+                    <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">3. PURPOSE OF DISCLOSURE</h4>
+                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium">{purpose}</p>
                   </div>
                 </div>
 
@@ -261,8 +261,8 @@ export function ModernNDATemplate({
                     <Lock className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">4. DEFINITION OF CONFIDENTIAL INFO</h4>
-                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium">{confidentialItems}</p>
+                    <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">4. DEFINITION OF CONFIDENTIAL INFO</h4>
+                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium">{confidentialItems}</p>
                   </div>
                 </div>
               </div>
@@ -274,8 +274,8 @@ export function ModernNDATemplate({
                     <ShieldCheck className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">5. OBLIGATIONS OF RECEIVING PARTY</h4>
-                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium">{obligations}</p>
+                    <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">5. OBLIGATIONS OF RECEIVING PARTY</h4>
+                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium">{obligations}</p>
                   </div>
                 </div>
 
@@ -284,8 +284,8 @@ export function ModernNDATemplate({
                     <XCircle className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">6. EXCLUSIONS FROM CONFIDENTIALITY</h4>
-                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium">{exclusions}</p>
+                    <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">6. EXCLUSIONS FROM CONFIDENTIALITY</h4>
+                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium">{exclusions}</p>
                   </div>
                 </div>
               </div>
@@ -297,8 +297,8 @@ export function ModernNDATemplate({
                     <CheckCircle className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">7. PERMITTED DISCLOSURES</h4>
-                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium">{permittedDisclosure}</p>
+                    <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">7. PERMITTED DISCLOSURES</h4>
+                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium">{permittedDisclosure}</p>
                   </div>
                 </div>
 
@@ -307,8 +307,8 @@ export function ModernNDATemplate({
                     <Clock className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">8. TERM & SURVIVAL DURATION</h4>
-                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium">{termDuration}</p>
+                    <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">8. TERM & SURVIVAL DURATION</h4>
+                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium">{termDuration}</p>
                   </div>
                 </div>
               </div>
@@ -320,8 +320,8 @@ export function ModernNDATemplate({
                     <FileCheck className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">9. RETURN OR DESTRUCTION OF DATA</h4>
-                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium">{returnTerm}</p>
+                    <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">9. RETURN OR DESTRUCTION OF DATA</h4>
+                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium">{returnTerm}</p>
                   </div>
                 </div>
 
@@ -330,8 +330,8 @@ export function ModernNDATemplate({
                     <Key className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">10. INTELLECTUAL PROPERTY RIGHTS</h4>
-                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium">{ipClause}</p>
+                    <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">10. INTELLECTUAL PROPERTY RIGHTS</h4>
+                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium">{ipClause}</p>
                   </div>
                 </div>
               </div>
@@ -377,7 +377,7 @@ export function ModernNDATemplate({
                 </div>
                 <div>
                   <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">11. DATA PROTECTION & SECURITY</h4>
-                  <p className="text-[11px] text-neutral-800 mt-1 leading-relaxed font-medium">{dataProtection}</p>
+                  <p className="text-xs text-neutral-800 mt-1 leading-relaxed font-medium">{dataProtection}</p>
                 </div>
               </div>
 
@@ -387,7 +387,7 @@ export function ModernNDATemplate({
                 </div>
                 <div>
                   <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">12. LIMITATION OF LIABILITY</h4>
-                  <p className="text-[11px] text-neutral-800 mt-1 leading-relaxed font-medium">{limitationOfLiability}</p>
+                  <p className="text-xs text-neutral-800 mt-1 leading-relaxed font-medium">{limitationOfLiability}</p>
                 </div>
               </div>
             </div>
@@ -400,7 +400,7 @@ export function ModernNDATemplate({
                 </div>
                 <div>
                   <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">13. BREACH & LEGAL REMEDIES</h4>
-                  <p className="text-[11px] text-neutral-800 mt-1 leading-relaxed font-medium">{breachRemedies}</p>
+                  <p className="text-xs text-neutral-800 mt-1 leading-relaxed font-medium">{breachRemedies}</p>
                 </div>
               </div>
 
@@ -410,7 +410,7 @@ export function ModernNDATemplate({
                 </div>
                 <div>
                   <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">14. TERMINATION CONDITIONS</h4>
-                  <p className="text-[11px] text-neutral-800 mt-1 leading-relaxed font-medium">{terminationClause}</p>
+                  <p className="text-xs text-neutral-800 mt-1 leading-relaxed font-medium">{terminationClause}</p>
                 </div>
               </div>
             </div>
@@ -423,7 +423,7 @@ export function ModernNDATemplate({
                 </div>
                 <div>
                   <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">15. ENTIRE AGREEMENT</h4>
-                  <p className="text-[11px] text-neutral-800 mt-1 leading-relaxed font-medium">{entireAgreement}</p>
+                  <p className="text-xs text-neutral-800 mt-1 leading-relaxed font-medium">{entireAgreement}</p>
                 </div>
               </div>
 
@@ -433,7 +433,7 @@ export function ModernNDATemplate({
                 </div>
                 <div>
                   <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">16. ADDITIONAL SPECIAL TERMS</h4>
-                  <p className="text-[11px] text-neutral-800 mt-1 leading-relaxed font-medium">{additionalTerms}</p>
+                  <p className="text-xs text-neutral-800 mt-1 leading-relaxed font-medium">{additionalTerms}</p>
                 </div>
               </div>
             </div>
@@ -447,7 +447,7 @@ export function ModernNDATemplate({
                 <p className="font-extrabold text-[#a6ce39] uppercase text-xs tracking-wider mb-1">17. DISCLOSING PARTY SIGNATURE</p>
                 <p className="font-bold text-neutral-900 text-xs">{disclosingCompany || disclosingName}</p>
                 <p className="font-mono text-neutral-800 border-b border-neutral-300 pb-1 mt-4 font-bold text-xs">{disclosingSignatory}</p>
-                <p className="text-[11px] text-neutral-600 font-medium">{disclosingDesignation}</p>
+                <p className="text-xs text-neutral-600 font-medium">{disclosingDesignation}</p>
                 <p className="text-xs text-neutral-400 mt-1">Date: {formatDate(effectiveDate)}</p>
               </div>
 
@@ -455,7 +455,7 @@ export function ModernNDATemplate({
                 <p className="font-extrabold text-[#a6ce39] uppercase text-xs tracking-wider mb-1">18. RECEIVING PARTY SIGNATURE</p>
                 <p className="font-bold text-neutral-900 text-xs">{receivingCompany || receivingName}</p>
                 <p className="font-mono text-neutral-800 border-b border-neutral-300 pb-1 mt-4 font-bold text-xs">{receivingSignatory}</p>
-                <p className="text-[11px] text-neutral-600 font-medium">{receivingDesignation}</p>
+                <p className="text-xs text-neutral-600 font-medium">{receivingDesignation}</p>
                 <p className="text-xs text-neutral-400 mt-1">Date: {formatDate(effectiveDate)}</p>
               </div>
             </div>
