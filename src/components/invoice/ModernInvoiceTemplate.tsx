@@ -321,6 +321,7 @@ export function ModernInvoiceTemplate({
 
             {/* Manager / Signature Block */}
             <div className="text-right flex flex-col items-end">
+              <span className="text-[11px] font-extrabold text-neutral-900 uppercase block mb-1">Authorized Signature</span>
               {signatureUrl ? (
                 <img src={signatureUrl} alt="Signature" className="h-10 object-contain mb-1" />
               ) : (

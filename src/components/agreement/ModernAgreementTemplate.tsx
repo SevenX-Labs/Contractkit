@@ -422,7 +422,7 @@ export function ModernAgreementTemplate({
             {/* Section 11: Digital Signatures Block Pinned at the Very End */}
             <div className="px-10 pb-6 pt-4 border-t border-neutral-200 grid grid-cols-2 gap-8 text-xs bg-white" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
               <div>
-                <p className="font-extrabold text-neutral-900 uppercase text-xs tracking-wider mb-2">DEVELOPER SIGNATURE:</p>
+                <p className="font-extrabold text-neutral-900 uppercase text-xs tracking-wider mb-2">AUTHORIZED SIGNATURE:</p>
                 <div className="h-9 flex items-center mb-1">
                   <span className="font-signature text-3xl font-extrabold text-neutral-900 tracking-wider select-none transform -rotate-3 border-b-2 border-neutral-900/80 pb-0.5 px-2">
                     shode

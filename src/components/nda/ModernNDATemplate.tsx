@@ -444,7 +444,7 @@ export function ModernNDATemplate({
             {/* Section 17 & 18: Digital Signatures Block Pinned at Bottom */}
             <div className="px-10 pb-5 pt-4 border-t border-neutral-200 grid grid-cols-2 gap-8 text-xs bg-white" style={{ breakInside: "avoid" }}>
               <div>
-                <p className="font-extrabold text-[#a6ce39] uppercase text-xs tracking-wider mb-1">17. DISCLOSING PARTY SIGNATURE</p>
+                <p className="font-extrabold text-[#a6ce39] uppercase text-xs tracking-wider mb-1">17. AUTHORIZED SIGNATURE</p>
                 <p className="font-bold text-neutral-900 text-xs">{disclosingCompany || disclosingName}</p>
                 <div className="h-9 flex items-center mt-2 mb-1">
                   <span className="font-signature text-3xl font-extrabold text-neutral-900 tracking-wider select-none transform -rotate-3 border-b-2 border-neutral-900/80 pb-0.5 px-2">
