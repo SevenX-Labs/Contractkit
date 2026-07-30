@@ -56,6 +56,8 @@ export interface InvoiceTemplateProps {
   qrCodeUrl?: string;
   
   currencySymbol?: string;
+  projectName?: string;
+  invoiceType?: string;
   accentColor?: "lime" | "purple" | "pink" | "emerald";
 }
 
@@ -96,6 +98,8 @@ export function ModernInvoiceTemplate({
   signatureUrl,
   qrCodeUrl,
   currencySymbol = "₹",
+  projectName = "E-Commerce Website",
+  invoiceType = "Advance Payment",
   accentColor = "lime",
 }: InvoiceTemplateProps) {
   // Color configuration
@@ -132,7 +136,7 @@ export function ModernInvoiceTemplate({
         <div className="flex justify-between items-start w-full relative">
           {/* Top Left Company Branding & Crisp Logo */}
           <div className="pt-10 pl-10 pr-4 max-w-sm">
-            <div className="flex flex-col items-start gap-1 mb-4">
+            <div className="flex flex-col items-start gap-1 mb-3">
               <Image
                 src="/logo.png"
                 alt="SevenX Labs"
@@ -171,7 +175,7 @@ export function ModernInvoiceTemplate({
               </h1>
               
               {/* Metadata 2-Column Grid */}
-              <div className="grid grid-cols-2 gap-4 text-left text-xs font-medium border-t border-neutral-800 pt-4">
+              <div className="grid grid-cols-2 gap-3 text-left text-xs font-medium border-t border-neutral-800 pt-4">
                 <div>
                   <span className="text-[11px] text-neutral-400 block font-sans">Invoice No.</span>
                   <span className="font-mono font-bold text-white text-xs block mt-0.5 whitespace-nowrap">{invoiceNumber}</span>
@@ -179,6 +183,14 @@ export function ModernInvoiceTemplate({
                 <div>
                   <span className="text-[11px] text-neutral-400 block font-sans">Date</span>
                   <span className="font-mono font-bold text-white text-xs block mt-0.5 whitespace-nowrap">{formatDate(invoiceDate)}</span>
+                </div>
+                <div>
+                  <span className="text-[11px] text-neutral-400 block font-sans">Invoice Type</span>
+                  <span className="font-bold text-[#a6ce39] text-xs block mt-0.5 whitespace-nowrap">{invoiceType || "Advance Payment"}</span>
+                </div>
+                <div>
+                  <span className="text-[11px] text-neutral-400 block font-sans">Project Name</span>
+                  <span className="font-bold text-white text-xs block mt-0.5 whitespace-nowrap truncate">{projectName || "E-Commerce Website"}</span>
                 </div>
               </div>
             </div>

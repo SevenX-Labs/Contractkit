@@ -40,6 +40,8 @@ export default function InvoicePage() {
     invoiceNumber: `SXL-INV-${new Date().getFullYear()}-000001`,
     invoiceDate: new Date().toISOString().split("T")[0],
     dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+    projectName: "E-Commerce Website",
+    invoiceType: "Advance Payment",
     
     senderName: "Sahil Hode",
     senderCompany: "SevenX Labs",
@@ -338,6 +340,54 @@ export default function InvoicePage() {
                 onChange={(e) => setFormData({ ...formData, invoiceDate: e.target.value })}
                 className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium focus:outline-none"
               />
+            </div>
+          </div>
+
+          {/* Project Name & Invoice Type */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="text-[10px] font-bold text-neutral-600 uppercase block mb-1">Project Name</label>
+              <input
+                type="text"
+                placeholder="e.g. E-Commerce Website"
+                value={formData.projectName || ""}
+                onChange={(e) => setFormData({ ...formData, projectName: e.target.value })}
+                className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold text-neutral-600 uppercase block mb-1">Invoice Type Option</label>
+              <div className="flex gap-2">
+                <select
+                  value={
+                    ["Full Payment", "Advance Payment", "50% Advance / 50% Final", "Milestone Payment", "Final Payment"].includes(formData.invoiceType || "")
+                      ? formData.invoiceType
+                      : "Custom"
+                  }
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val !== "Custom") {
+                      setFormData({ ...formData, invoiceType: val });
+                    }
+                  }}
+                  className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-2 py-2 text-xs font-bold text-neutral-900 focus:outline-none cursor-pointer"
+                >
+                  <option value="Full Payment">Full Payment</option>
+                  <option value="Advance Payment">Advance Payment</option>
+                  <option value="50% Advance / 50% Final">50% Advance / 50% Final</option>
+                  <option value="Milestone Payment">Milestone Payment</option>
+                  <option value="Final Payment">Final Payment</option>
+                  <option value="Custom">Custom Text</option>
+                </select>
+
+                <input
+                  type="text"
+                  placeholder="Custom Type"
+                  value={formData.invoiceType || ""}
+                  onChange={(e) => setFormData({ ...formData, invoiceType: e.target.value })}
+                  className="flex-1 bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 focus:outline-none"
+                />
+              </div>
             </div>
           </div>
 

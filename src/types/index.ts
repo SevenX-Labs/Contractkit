@@ -31,6 +31,8 @@ export interface InvoiceData {
   invoiceNumber: string;
   invoiceDate: string;
   dueDate: string;
+  projectName?: string;
+  invoiceType?: string;
   
   senderName: string;
   senderCompany: string;
