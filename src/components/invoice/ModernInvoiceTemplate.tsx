@@ -2,7 +2,7 @@
 
 import React from "react";
 import { formatCurrency, formatDate } from "../../lib/utils";
-import { Phone, Mail, Globe, MapPin } from "lucide-react";
+import { Phone, Mail, MapPin } from "lucide-react";
 import Image from "next/image";
 
 export interface InvoiceTemplateProps {
@@ -16,7 +16,6 @@ export interface InvoiceTemplateProps {
   senderAddress?: string;
   senderEmail?: string;
   senderPhone?: string;
-  senderWebsite?: string;
   logoUrl?: string;
   stampUrl?: string;
   
@@ -43,10 +42,10 @@ export interface InvoiceTemplateProps {
   total: number;
   
   paymentMethod?: string;
-  paymentDetails?: string;
+  holderName?: string;
   bankName?: string;
-  accountName?: string;
   accountNumber?: string;
+  ifscCode?: string;
   
   note?: string;
   terms?: string;
@@ -65,10 +64,9 @@ export function ModernInvoiceTemplate({
   invoiceDate,
   senderName = "Sahil Hode",
   senderCompany = "SevenX Labs",
-  senderAddress = "SevenX Tech Park, HSR Layout, Sector 1, Bengaluru",
-  senderEmail = "hello@sevenxlabs.com",
-  senderPhone = "+91 98765 43210",
-  senderWebsite = "www.sevenxlabs.com",
+  senderAddress = "Thane, Mumbai, Maharashtra",
+  senderEmail = "sevenxlabs07@gmail.com",
+  senderPhone = "8652601566",
   logoUrl = "/logo.png",
   stampUrl,
   clientName = "Sophia Smith",
@@ -85,11 +83,14 @@ export function ModernInvoiceTemplate({
   shippingAmount = 0,
   total = 0,
   paymentMethod = "Payment Method.",
-  paymentDetails = "Account Name: SevenX Labs | Account: 50100234567890 | Bank: Silicon Tech Bank | UPI: sevenxlabs@upi",
+  holderName = "Sahil Hode (SevenX Labs)",
+  bankName = "HDFC Bank",
+  accountNumber = "50100234567890",
+  ifscCode = "HDFC0001234",
   note,
   terms,
-  signatureName = "Sophia Smith",
-  signatureTitle = "Manager",
+  signatureName = "Sahil Hode",
+  signatureTitle = "Founder & Manager",
   signatureUrl,
   qrCodeUrl,
   currencySymbol = "₹",
@@ -116,9 +117,6 @@ export function ModernInvoiceTemplate({
 
   const computedTaxAmount = taxAmount || (subtotal * (taxPercent || 0)) / 100;
   const computedTotal = total || subtotal + computedTaxAmount - (discountAmount || 0) + (shippingAmount || 0);
-
-  // Format payment details nicely
-  const paymentLines = paymentDetails.split("|").map((s) => s.trim());
 
   return (
     <div
@@ -179,7 +177,7 @@ export function ModernInvoiceTemplate({
               </div>
             </div>
 
-            {/* Top Right Geometric Accent Triangles Matching Reference Image Exactly */}
+            {/* Top Right Geometric Accent Triangles */}
             <div className="absolute -bottom-6 -right-6 pointer-events-none z-20">
               <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <polygon points="20,10 90,50 30,90" fill={accentShape} opacity="0.95" />
@@ -227,15 +225,28 @@ export function ModernInvoiceTemplate({
       {/* Bottom Pinned Section: Payment Details (Left) + Totals & Signature (Right) */}
       <div className="mt-auto px-10 pb-8 pt-6 relative z-10">
         <div className="grid grid-cols-12 gap-8 items-end">
-          {/* Left Column: Clean Single Payment Details */}
+          {/* Left Column: Clean Payment Details Structure (NO UPI ID) */}
           <div className="col-span-7 space-y-2">
-            <h3 className="text-xs font-black text-neutral-900 tracking-tight uppercase mb-1 ml-1">
+            <h3 className="text-xs font-black text-neutral-900 tracking-tight uppercase mb-1.5 ml-1">
               {paymentMethod}
             </h3>
-            <div className="text-xs text-neutral-900 font-semibold space-y-1 bg-neutral-50/95 p-4 rounded-2xl border border-neutral-200/80 font-mono shadow-sm backdrop-blur-sm relative z-20">
-              {paymentLines.map((line, i) => (
-                <p key={i}>{line}</p>
-              ))}
+            <div className="text-xs text-neutral-900 font-semibold space-y-1.5 bg-neutral-50/95 p-4 rounded-2xl border border-neutral-200/80 shadow-sm backdrop-blur-sm relative z-20">
+              <div className="flex items-center gap-2">
+                <span className="text-neutral-500 font-medium min-w-[90px]">Holder Name:</span>
+                <span className="font-bold text-neutral-900">{holderName}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-neutral-500 font-medium min-w-[90px]">Bank Name:</span>
+                <span className="font-bold text-neutral-900">{bankName}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-neutral-500 font-medium min-w-[90px]">Account No:</span>
+                <span className="font-mono font-extrabold text-neutral-900 tracking-wide">{accountNumber}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-neutral-500 font-medium min-w-[90px]">IFSC Code:</span>
+                <span className="font-mono font-bold text-neutral-900">{ifscCode}</span>
+              </div>
             </div>
           </div>
 
@@ -280,35 +291,28 @@ export function ModernInvoiceTemplate({
         </div>
       </div>
 
-      {/* Bottom Geometric Accent Shifted Left Behind Payment Card */}
+      {/* Bottom Geometric Accent */}
       <div className="absolute bottom-10 -left-6 pointer-events-none z-0 opacity-40">
         <svg width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           <polygon points="0,90 70,50 10,0" fill={accentShape} />
         </svg>
       </div>
 
-      {/* Full-Width Black Footer Bar */}
-      <div className="relative w-full bg-[#0a0a0a] text-white px-8 py-4 flex justify-between items-center text-[10px] font-medium z-20">
-        <div className="flex items-center gap-6 text-neutral-300">
-          <div className="flex items-center gap-1.5">
-            <Phone className="w-3 h-3 text-white shrink-0" />
-            <span>{senderPhone}</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Mail className="w-3 h-3 text-white shrink-0" />
-            <span>{senderEmail}</span>
-          </div>
+      {/* Full-Width Black Footer Bar (Phone, Email, Address only - NO WEBSITE) */}
+      <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-4 flex justify-between items-center text-xs font-semibold z-20">
+        <div className="flex items-center gap-2">
+          <Phone className="w-3.5 h-3.5 text-white shrink-0" />
+          <span>{senderPhone || "8652601566"}</span>
         </div>
 
-        <div className="flex items-center gap-6 text-neutral-300">
-          <div className="flex items-center gap-1.5">
-            <Globe className="w-3 h-3 text-white shrink-0" />
-            <span>{senderWebsite}</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <MapPin className="w-3 h-3 text-white shrink-0" />
-            <span>{senderAddress}</span>
-          </div>
+        <div className="flex items-center gap-2">
+          <Mail className="w-3.5 h-3.5 text-white shrink-0" />
+          <span>{senderEmail || "sevenxlabs07@gmail.com"}</span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <MapPin className="w-3.5 h-3.5 text-white shrink-0" />
+          <span>{senderAddress || "Thane, Mumbai, Maharashtra"}</span>
         </div>
       </div>
     </div>

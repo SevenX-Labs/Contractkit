@@ -31,11 +31,11 @@ export default function InvoicePage() {
     invoiceDate: new Date().toISOString().split("T")[0],
     dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
     
-    senderName: "SevenX Labs",
+    senderName: "Sahil Hode",
     senderCompany: "SevenX Labs",
-    senderAddress: "SevenX Tech Park, HSR Layout, Sector 1, Bengaluru",
-    senderEmail: "hello@sevenxlabs.com",
-    senderPhone: "+91 98765 43210",
+    senderAddress: "Thane, Mumbai, Maharashtra",
+    senderEmail: "sevenxlabs07@gmail.com",
+    senderPhone: "8652601566",
     
     clientName: "Sophia Smith",
     clientCompany: "Acme Global",
@@ -44,7 +44,7 @@ export default function InvoicePage() {
     clientPhone: "+123-456-7890",
     
     paymentMethod: "Payment Method.",
-    paymentDetails: "Account Name: SevenX Labs | Account: 0000 0000 0000 | Bank: Commerz Bank",
+    paymentDetails: "Holder Name: Sahil Hode (SevenX Labs) | Bank Name: HDFC Bank | Account No: 50100234567890 | IFSC Code: HDFC0001234",
     
     items: [
       { id: "item-1", description: "Website Design and Development", quantity: 1, rate: 1230, amount: 1230 },
@@ -72,13 +72,13 @@ export default function InvoicePage() {
       setFormData((prev: InvoiceData) => ({
         ...prev,
         invoiceNumber: invNum,
-        senderName: profile.name || "SevenX Labs",
+        senderName: profile.name || "Sahil Hode",
         senderCompany: profile.company || "SevenX Labs",
-        senderAddress: profile.address || "SevenX Tech Park, HSR Layout, Sector 1, Bengaluru",
-        senderEmail: profile.email || "hello@sevenxlabs.com",
-        senderPhone: profile.phone || "+91 98765 43210",
+        senderAddress: profile.address || "Thane, Mumbai, Maharashtra",
+        senderEmail: profile.email || "sevenxlabs07@gmail.com",
+        senderPhone: profile.phone || "8652601566",
         paymentMethod: "Payment Method.",
-        paymentDetails: `Account Name: ${profile.name || "SevenX Labs"} | Account 0000 0000 0000 | ${profile.bankName || "Commerz Bank"}`,
+        paymentDetails: `Holder Name: ${profile.name || "Sahil Hode (SevenX Labs)"} | Bank Name: ${profile.bankName || "HDFC Bank"} | Account No: ${profile.bankAccount || "50100234567890"} | IFSC Code: HDFC0001234`,
       }));
     });
   }, []);
@@ -319,7 +319,7 @@ export default function InvoicePage() {
           <div className="flex flex-col gap-3">
             <h3 className="text-xs font-extrabold text-neutral-900 uppercase tracking-wider flex items-center gap-1.5">
               <User className="w-3.5 h-3.5 text-pink-600" />
-              <span>Company Branding & Studio (Sender)</span>
+              <span>Company Branding (Sender)</span>
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <input
