@@ -8,7 +8,6 @@ import {
   MapPin,
   Lock,
   ShieldCheck,
-  Users,
   Clock,
   FileCheck,
   Gavel,
@@ -17,8 +16,6 @@ import {
   Key,
   Shield,
   FileText,
-  Building,
-  UserCheck,
   CheckCircle,
   XCircle,
 } from "lucide-react";
@@ -47,7 +44,7 @@ export interface NDATemplateProps {
   receivingPhone?: string;
   receivingWebsite?: string;
   
-  // 20 NDA Clauses & Terms
+  // Generic Freelancer NDA Clauses & Terms
   purpose?: string;
   confidentialItems?: string;
   obligations?: string;
@@ -56,12 +53,10 @@ export interface NDATemplateProps {
   termDuration?: string;
   returnTerm?: string;
   ipClause?: string;
-  nonSolicitation?: string;
   dataProtection?: string;
   limitationOfLiability?: string;
   breachRemedies?: string;
   terminationClause?: string;
-  governingLaw?: string;
   entireAgreement?: string;
   additionalTerms?: string;
   
@@ -79,7 +74,6 @@ export function ModernNDATemplate({
   activePage,
   ndaNumber = "SXL-NDA-2026-000001",
   effectiveDate = new Date().toISOString().split("T")[0],
-  version = "1.0",
   
   disclosingName = "Sahil Hode",
   disclosingCompany = "SevenX Labs",
@@ -95,25 +89,23 @@ export function ModernNDATemplate({
   receivingPhone = "+1 234 567 8900",
   receivingWebsite = "www.smithinnovations.com",
   
-  purpose = "Evaluating business partnership, custom software development requirements, and technical API integrations.",
-  confidentialItems = "Source Code, Database Schemas, REST APIs, UI/UX Wireframes, Business Logic, Customer Data, Financial Information, Trade Secrets, and Proprietary Algorithms.",
-  obligations = "Maintain strict confidentiality, prevent unauthorized disclosure, refrain from copying or reverse engineering, and restrict access solely to authorized personnel with a need-to-know.",
+  purpose = "Evaluating business partnership, freelance design/development services, custom software engineering, and technical project requirements.",
+  confidentialItems = "Source Code, Database Schemas, REST APIs, UI/UX Wireframes, Business Logic, Customer Data, Financial Information, Credentials, and Project Specifications.",
+  obligations = "Maintain strict confidentiality, prevent unauthorized disclosure, refrain from copying or distributing confidential materials, and restrict access solely to project personnel.",
   exclusions = "Information that is already public, previously known without restriction, received legally from a third party, or independently developed without reference to Confidential Information.",
-  permittedDisclosure = "Disclosures required by law, court subpoena, regulatory government request, or to professional legal/financial advisors bound by confidentiality duties.",
-  termDuration = "Agreement remains effective for 3 years from Effective Date; confidentiality obligations survive for 5 years post-termination.",
-  returnTerm = "Upon written notice, Receiving Party shall immediately return or permanently destroy all digital files, backups, and physical documents.",
-  ipClause = "All intellectual property rights, trade secrets, and ownership remain strictly with Disclosing Party. No license or transfer is granted.",
-  nonSolicitation = "Neither party shall solicit, recruit, hire, or poach employees or contractors of the other party during the term and 12 months thereafter.",
-  dataProtection = "Employ industry-standard AES-256 encryption, secure cloud storage, strict credential access control, and robust cyber security protocols.",
-  limitationOfLiability = "Neither party shall be liable for indirect, incidental, punitive, or consequential damages. Maximum aggregate liability is limited to actual direct damages.",
-  breachRemedies = "Immediate injunctive relief without posting bond, monetary damages, legal fee reimbursement, and prompt notice of any actual or suspected breach.",
-  terminationClause = "Either party may terminate this agreement upon 14 calendar days written notice. Survival clauses remain binding post-termination.",
-  governingLaw = "Governed by the laws of India, with exclusive legal jurisdiction in the courts of Mumbai, Maharashtra.",
-  entireAgreement = "This Agreement contains the complete and exclusive understanding between parties, superseding all prior oral or written agreements.",
-  additionalTerms = "Special conditions: Confidentiality duties extend to all affiliated subsidiaries and third-party contractor audit trails.",
+  permittedDisclosure = "Disclosures approved in writing by the disclosing party, required by legal process, or made to professional legal/financial advisors bound by confidentiality.",
+  termDuration = "Agreement remains effective during project collaboration; confidentiality obligations survive for 3 years post-termination.",
+  returnTerm = "Upon written request, Receiving Party shall immediately return or permanently delete all digital files, project backups, and physical documents.",
+  ipClause = "All pre-existing intellectual property, project assets, and custom deliverables remain strictly owned by the respective owner. No transfer or license is implied unless agreed separately.",
+  dataProtection = "Employ reasonable security measures, password protection, secure storage, and strict credential access controls for all shared materials.",
+  limitationOfLiability = "Neither party shall be liable for indirect, incidental, or consequential damages. Liability is limited to direct actual damages arising from project scope.",
+  breachRemedies = "Prompt written notice of any actual or suspected breach, right to seek immediate injunctive relief, and recovery of reasonable legal expenses.",
+  terminationClause = "Either party may terminate this agreement upon written notice. Confidentiality and non-disclosure duties survive project termination.",
+  entireAgreement = "This Agreement represents the complete understanding between parties regarding confidentiality, superseding all prior oral or written discussions.",
+  additionalTerms = "Special Conditions: Custom project clauses, remote work protocols, and communication guidelines agreed upon by both parties.",
   
   disclosingSignatory = "Sahil Hode",
-  disclosingDesignation = "Founder & CEO (SevenX Labs)",
+  disclosingDesignation = "Founder & Lead Developer",
   receivingSignatory = "Sophia Smith",
   receivingDesignation = "Managing Director",
   
@@ -171,11 +163,11 @@ export function ModernNDATemplate({
                 </div>
 
                 <div className="mt-4">
-                  <span className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-widest block mb-0.5">
+                  <span className="text-xs font-extrabold text-neutral-400 uppercase tracking-widest block mb-0.5">
                     NON-DISCLOSURE AGREEMENT
                   </span>
                   <h2 className="text-lg font-black text-neutral-900 tracking-tight leading-snug">
-                    MUTUAL CONFIDENTIALITY AGREEMENT (NDA)
+                    FREELANCE NON-DISCLOSURE AGREEMENT
                   </h2>
                 </div>
               </div>
@@ -190,11 +182,11 @@ export function ModernNDATemplate({
                   {/* Metadata 2-Column Grid */}
                   <div className="grid grid-cols-2 gap-4 text-left text-xs font-medium border-t border-neutral-800 pt-3">
                     <div>
-                      <span className="text-[11px] text-neutral-400 block font-sans">Agreement No.</span>
+                      <span className="text-xs text-neutral-400 block font-sans">Agreement No.</span>
                       <span className="font-mono font-bold text-white text-xs block mt-0.5 whitespace-nowrap">{ndaNumber}</span>
                     </div>
                     <div>
-                      <span className="text-[11px] text-neutral-400 block font-sans">Effective Date</span>
+                      <span className="text-xs text-neutral-400 block font-sans">Effective Date</span>
                       <span className="font-mono font-bold text-white text-xs block mt-0.5 whitespace-nowrap">{formatDate(effectiveDate)}</span>
                     </div>
                   </div>
@@ -213,8 +205,8 @@ export function ModernNDATemplate({
             {/* Intro Paragraph */}
             <div className="px-10 mt-3.5 text-xs text-neutral-800 font-medium leading-relaxed">
               <p>
-                This Mutual Non-Disclosure Agreement (&quot;Agreement&quot;) is entered into on{" "}
-                <strong className="text-neutral-900 font-bold">{formatDate(effectiveDate)}</strong> (&quot;Effective Date&quot;) by and between the Disclosing Party and Receiving Party listed below to protect proprietary business and technical assets.
+                This Non-Disclosure Agreement (&quot;Agreement&quot;) is entered into on{" "}
+                <strong className="text-neutral-900 font-bold">{formatDate(effectiveDate)}</strong> (&quot;Effective Date&quot;) by and between the Disclosing Party and Receiving Party listed below to safeguard proprietary project information and assets.
               </p>
             </div>
 
@@ -229,8 +221,8 @@ export function ModernNDATemplate({
                 {/* Disclosing Party */}
                 <div className="space-y-1 pr-3 border-r border-neutral-200">
                   <h3 className="text-xs font-black text-neutral-900">{disclosingCompany || disclosingName}</h3>
-                  <p className="text-neutral-700 font-medium text-[11px]">{disclosingAddress}</p>
-                  <div className="pt-0.5 space-y-0.5 text-[11px]">
+                  <p className="text-neutral-700 font-medium text-xs">{disclosingAddress}</p>
+                  <div className="pt-0.5 space-y-0.5 text-xs">
                     <p><strong className="text-neutral-600 font-bold">Rep:</strong> {disclosingName}</p>
                     <p><strong className="text-neutral-600 font-bold">Phone:</strong> {disclosingPhone}</p>
                     <p><strong className="text-neutral-600 font-bold">Email:</strong> {disclosingEmail}</p>
@@ -240,9 +232,9 @@ export function ModernNDATemplate({
                 {/* Receiving Party */}
                 <div className="space-y-1 pl-3">
                   <h3 className="text-xs font-black text-neutral-900">{receivingName}</h3>
-                  {receivingCompany && <p className="text-neutral-800 font-bold text-[11px]">{receivingCompany}</p>}
-                  <p className="text-neutral-700 font-medium text-[11px]">{receivingAddress}</p>
-                  <div className="pt-0.5 space-y-0.5 text-[11px]">
+                  {receivingCompany && <p className="text-neutral-800 font-bold text-xs">{receivingCompany}</p>}
+                  <p className="text-neutral-700 font-medium text-xs">{receivingAddress}</p>
+                  <div className="pt-0.5 space-y-0.5 text-xs">
                     <p><strong className="text-neutral-600 font-bold">Phone:</strong> {receivingPhone}</p>
                     <p><strong className="text-neutral-600 font-bold">Email:</strong> {receivingEmail}</p>
                   </div>
@@ -250,7 +242,7 @@ export function ModernNDATemplate({
               </div>
             </div>
 
-            {/* Page 1 Clauses: Sections 3 - 12 (Legible Typography) */}
+            {/* Page 1 Clauses: Sections 3 - 10 */}
             <div className="px-10 mt-3 space-y-3">
               {/* Section 3 & 4 */}
               <div className="grid grid-cols-2 gap-3">
@@ -315,7 +307,7 @@ export function ModernNDATemplate({
                     <Clock className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">8. TERM & SURVIVAL PERIOD</h4>
+                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">8. TERM & SURVIVAL DURATION</h4>
                     <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium">{termDuration}</p>
                   </div>
                 </div>
@@ -340,29 +332,6 @@ export function ModernNDATemplate({
                   <div>
                     <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">10. INTELLECTUAL PROPERTY RIGHTS</h4>
                     <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium">{ipClause}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Section 11 & 12 */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <UserCheck className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">11. NON-SOLICITATION CLAUSE</h4>
-                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium">{nonSolicitation}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <Shield className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">12. DATA PROTECTION & SECURITY</h4>
-                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium">{dataProtection}</p>
                   </div>
                 </div>
               </div>
@@ -400,25 +369,48 @@ export function ModernNDATemplate({
       {showPage2 && (
         <div className="relative w-full min-h-[297mm] flex flex-col justify-between pt-10 pb-0">
           <div className="px-10 space-y-4">
-            {/* Section 13 & 14 */}
+            {/* Section 11 & 12 */}
             <div className="grid grid-cols-2 gap-4">
               <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
                 <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
-                  <AlertTriangle className="w-5 h-5" />
+                  <Shield className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">13. LIMITATION OF LIABILITY</h4>
-                  <p className="text-[11px] text-neutral-800 mt-1 leading-relaxed font-medium">{limitationOfLiability}</p>
+                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">11. DATA PROTECTION & SECURITY</h4>
+                  <p className="text-[11px] text-neutral-800 mt-1 leading-relaxed font-medium">{dataProtection}</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
                 <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
+                  <AlertTriangle className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">12. LIMITATION OF LIABILITY</h4>
+                  <p className="text-[11px] text-neutral-800 mt-1 leading-relaxed font-medium">{limitationOfLiability}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Section 13 & 14 */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
                   <Gavel className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">14. BREACH & LEGAL REMEDIES</h4>
+                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">13. BREACH & LEGAL REMEDIES</h4>
                   <p className="text-[11px] text-neutral-800 mt-1 leading-relaxed font-medium">{breachRemedies}</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
+                  <Clock className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">14. TERMINATION CONDITIONS</h4>
+                  <p className="text-[11px] text-neutral-800 mt-1 leading-relaxed font-medium">{terminationClause}</p>
                 </div>
               </div>
             </div>
@@ -427,33 +419,10 @@ export function ModernNDATemplate({
             <div className="grid grid-cols-2 gap-4">
               <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
                 <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
-                  <Clock className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">15. TERMINATION CONDITIONS</h4>
-                  <p className="text-[11px] text-neutral-800 mt-1 leading-relaxed font-medium">{terminationClause}</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
-                  <Building className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">16. GOVERNING LAW & JURISDICTION</h4>
-                  <p className="text-[11px] text-neutral-800 mt-1 leading-relaxed font-medium">{governingLaw}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Section 17 & 18 */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
                   <Handshake className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">17. ENTIRE AGREEMENT & CLAUSES</h4>
+                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">15. ENTIRE AGREEMENT</h4>
                   <p className="text-[11px] text-neutral-800 mt-1 leading-relaxed font-medium">{entireAgreement}</p>
                 </div>
               </div>
@@ -463,7 +432,7 @@ export function ModernNDATemplate({
                   <FileText className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">18. ADDITIONAL TERMS & CONDITIONS</h4>
+                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">16. ADDITIONAL SPECIAL TERMS</h4>
                   <p className="text-[11px] text-neutral-800 mt-1 leading-relaxed font-medium">{additionalTerms}</p>
                 </div>
               </div>
@@ -472,10 +441,10 @@ export function ModernNDATemplate({
 
           {/* Bottom Pinned Digital Signatures Block & Footer Bar on Page 2 */}
           <div className="mt-auto">
-            {/* Section 19 & 20: Digital Signatures Block Pinned at Bottom */}
+            {/* Section 17 & 18: Digital Signatures Block Pinned at Bottom */}
             <div className="px-10 pb-5 pt-4 border-t border-neutral-200 grid grid-cols-2 gap-8 text-xs bg-white" style={{ breakInside: "avoid" }}>
               <div>
-                <p className="font-extrabold text-[#a6ce39] uppercase text-xs tracking-wider mb-1">19. DISCLOSING PARTY SIGNATURE</p>
+                <p className="font-extrabold text-[#a6ce39] uppercase text-xs tracking-wider mb-1">17. DISCLOSING PARTY SIGNATURE</p>
                 <p className="font-bold text-neutral-900 text-xs">{disclosingCompany || disclosingName}</p>
                 <p className="font-mono text-neutral-800 border-b border-neutral-300 pb-1 mt-4 font-bold text-xs">{disclosingSignatory}</p>
                 <p className="text-[11px] text-neutral-600 font-medium">{disclosingDesignation}</p>
@@ -483,7 +452,7 @@ export function ModernNDATemplate({
               </div>
 
               <div>
-                <p className="font-extrabold text-[#a6ce39] uppercase text-xs tracking-wider mb-1">20. RECEIVING PARTY SIGNATURE</p>
+                <p className="font-extrabold text-[#a6ce39] uppercase text-xs tracking-wider mb-1">18. RECEIVING PARTY SIGNATURE</p>
                 <p className="font-bold text-neutral-900 text-xs">{receivingCompany || receivingName}</p>
                 <p className="font-mono text-neutral-800 border-b border-neutral-300 pb-1 mt-4 font-bold text-xs">{receivingSignatory}</p>
                 <p className="text-[11px] text-neutral-600 font-medium">{receivingDesignation}</p>
