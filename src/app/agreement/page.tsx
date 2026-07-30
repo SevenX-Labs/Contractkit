@@ -247,7 +247,6 @@ export default function AgreementPage() {
       activePage={page}
       agreementNumber={formData.agreementNumber}
       effectiveDate={formData.date}
-      expiryDate={formData.deadline}
       version={formData.version}
       providerName={formData.freelancerName}
       providerCompany={formData.freelancerCompany}

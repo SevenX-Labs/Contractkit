@@ -207,8 +207,8 @@ export function ModernAgreementTemplate({
                     AGREEMENT
                   </h1>
                   
-                  {/* Metadata 3-Column Grid */}
-                  <div className="grid grid-cols-3 gap-2 text-center text-xs font-medium border-t border-neutral-800 pt-3">
+                  {/* Metadata 2-Column Grid */}
+                  <div className="grid grid-cols-2 gap-4 text-left text-xs font-medium border-t border-neutral-800 pt-3">
                     <div>
                       <span className="text-[10px] text-neutral-400 block font-sans">Agreement No.</span>
                       <span className="font-mono font-bold text-white text-[11px] block mt-0.5 whitespace-nowrap">{agreementNumber}</span>
@@ -216,10 +216,6 @@ export function ModernAgreementTemplate({
                     <div>
                       <span className="text-[10px] text-neutral-400 block font-sans">Effective Date</span>
                       <span className="font-mono font-bold text-white text-[11px] block mt-0.5 whitespace-nowrap">{formatDate(effectiveDate)}</span>
-                    </div>
-                    <div>
-                      <span className="text-[10px] text-neutral-400 block font-sans">Expiry Date</span>
-                      <span className="font-mono font-bold text-white text-[11px] block mt-0.5 whitespace-nowrap">{formatDate(expiryDate)}</span>
                     </div>
                   </div>
                 </div>
