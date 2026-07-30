@@ -27,24 +27,24 @@ export default function InvoicePage() {
   const [accentTheme, setAccentTheme] = useState<"lime" | "purple" | "pink" | "emerald">("lime");
 
   const [formData, setFormData] = useState<InvoiceData>({
-    invoiceNumber: "003979",
+    invoiceNumber: "SXL-INV-2026-000001",
     invoiceDate: new Date().toISOString().split("T")[0],
     dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
     
-    senderName: "Cool Creative Studio",
-    senderCompany: "Cool Creative Studio",
-    senderAddress: "69 Frank Helga, Rd, New York, US",
-    senderEmail: "yourmail@gmail.com",
-    senderPhone: "+49 0000 000 0000",
+    senderName: "SevenX Labs",
+    senderCompany: "SevenX Labs",
+    senderAddress: "SevenX Tech Park, HSR Layout, Sector 1, Bengaluru",
+    senderEmail: "hello@sevenxlabs.com",
+    senderPhone: "+91 98765 43210",
     
     clientName: "Sophia Smith",
     clientCompany: "Acme Global",
-    clientAddress: "Rosenstraße 12 Berlin",
+    clientAddress: "100 Tech Plaza, Suite 400, Tech District, CA",
     clientEmail: "mail@mail.com",
-    clientPhone: "+49 0000 000 0000",
+    clientPhone: "+123-456-7890",
     
     paymentMethod: "Payment Method.",
-    paymentDetails: "Account Name: Cool Creative Studio | Account: 0000 0000 0000 | Bank: Commerz Bank",
+    paymentDetails: "Account Name: SevenX Labs | Account: 0000 0000 0000 | Bank: Commerz Bank",
     
     items: [
       { id: "item-1", description: "Website Design and Development", quantity: 1, rate: 1230, amount: 1230 },
@@ -62,7 +62,7 @@ export default function InvoicePage() {
     taxAmount: 1053,
     total: 8073,
     
-    note: "Web Design is the Digital face of your brand shaping user perceptions and driving engagement.",
+    note: "",
     status: "sent",
     createdAt: new Date().toISOString(),
   });
@@ -71,14 +71,14 @@ export default function InvoicePage() {
     Promise.all([getProfileDB(), getNextInvoiceNumberDB()]).then(([profile, invNum]) => {
       setFormData((prev: InvoiceData) => ({
         ...prev,
-        invoiceNumber: invNum.replace("SXL-INV-", "00"),
-        senderName: profile.name || "Cool Creative Studio",
+        invoiceNumber: invNum,
+        senderName: profile.name || "SevenX Labs",
         senderCompany: profile.company || "SevenX Labs",
-        senderAddress: profile.address || "69 Frank Helga, Rd, New York, US",
-        senderEmail: profile.email || "yourmail@gmail.com",
-        senderPhone: profile.phone || "+49 0000 000 0000",
+        senderAddress: profile.address || "SevenX Tech Park, HSR Layout, Sector 1, Bengaluru",
+        senderEmail: profile.email || "hello@sevenxlabs.com",
+        senderPhone: profile.phone || "+91 98765 43210",
         paymentMethod: "Payment Method.",
-        paymentDetails: `Account Name: ${profile.name || "Cool Creative Studio"} | Account 0000 0000 0000 | ${profile.bankName || "Commerz Bank"}`,
+        paymentDetails: `Account Name: ${profile.name || "SevenX Labs"} | Account 0000 0000 0000 | ${profile.bankName || "Commerz Bank"}`,
       }));
     });
   }, []);

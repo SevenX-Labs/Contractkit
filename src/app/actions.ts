@@ -545,7 +545,14 @@ export async function createDocumentSuiteDB(data: {
 }
 
 export async function getNextInvoiceNumberDB(): Promise<string> {
-  return getNextDocumentNumberDB("INVOICE");
+  try {
+    const year = new Date().getFullYear();
+    const count = await prisma.documentSuite.count({ where: { type: "INVOICE" } });
+    const num = (count + 1).toString().padStart(6, "0");
+    return `SXL-INV-${year}-${num}`;
+  } catch (err) {
+    return "SXL-INV-2026-000001";
+  }
 }
 
 export async function createInvoiceDB(data: InvoiceData) {

@@ -3,6 +3,7 @@
 import React from "react";
 import { formatCurrency, formatDate } from "../../lib/utils";
 import { Phone, Mail, Globe, MapPin } from "lucide-react";
+import Image from "next/image";
 
 export interface InvoiceTemplateProps {
   id?: string;
@@ -60,22 +61,22 @@ export interface InvoiceTemplateProps {
 
 export function ModernInvoiceTemplate({
   id = "invoice-pdf-preview",
-  invoiceNumber,
+  invoiceNumber = "SXL-INV-2026-000001",
   invoiceDate,
   dueDate,
-  senderName = "Cool Creative Studio",
-  senderCompany = "SevenX Labs Studio",
-  senderAddress = "Rosenstraße 12 Berlin",
-  senderEmail = "mail@mail.com",
-  senderPhone = "+49 0000 000 0000",
-  senderWebsite = "www.yourdomain.com",
-  logoUrl,
+  senderName = "Sahil Hode",
+  senderCompany = "SevenX Labs",
+  senderAddress = "SevenX Tech Park, HSR Layout, Sector 1, Bengaluru",
+  senderEmail = "hello@sevenxlabs.com",
+  senderPhone = "+91 98765 43210",
+  senderWebsite = "www.sevenxlabs.com",
+  logoUrl = "/logo.png",
   stampUrl,
   clientName = "Sophia Smith",
-  clientCompany = "Acme Global Inc",
-  clientAddress = "Rosenstraße 12 Berlin",
+  clientCompany = "Acme Global",
+  clientAddress = "100 Tech Plaza, Suite 400, Tech District, CA",
   clientEmail = "mail@mail.com",
-  clientPhone = "+49 0000 000 0000",
+  clientPhone = "+123-456-7890",
   items = [],
   subtotal = 0,
   taxPercent = 15,
@@ -85,12 +86,9 @@ export function ModernInvoiceTemplate({
   shippingAmount = 0,
   total = 0,
   paymentMethod = "Payment Method.",
-  paymentDetails,
-  bankName = "Commerz Bank",
-  accountName = "Account Name",
-  accountNumber = "Account 0000 0000 0000",
-  note = "Thanks For Your Business",
-  terms = "Web Design is the Digital face of your brand shaping user perceptions and driving engagement. Through intuitive interfaces and captivating visuals, it creates memorable experiences that resonate with your target audience.",
+  paymentDetails = "Account Name: SevenX Labs | Account: 50100234567890 | Bank: Silicon Tech Bank | UPI: sevenxlabs@upi",
+  note,
+  terms,
   signatureName = "Sophia Smith",
   signatureTitle = "Manager",
   signatureUrl,
@@ -120,28 +118,34 @@ export function ModernInvoiceTemplate({
   const computedTaxAmount = taxAmount || (subtotal * (taxPercent || 0)) / 100;
   const computedTotal = total || subtotal + computedTaxAmount - (discountAmount || 0) + (shippingAmount || 0);
 
+  // Format payment details nicely
+  const paymentLines = paymentDetails.split("|").map((s) => s.trim());
+
   return (
     <div
       id={id}
       className="relative w-[210mm] min-h-[297mm] bg-white text-neutral-900 mx-auto flex flex-col justify-between select-none shadow-2xl rounded-2xl overflow-hidden p-0"
       style={{ fontFamily: "'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" }}
     >
-      {/* Top Main Section */}
+      {/* Top Header & Table Section */}
       <div className="relative w-full">
         {/* Top Header Row with Black Block in Top-Right */}
         <div className="flex justify-between items-start w-full relative">
-          {/* Top Left Company Branding */}
+          {/* Top Left Company Branding & Crisp Logo */}
           <div className="pt-10 pl-10 pr-4 max-w-sm">
-            {logoUrl ? (
-              <img src={logoUrl} alt="Logo" className="h-10 object-contain mb-2" />
-            ) : (
-              <h1 className="text-2xl font-black tracking-tight text-neutral-900">
-                {senderCompany || senderName || "Cool Creative Studio"}
-              </h1>
-            )}
+            <div className="mb-4">
+              <Image
+                src="/logo.png"
+                alt="SevenX Labs"
+                width={180}
+                height={60}
+                className="h-14 w-auto object-contain"
+                priority
+              />
+            </div>
 
             {/* Client Info Section */}
-            <div className="mt-10">
+            <div className="mt-8">
               <span className="text-xs font-bold text-neutral-500 uppercase tracking-widest block mb-1">
                 INVOICE TO.
               </span>
@@ -156,7 +160,7 @@ export function ModernInvoiceTemplate({
             </div>
           </div>
 
-          {/* Top Right Black Header Panel with Curved Bottom Corner */}
+          {/* Top Right Black Header Panel */}
           <div className="relative w-[50%] bg-[#0a0a0a] text-white pt-10 pb-8 px-8 rounded-bl-[50px] shadow-2xl flex flex-col justify-between min-h-[200px]">
             <div>
               <h1 className="text-6xl font-black tracking-wider uppercase text-white mb-6">
@@ -167,15 +171,15 @@ export function ModernInvoiceTemplate({
               <div className="grid grid-cols-3 gap-2 text-center text-xs font-medium border-t border-neutral-800 pt-4">
                 <div>
                   <span className="text-[11px] text-neutral-400 block font-sans">Invoice No.</span>
-                  <span className="font-mono font-bold text-white text-sm block mt-0.5">#{invoiceNumber}</span>
+                  <span className="font-mono font-bold text-white text-xs block mt-0.5">{invoiceNumber}</span>
                 </div>
                 <div>
                   <span className="text-[11px] text-neutral-400 block font-sans">Date</span>
-                  <span className="font-mono font-bold text-white text-sm block mt-0.5">{formatDate(invoiceDate)}</span>
+                  <span className="font-mono font-bold text-white text-xs block mt-0.5">{formatDate(invoiceDate)}</span>
                 </div>
                 <div>
                   <span className="text-[11px] text-neutral-400 block font-sans">Due Date</span>
-                  <span className="font-mono font-bold text-white text-sm block mt-0.5">{formatDate(dueDate)}</span>
+                  <span className="font-mono font-bold text-white text-xs block mt-0.5">{formatDate(dueDate)}</span>
                 </div>
               </div>
             </div>
@@ -194,7 +198,7 @@ export function ModernInvoiceTemplate({
         <div className="px-10 mt-10">
           {/* Black Full-Width Header Row */}
           <div className="bg-[#0a0a0a] text-white rounded-full py-3.5 px-6 flex justify-between items-center text-xs font-black uppercase tracking-wider mb-2 shadow-md">
-            <span className="w-16 text-center">QTY</span>
+            <span className="w-16 text-center">SR NO.</span>
             <span className="flex-1 px-4">ITEM DESCRIPTION</span>
             <span className="w-28 text-right">RATE</span>
             <span className="w-28 text-right">TOTAL</span>
@@ -203,7 +207,8 @@ export function ModernInvoiceTemplate({
           {/* Table Body Rows */}
           <div className="flex flex-col gap-2">
             {items.map((item, index) => {
-              const isHighlighted = index % 2 === 1; // Alternating highlighted rows
+              const isHighlighted = index % 2 === 1;
+              const srNo = String(index + 1).padStart(2, "0");
               return (
                 <div
                   key={item.id || index}
@@ -213,7 +218,7 @@ export function ModernInvoiceTemplate({
                       : "bg-white text-neutral-800 rounded-full"
                   }`}
                 >
-                  <span className="w-16 text-center font-mono font-bold">{item.quantity}</span>
+                  <span className="w-16 text-center font-mono font-bold">{srNo}</span>
                   <span className="flex-1 px-4 font-semibold">{item.description}</span>
                   <span className="w-28 text-right font-mono">{formatCurrency(item.rate, currencySymbol)}</span>
                   <span className="w-28 text-right font-mono font-bold">{formatCurrency(item.amount, currencySymbol)}</span>
@@ -222,32 +227,20 @@ export function ModernInvoiceTemplate({
             })}
           </div>
         </div>
+      </div>
 
-        {/* Bottom Details Row: Payment Details & Terms (Left) + Totals & Signature (Right) */}
-        <div className="px-10 mt-8 grid grid-cols-12 gap-8 items-start">
-          {/* Left Column: Payment Details & Terms & Conditions */}
-          <div className="col-span-7 space-y-5">
-            {/* Payment Method */}
-            <div>
-              <h3 className="text-xs font-black text-neutral-900 tracking-tight uppercase mb-1">
-                {paymentMethod}
-              </h3>
-              <div className="text-xs text-neutral-700 font-semibold space-y-0.5">
-                <p>{accountName}</p>
-                <p className="font-mono">{accountNumber}</p>
-                <p>{bankName}</p>
-                {paymentDetails && <p className="text-[11px] text-neutral-500 font-mono mt-1">{paymentDetails}</p>}
-              </div>
-            </div>
-
-            {/* Terms & Conditions */}
-            <div>
-              <h3 className="text-xs font-black text-neutral-900 tracking-tight uppercase mb-1">
-                Terms & Condition
-              </h3>
-              <p className="text-[11px] text-neutral-600 leading-relaxed font-normal max-w-md">
-                {terms}
-              </p>
+      {/* Bottom Pinned Section: Payment Details (Left) + Totals & Signature (Right) */}
+      <div className="mt-auto px-10 pb-8 pt-6">
+        <div className="grid grid-cols-12 gap-8 items-end">
+          {/* Left Column: Clean Single Payment Details */}
+          <div className="col-span-7 space-y-2">
+            <h3 className="text-xs font-black text-neutral-900 tracking-tight uppercase mb-1">
+              {paymentMethod}
+            </h3>
+            <div className="text-xs text-neutral-800 font-semibold space-y-1 bg-neutral-50/80 p-3.5 rounded-2xl border border-neutral-100 font-mono">
+              {paymentLines.map((line, i) => (
+                <p key={i}>{line}</p>
+              ))}
             </div>
           </div>
 
@@ -281,7 +274,7 @@ export function ModernInvoiceTemplate({
             </div>
 
             {/* Manager / Signature Block */}
-            <div className="text-right pt-4 flex flex-col items-end">
+            <div className="text-right flex flex-col items-end">
               {signatureUrl ? (
                 <img src={signatureUrl} alt="Signature" className="h-10 object-contain mb-1" />
               ) : null}
@@ -300,8 +293,8 @@ export function ModernInvoiceTemplate({
         </svg>
       </div>
 
-      {/* Full-Width Black Footer Bar with Contact Icons & Lime Green Accent Block */}
-      <div className="relative w-full bg-[#0a0a0a] text-white px-8 py-3.5 flex justify-between items-center text-[10px] font-medium z-10">
+      {/* Full-Width Black Footer Bar */}
+      <div className="relative w-full bg-[#0a0a0a] text-white px-8 py-4 flex justify-between items-center text-[10px] font-medium z-10">
         <div className="flex items-center gap-6 text-neutral-300">
           <div className="flex items-center gap-1.5">
             <Phone className="w-3 h-3 text-white shrink-0" />
@@ -323,9 +316,6 @@ export function ModernInvoiceTemplate({
             <span>{senderAddress}</span>
           </div>
         </div>
-
-        {/* Lime Accent Block on Bottom Right of Footer */}
-        <div className={`absolute right-0 top-0 bottom-0 w-16 ${accentBg} rounded-tl-lg`} />
       </div>
     </div>
   );
