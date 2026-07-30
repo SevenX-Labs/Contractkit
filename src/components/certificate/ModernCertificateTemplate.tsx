@@ -294,9 +294,9 @@ export function ModernCertificateTemplate({
           {/* Provider Signature */}
           <div className="border border-neutral-200 rounded-2xl p-4 relative overflow-hidden">
             <p className="font-extrabold text-neutral-900 uppercase text-[11px] tracking-wider mb-2">FOR SEVENX LABS</p>
-            <div className="h-10 flex items-end mb-2">
-              <span className="font-serif italic text-2xl font-bold text-neutral-900 border-b border-neutral-300 w-full pb-1">
-                {providerSignatory}
+            <div className="h-10 flex items-center mb-2">
+              <span className="font-signature text-3xl font-extrabold text-neutral-900 tracking-wider select-none transform -rotate-3 border-b-2 border-neutral-900/80 pb-0.5 px-2">
+                shode
               </span>
             </div>
             <p className="font-bold text-neutral-900 text-xs">{providerSignatory}</p>

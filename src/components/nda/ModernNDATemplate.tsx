@@ -446,7 +446,11 @@ export function ModernNDATemplate({
               <div>
                 <p className="font-extrabold text-[#a6ce39] uppercase text-xs tracking-wider mb-1">17. DISCLOSING PARTY SIGNATURE</p>
                 <p className="font-bold text-neutral-900 text-xs">{disclosingCompany || disclosingName}</p>
-                <p className="font-mono text-neutral-800 border-b border-neutral-300 pb-1 mt-4 font-bold text-xs">{disclosingSignatory}</p>
+                <div className="h-9 flex items-center mt-2 mb-1">
+                  <span className="font-signature text-3xl font-extrabold text-neutral-900 tracking-wider select-none transform -rotate-3 border-b-2 border-neutral-900/80 pb-0.5 px-2">
+                    shode
+                  </span>
+                </div>
                 <p className="text-xs text-neutral-600 font-medium">{disclosingDesignation}</p>
                 <p className="text-xs text-neutral-400 mt-1">Date: {formatDate(effectiveDate)}</p>
               </div>

@@ -458,32 +458,22 @@ export function ModernQuotationTemplate({
             </div>
           </div>
 
-          {/* Right Column: Signature & Round Stamp Block */}
-          <div className="col-span-5 flex flex-col items-end text-right space-y-1.5 pt-1">
-            <p className="text-xs font-extrabold text-neutral-900 uppercase">For SevenX Labs</p>
+          {/* Right Column: Signature Block */}
+          <div className="col-span-5 flex flex-col items-end text-right space-y-1 pt-1">
+            <p className="text-xs font-extrabold text-neutral-900 uppercase">Authorized Signature</p>
 
-            {/* Signature Area & Stamp Container */}
-            <div className="relative w-48 h-14 flex items-center justify-center my-1">
-              {/* Cursive Signature Display */}
+            {/* Signature Area */}
+            <div className="h-14 flex items-center justify-end my-1">
               {signatureUrl ? (
                 <img src={signatureUrl} alt="Signature" className="h-12 object-contain" />
               ) : (
-                <span className="font-serif italic text-2xl font-bold text-neutral-900">
-                  {signatoryName}
+                <span className="font-signature text-3xl font-extrabold text-neutral-900 tracking-wider select-none transform -rotate-3 border-b-2 border-neutral-900/80 pb-0.5 px-2">
+                  shode
                 </span>
               )}
-
-              {/* Round Stamp Badge */}
-              <div className="absolute -right-2 top-0 w-16 h-16 rounded-full border-2 border-dashed border-[#8cc63f] flex flex-col items-center justify-center text-[7px] font-black text-[#8cc63f] uppercase transform rotate-12 opacity-85 pointer-events-none bg-white/40 backdrop-blur-xs">
-                <span>SEVENX LABS</span>
-                <div className="w-3 h-3 rounded-full bg-[#8cc63f] text-neutral-900 font-bold flex items-center justify-center text-[8px] my-0.5">
-                  X
-                </div>
-                <span className="text-[6px]">AUTHORIZED</span>
-              </div>
             </div>
 
-            <div className="text-xs">
+            <div className="text-xs space-y-0.5">
               <p className="font-bold text-neutral-900">Name: {signatoryName}</p>
               <p className="text-neutral-500 font-semibold text-[11px]">Designation: {designation}</p>
               <p className="text-neutral-500 font-medium text-[11px]">Date: {formatDate(quotationDate)}</p>

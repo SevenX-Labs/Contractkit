@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+.font-signature {
+  font-family: 'Dancing Script', 'Caveat', 'Great Vibes', cursive, serif;
+}
+
 @layer base {
   :root {
     --background: #f4f0e6;

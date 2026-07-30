@@ -323,7 +323,11 @@ export function ModernInvoiceTemplate({
             <div className="text-right flex flex-col items-end">
               {signatureUrl ? (
                 <img src={signatureUrl} alt="Signature" className="h-10 object-contain mb-1" />
-              ) : null}
+              ) : (
+                <span className="font-signature text-3xl font-extrabold text-neutral-900 tracking-wider select-none transform -rotate-3 border-b-2 border-neutral-900/80 pb-0.5 px-2 mb-1">
+                  shode
+                </span>
+              )}
               <span className="text-xs font-extrabold text-neutral-900 block">{signatureName}</span>
               <span className="text-[10px] font-bold text-neutral-500 block">{signatureTitle}</span>
             </div>

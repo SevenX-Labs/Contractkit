@@ -423,7 +423,11 @@ export function ModernAgreementTemplate({
             <div className="px-10 pb-6 pt-4 border-t border-neutral-200 grid grid-cols-2 gap-8 text-xs bg-white" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
               <div>
                 <p className="font-extrabold text-neutral-900 uppercase text-xs tracking-wider mb-2">DEVELOPER SIGNATURE:</p>
-                <p className="font-mono text-neutral-900 border-b border-neutral-300 pb-1 font-bold text-xs">{providerSignatory}</p>
+                <div className="h-9 flex items-center mb-1">
+                  <span className="font-signature text-3xl font-extrabold text-neutral-900 tracking-wider select-none transform -rotate-3 border-b-2 border-neutral-900/80 pb-0.5 px-2">
+                    shode
+                  </span>
+                </div>
                 <p className="text-xs text-neutral-500 font-medium mt-1">Date: {formatDate(effectiveDate)}</p>
               </div>
               <div>
