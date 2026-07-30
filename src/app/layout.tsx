@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className="dark">
       <body className="bg-neutral-950 text-neutral-100 selection:bg-purple-500/30 selection:text-purple-200">
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+        <ThemeProvider>
           <AppShell>{children}</AppShell>
         </ThemeProvider>
       </body>

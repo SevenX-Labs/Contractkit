@@ -609,6 +609,21 @@ export async function createAgreementDB(data: AgreementData) {
     dueDate: data.deadline,
     clientName: data.clientName,
     clientEmail: data.clientEmail,
+  });
+}
+
+export async function createNDADB(data: NDAData) {
+  const clientName = data.receivingName || data.clientName || "Receiving Party";
+  const clientEmail = data.receivingEmail || data.disclosingEmail || "nda@client.com";
+
+  return createDocumentSuiteDB({
+    documentNumber: data.ndaNumber,
+    title: `Mutual NDA - ${clientName}`,
+    type: "NDA",
+    totalAmount: 0,
+    date: data.effectiveDate,
+    clientName: clientName,
+    clientEmail: clientEmail,
     contentJson: JSON.stringify(data),
   });
 }
