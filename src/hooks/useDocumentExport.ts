@@ -57,7 +57,25 @@ export function useDocumentExport() {
     }
   };
 
-  // 1. Export as PDF with Multi-Page Canvas Slicing (Supports 1-page, 2-page, N-page documents perfectly)
+  /**
+   * Capture a single DOM element to a high-res canvas.
+   */
+  const captureElement = async (element: HTMLElement): Promise<HTMLCanvasElement> => {
+    return html2canvas(element, {
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      backgroundColor: "#ffffff",
+      windowWidth: 1200,
+      onclone: (clonedDoc) => sanitizeClonedDoc(clonedDoc),
+    });
+  };
+
+  /**
+   * Per-page PDF export. Finds individual page containers inside the element
+   * and renders each one separately into its own PDF page.
+   * This ensures exact 1:1 match between preview and PDF with no content shift.
+   */
   const exportToPDF = async (elementId: string, filename: string = "Document.pdf") => {
     const element = document.getElementById(elementId);
     if (!element) {
@@ -68,14 +86,13 @@ export function useDocumentExport() {
     try {
       setIsExporting(true);
 
-      const canvas = await html2canvas(element, {
-        scale: 2, // Crisp 200 DPI resolution
-        useCORS: true,
-        logging: false,
-        backgroundColor: "#ffffff",
-        windowWidth: 1200,
-        onclone: (clonedDoc) => sanitizeClonedDoc(clonedDoc),
-      });
+      const a4WidthMm = 210;
+      const a4HeightMm = 297;
+
+      // Find individual page containers (direct children of the wrapper)
+      const pageContainers = Array.from(element.children).filter(
+        (child) => child instanceof HTMLElement && child.offsetHeight > 0
+      ) as HTMLElement[];
 
       const pdf = new jsPDF({
         orientation: "portrait",
@@ -83,54 +100,65 @@ export function useDocumentExport() {
         format: "a4",
       });
 
-      const a4WidthMm = 210;
-      const a4HeightMm = 297;
+      if (pageContainers.length > 1) {
+        // Multi-page: render each page container individually for pixel-perfect output
+        for (let i = 0; i < pageContainers.length; i++) {
+          if (i > 0) pdf.addPage();
 
-      // Calculate canvas height corresponding to 1 A4 page in canvas pixels
-      const canvasPageHeight = Math.floor((canvas.width * a4HeightMm) / a4WidthMm);
-      
-      // Calculate total pages, filtering out trailing pixel overflows (<= 30px)
-      let totalPages = Math.floor(canvas.height / canvasPageHeight);
-      const remainder = canvas.height % canvasPageHeight;
-      if (remainder > 30) {
-        totalPages += 1;
-      }
-      totalPages = Math.max(1, totalPages);
+          const pageEl = pageContainers[i];
+          const canvas = await captureElement(pageEl);
 
-      for (let page = 0; page < totalPages; page++) {
-        if (page > 0) pdf.addPage();
+          // Scale canvas to fit exactly within A4 dimensions
+          const imgData = canvas.toDataURL("image/png", 1.0);
+          pdf.addImage(imgData, "PNG", 0, 0, a4WidthMm, a4HeightMm, undefined, "FAST");
+        }
+      } else {
+        // Single-page or no page containers found: fallback to full-element capture with smart slicing
+        const canvas = await captureElement(element);
 
-        const pageCanvas = document.createElement("canvas");
-        pageCanvas.width = canvas.width;
-        pageCanvas.height = canvasPageHeight;
-        const ctx = pageCanvas.getContext("2d");
+        const canvasPageHeight = Math.floor((canvas.width * a4HeightMm) / a4WidthMm);
+        let totalPages = Math.floor(canvas.height / canvasPageHeight);
+        const remainder = canvas.height % canvasPageHeight;
+        if (remainder > 30) {
+          totalPages += 1;
+        }
+        totalPages = Math.max(1, totalPages);
 
-        if (ctx) {
-          ctx.fillStyle = "#ffffff";
-          ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+        for (let page = 0; page < totalPages; page++) {
+          if (page > 0) pdf.addPage();
 
-          const sourceY = page * canvasPageHeight;
-          const sourceHeight = Math.min(canvasPageHeight, canvas.height - sourceY);
+          const pageCanvas = document.createElement("canvas");
+          pageCanvas.width = canvas.width;
+          pageCanvas.height = canvasPageHeight;
+          const ctx = pageCanvas.getContext("2d");
 
-          ctx.drawImage(
-            canvas,
-            0,
-            sourceY,
-            canvas.width,
-            sourceHeight,
-            0,
-            0,
-            canvas.width,
-            sourceHeight
-          );
+          if (ctx) {
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
 
-          const pageImgData = pageCanvas.toDataURL("image/png", 1.0);
-          pdf.addImage(pageImgData, "PNG", 0, 0, a4WidthMm, a4HeightMm, undefined, "FAST");
+            const sourceY = page * canvasPageHeight;
+            const sourceHeight = Math.min(canvasPageHeight, canvas.height - sourceY);
+
+            ctx.drawImage(
+              canvas,
+              0,
+              sourceY,
+              canvas.width,
+              sourceHeight,
+              0,
+              0,
+              canvas.width,
+              sourceHeight
+            );
+
+            const pageImgData = pageCanvas.toDataURL("image/png", 1.0);
+            pdf.addImage(pageImgData, "PNG", 0, 0, a4WidthMm, a4HeightMm, undefined, "FAST");
+          }
         }
       }
 
       pdf.save(filename);
-      toast.success(`Successfully exported ${totalPages}-page PDF: ${filename}`);
+      toast.success(`Successfully exported ${pageContainers.length > 1 ? pageContainers.length : 1}-page PDF: ${filename}`);
     } catch (err: any) {
       console.error("PDF Export error:", err);
       toast.error("Error exporting PDF.");
@@ -150,14 +178,7 @@ export function useDocumentExport() {
     try {
       setIsExporting(true);
 
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: "#ffffff",
-        windowWidth: 1200,
-        onclone: (clonedDoc) => sanitizeClonedDoc(clonedDoc),
-      });
+      const canvas = await captureElement(element);
 
       const link = document.createElement("a");
       link.href = canvas.toDataURL("image/png", 1.0);

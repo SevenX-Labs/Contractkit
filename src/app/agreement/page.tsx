@@ -845,7 +845,7 @@ export default function AgreementPage() {
           </div>
 
           {/* Hidden Offscreen Container for PDF Export (Both Pages) */}
-          <div className="fixed -left-[9999px] -top-[9999px]">
+          <div style={{ position: "absolute", left: "-9999px", top: 0, width: "210mm", overflow: "hidden", pointerEvents: "none" }}>
             {renderAgreementContent(undefined, "agreement-pdf-preview")}
           </div>
         </div>
