@@ -190,7 +190,7 @@ export function ModernAgreementTemplate({
               </div>
 
               {/* Top Right Black Header Panel */}
-              <div className="relative w-[50%] bg-[#0a0a0a] text-white pt-8 pb-6 px-8 rounded-bl-[50px] shadow-2xl flex flex-col justify-between min-h-[180px]">
+              <div className="relative w-[50%] bg-[#0a0a0a] text-white pt-8 pb-6 px-8 rounded-bl-[50px] shadow-2xl flex flex-col justify-between min-h-[180px] overflow-hidden">
                 <div className="relative z-10">
                   <h1 className="text-4xl font-black tracking-wider uppercase text-white mb-4">
                     AGREEMENT
@@ -210,10 +210,10 @@ export function ModernAgreementTemplate({
                 </div>
 
                 {/* Top Right Geometric Accent Triangles */}
-                <div className="absolute -bottom-6 -right-6 pointer-events-none z-20">
-                  <svg width="90" height="90" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <polygon points="20,10 90,50 30,90" fill={accentShape} opacity="0.95" />
-                    <polygon points="50,20 100,50 60,80" fill={accentShape} opacity="0.65" />
+                <div className="absolute bottom-0 right-0 overflow-hidden pointer-events-none z-20">
+                  <svg width="75" height="75" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="30,20 100,50 40,90" fill={accentShape} opacity="0.95" />
+                    <polygon points="60,30 100,60 70,85" fill={accentShape} opacity="0.65" />
                   </svg>
                 </div>
               </div>

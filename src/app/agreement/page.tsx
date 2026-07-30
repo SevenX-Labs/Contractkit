@@ -821,8 +821,18 @@ export default function AgreementPage() {
             </div>
           </div>
 
-          <div className="overflow-x-auto shadow-xl rounded-3xl bg-[#EBE7DC] p-3 border border-[#E2DDD0]">
-            {renderAgreementContent(activePreviewPage, "agreement-preview-onscreen")}
+          <div className="w-full bg-[#DFD9C9] p-3 rounded-3xl border border-[#D5CEBC] shadow-inner overflow-hidden flex flex-col items-center">
+            <div className="w-full flex justify-center overflow-hidden">
+              <div
+                className="origin-top transition-transform duration-300 shadow-2xl rounded-2xl"
+                style={{
+                  transform: "scale(0.68)",
+                  marginBottom: "-280px",
+                }}
+              >
+                {renderAgreementContent(activePreviewPage, "agreement-preview-onscreen")}
+              </div>
+            </div>
           </div>
 
           {/* Hidden Offscreen Container for PDF Export (Both Pages) */}

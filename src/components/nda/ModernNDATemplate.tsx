@@ -193,10 +193,10 @@ export function ModernNDATemplate({
                 </div>
 
                 {/* Geometric Accent Triangles strictly contained within black panel */}
-                <div className="absolute -bottom-4 -right-4 pointer-events-none z-20">
-                  <svg width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <polygon points="20,10 90,50 30,90" fill={accentShape} opacity="0.95" />
-                    <polygon points="50,20 100,50 60,80" fill={accentShape} opacity="0.65" />
+                <div className="absolute bottom-0 right-0 overflow-hidden pointer-events-none z-20">
+                  <svg width="75" height="75" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="30,20 100,50 40,90" fill={accentShape} opacity="0.95" />
+                    <polygon points="60,30 100,60 70,85" fill={accentShape} opacity="0.65" />
                   </svg>
                 </div>
               </div>
