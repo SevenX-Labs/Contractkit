@@ -132,15 +132,19 @@ export function ModernInvoiceTemplate({
         <div className="flex justify-between items-start w-full relative">
           {/* Top Left Company Branding & Crisp Logo */}
           <div className="pt-10 pl-10 pr-4 max-w-sm">
-            <div className="mb-4">
+            <div className="flex flex-col items-start gap-1 mb-4">
               <Image
                 src="/logo.png"
                 alt="SevenX Labs"
                 width={260}
                 height={90}
-                className="h-24 w-auto object-contain max-w-[220px]"
+                className="h-16 w-auto object-contain max-w-[200px]"
                 priority
               />
+              <div className="flex items-center gap-1.5 mt-1 font-extrabold tracking-tight text-2xl uppercase">
+                <span className="text-neutral-900 font-black">SevenX</span>
+                <span className="text-[#a6ce39] font-black">Labs</span>
+              </div>
             </div>
 
             {/* Client Info Section */}
