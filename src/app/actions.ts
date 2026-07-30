@@ -522,7 +522,15 @@ export async function createDocumentSuiteDB(data: {
     const safeClientName = data.clientName || "Client";
     const safeClientEmail = data.clientEmail || "client@email.com";
 
-    const upserted = await prisma.documentSuite.upsert({
+    // Defensive model accessor: fallback to fresh PrismaClient if dev server cached a stale instance
+    let dbModel = (prisma as any).documentSuite;
+    if (!dbModel) {
+      const { PrismaClient } = require("@prisma/client");
+      const freshPrisma = new PrismaClient();
+      dbModel = freshPrisma.documentSuite;
+    }
+
+    const upserted = await dbModel.upsert({
       where: { documentNumber: docNumber },
       update: {
         title: data.title,

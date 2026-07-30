@@ -7,44 +7,40 @@ import jsPDF from "jspdf";
 export function useDocumentExport() {
   const [isExporting, setIsExporting] = useState(false);
 
-  // Helper to sanitize cloned DOM tree for html2canvas (removes unsupported lab() and oklch() color functions)
+  // Helper to sanitize cloned DOM tree for html2canvas (removes unsupported lab(), oklch(), and color-mix() color functions)
   const sanitizeClonedDoc = (clonedDoc: Document) => {
-    // 1. Clean style elements
-    const styleTags = Array.from(clonedDoc.querySelectorAll("style"));
-    styleTags.forEach((style) => {
-      try {
-        if (style.textContent) {
-          style.textContent = style.textContent
-            .replace(/lab\([^)]+\)/gi, "rgba(0, 0, 0, 0.1)")
-            .replace(/oklch\([^)]+\)/gi, "rgba(0, 0, 0, 0.1)");
-        }
-      } catch (e) {
-        // Ignore cross-origin stylesheet errors
+    try {
+      // 1. Aggressively sanitize entire head HTML (injected <style> tags & CSS variables)
+      if (clonedDoc.head) {
+        clonedDoc.head.innerHTML = clonedDoc.head.innerHTML
+          .replace(/lab\([^)]*\)/gi, "#000000")
+          .replace(/oklch\([^)]*\)/gi, "#000000")
+          .replace(/color-mix\([^)]*\)/gi, "#000000");
       }
-    });
 
-    // 2. Clean element inline styles & CSS custom properties
-    const allElements = Array.from(clonedDoc.querySelectorAll("*"));
-    allElements.forEach((el) => {
-      const htmlEl = el as HTMLElement;
-      if (htmlEl.style) {
-        const styleAttr = htmlEl.getAttribute("style") || "";
-        if (styleAttr.includes("lab(") || styleAttr.includes("oklch(")) {
-          const cleanedStyle = styleAttr
-            .replace(/lab\([^)]+\)/gi, "rgba(0, 0, 0, 0.1)")
-            .replace(/oklch\([^)]+\)/gi, "rgba(0, 0, 0, 0.1)");
-          htmlEl.setAttribute("style", cleanedStyle);
-        }
-
-        // Reset any inline shadow or filter that triggers lab/oklch color parsing in html2canvas
-        if (htmlEl.style.boxShadow && (htmlEl.style.boxShadow.includes("lab(") || htmlEl.style.boxShadow.includes("oklch("))) {
-          htmlEl.style.boxShadow = "none";
-        }
-        if (htmlEl.style.borderColor && (htmlEl.style.borderColor.includes("lab(") || htmlEl.style.borderColor.includes("oklch("))) {
-          htmlEl.style.borderColor = "#e5e5e5";
-        }
+      // 2. Aggressively sanitize entire body HTML (inline style attributes & DOM tags)
+      if (clonedDoc.body) {
+        clonedDoc.body.innerHTML = clonedDoc.body.innerHTML
+          .replace(/lab\([^)]*\)/gi, "#000000")
+          .replace(/oklch\([^)]*\)/gi, "#000000")
+          .replace(/color-mix\([^)]*\)/gi, "#000000");
       }
-    });
+
+      // 3. Traversal fallback on style tags & cssRules
+      const styleTags = Array.from(clonedDoc.querySelectorAll("style"));
+      styleTags.forEach((style) => {
+        try {
+          if (style.textContent) {
+            style.textContent = style.textContent
+              .replace(/lab\([^)]*\)/gi, "#000000")
+              .replace(/oklch\([^)]*\)/gi, "#000000")
+              .replace(/color-mix\([^)]*\)/gi, "#000000");
+          }
+        } catch (e) {}
+      });
+    } catch (e) {
+      console.warn("Sanitization warning:", e);
+    }
   };
 
   // 1. Export as PDF
