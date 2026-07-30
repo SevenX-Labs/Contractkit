@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "../components/providers/ThemeProvider";
 import { AppShell } from "../components/layout/AppShell";
+import AuthGuard from "../components/auth/AuthGuard";
 
 export const metadata: Metadata = {
   title: "SevenX Labs — Freelance Tech Studio Toolkit",
@@ -29,7 +30,9 @@ export default function RootLayout({
       </head>
       <body className="bg-neutral-950 text-neutral-100 selection:bg-purple-500/30 selection:text-purple-200">
         <ThemeProvider>
-          <AppShell>{children}</AppShell>
+          <AuthGuard>
+            <AppShell>{children}</AppShell>
+          </AuthGuard>
         </ThemeProvider>
       </body>
     </html>

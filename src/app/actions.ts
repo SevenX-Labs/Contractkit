@@ -4,6 +4,19 @@ import prisma from "../lib/prisma";
 import { InvoiceData, QuotationData, AgreementData, NDAData, FreelancerProfile, SavedDocument } from "../types";
 import { revalidatePath } from "next/cache";
 
+// ==================== AUTHENTICATION ====================
+export async function loginDB(password: string) {
+  try {
+    const envPass = process.env.USER_PASS || "sevenxlabs@2026";
+    if (password.trim() === envPass.trim()) {
+      return { success: true };
+    }
+    return { success: false, error: "Incorrect password. Access denied." };
+  } catch (err) {
+    return { success: false, error: String(err) };
+  }
+}
+
 // ==================== PROFILE / SETTINGS ====================
 export async function getProfileDB(): Promise<FreelancerProfile> {
   try {

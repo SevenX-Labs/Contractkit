@@ -18,6 +18,7 @@ import {
   Settings,
   Sparkles,
   X,
+  LogOut,
 } from "lucide-react";
 import { SevenXLogo } from "../logo/SevenXLogo";
 
@@ -43,6 +44,10 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
     { name: "History & Vault", href: "/history", icon: History },
     { name: "Settings", href: "/settings", icon: Settings },
   ];
+
+  const handleLogout = () => {
+    window.dispatchEvent(new Event("contractkit_logout"));
+  };
 
   const navContent = (
     <div className="flex flex-col justify-between min-h-full p-6 select-none">
@@ -86,18 +91,26 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
         </nav>
       </div>
 
-      {/* SevenX Studio Footer Card */}
+      {/* SevenX Studio Footer Card with Logout */}
       <div className="pt-6 mt-6 border-t border-neutral-800">
         <div className="bg-neutral-900 border border-neutral-800 p-3 rounded-2xl flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-pink-500/20 text-pink-400 flex items-center justify-center font-bold text-xs">
               <Sparkles className="w-3.5 h-3.5" />
             </div>
-            <div>
-              <p className="text-[11px] font-bold text-white">SevenX Studio</p>
-              <p className="text-[9px] text-neutral-400 font-mono">Enterprise v2.0</p>
+            <div className="min-w-0">
+              <p className="text-[11px] font-bold text-white truncate">SevenX Studio</p>
+              <p className="text-[9px] text-neutral-400 font-mono truncate">sevenxlabs07@gmail.com</p>
             </div>
           </div>
+
+          <button
+            onClick={handleLogout}
+            className="p-1.5 rounded-lg bg-neutral-800 text-neutral-400 hover:text-white hover:bg-pink-900/50 transition cursor-pointer shrink-0 ml-1"
+            title="Logout of ContractKit"
+          >
+            <LogOut className="w-4 h-4 text-pink-400" />
+          </button>
         </div>
       </div>
     </div>
