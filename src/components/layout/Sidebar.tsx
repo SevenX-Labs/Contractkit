@@ -15,6 +15,7 @@ import {
   Receipt,
   History,
   Settings,
+  Sparkles,
   X,
 } from "lucide-react";
 import { SevenXLogo } from "../logo/SevenXLogo";
