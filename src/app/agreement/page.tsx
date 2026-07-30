@@ -656,16 +656,16 @@ export default function AgreementPage() {
             )}
           </div>
 
-          {/* SECTION 8: Milestones */}
+          {/* SECTION 5: Milestones */}
           <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-2xl overflow-hidden shadow-sm">
             <button
-              onClick={() => toggleSection(8)}
+              onClick={() => toggleSection(5)}
               className="w-full px-5 py-3.5 flex items-center justify-between font-extrabold text-xs text-neutral-900 hover:bg-[#DFD9C9] transition cursor-pointer"
             >
-              <span>SECTION 8: Timeline & Milestones</span>
-              {openSections[8] ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              <span>SECTION 5: Timeline & Milestones</span>
+              {openSections[5] ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             </button>
-            {openSections[8] && (
+            {openSections[5] && (
               <div className="p-5 border-t border-[#D5CEBC] flex flex-col gap-3">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-bold text-neutral-700">Project Milestones</span>
@@ -726,14 +726,14 @@ export default function AgreementPage() {
             )}
           </div>
 
-          {/* SECTION 9: Payment Terms */}
+          {/* SECTION 6: Payment Terms */}
           <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-2xl overflow-hidden shadow-sm">
             <button
-              onClick={() => toggleSection(9)}
+              onClick={() => toggleSection(6)}
               className="w-full px-5 py-3.5 flex items-center justify-between font-extrabold text-xs text-neutral-900 hover:bg-[#DFD9C9] transition cursor-pointer"
             >
-              <span>SECTION 9: Payment Terms & Auto-Milestones</span>
-              {openSections[9] ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              <span>SECTION 6: Payment Terms & Auto-Milestones</span>
+              {openSections[6] ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             </button>
             {openSections[9] && (
               <div className="p-5 border-t border-[#D5CEBC] flex flex-col gap-3">

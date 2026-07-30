@@ -429,9 +429,12 @@ export function ModernAgreementTemplate({
                 </p>
               </div>
             </div>
+          </div>
 
-            {/* Section 11: Digital Signatures Block */}
-            <div className="pt-10 border-t border-neutral-200 grid grid-cols-2 gap-8 text-xs" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+          {/* Bottom Pinned Digital Signatures Block & Footer on Page 2 End */}
+          <div className="mt-auto">
+            {/* Section 11: Digital Signatures Block Pinned at the Very End */}
+            <div className="px-10 pb-6 pt-4 border-t border-neutral-200 grid grid-cols-2 gap-8 text-xs bg-white" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
               <div>
                 <p className="font-extrabold text-neutral-900 uppercase text-[10px] tracking-wider mb-2">DEVELOPER SIGNATURE:</p>
                 <p className="font-mono text-neutral-800 border-b border-neutral-300 pb-1 font-bold">{providerSignatory}</p>
@@ -443,10 +446,7 @@ export function ModernAgreementTemplate({
                 <p className="text-[10px] text-neutral-400 mt-1">Date: {formatDate(effectiveDate)}</p>
               </div>
             </div>
-          </div>
 
-          {/* Bottom Pinned Footer & Geometric Accent on Page 2 */}
-          <div>
             <div className="px-10 py-1 flex justify-between items-center text-[10px] text-neutral-400 font-mono">
               <span>SevenX Labs • Ref #{agreementNumber}</span>
               <span>Page 2 of 2</span>
