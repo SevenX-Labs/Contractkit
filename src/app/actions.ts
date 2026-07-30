@@ -555,8 +555,58 @@ export async function createDocumentSuiteDB(data: {
     const docNumber = data.documentNumber || `SXL-${data.type.slice(0, 3)}-${Date.now()}`;
     const safeClientName = data.clientName || "Client";
     const safeClientEmail = data.clientEmail || "client@email.com";
+    const amountVal = data.totalAmount || 0;
 
-    // Defensive model accessor: fallback to fresh PrismaClient if dev server cached a stale instance
+    // 1. Auto-find or create Client record
+    let targetClientId = data.clientId;
+    if (!targetClientId && safeClientName && safeClientName !== "Client") {
+      let existingClient = await prisma.client.findFirst({
+        where: {
+          OR: [
+            { email: { equals: safeClientEmail, mode: "insensitive" } },
+            { name: { equals: safeClientName, mode: "insensitive" } },
+          ],
+        },
+      });
+
+      if (!existingClient) {
+        existingClient = await prisma.client.create({
+          data: {
+            name: safeClientName,
+            email: safeClientEmail,
+            status: "Active",
+            workType: "Web Dev",
+          },
+        });
+      }
+      targetClientId = existingClient.id;
+    }
+
+    // 2. Auto-find or create Project record for Client
+    let targetProjectId = data.projectId;
+    if (!targetProjectId && targetClientId) {
+      let existingProject = await prisma.project.findFirst({
+        where: { clientId: targetClientId },
+      });
+
+      if (!existingProject) {
+        existingProject = await prisma.project.create({
+          data: {
+            name: `${safeClientName} Project`,
+            description: `Project for ${safeClientName}`,
+            budget: amountVal,
+            totalValue: amountVal,
+            amountPaid: 0,
+            amountPending: amountVal,
+            status: "In Progress",
+            clientId: targetClientId,
+          },
+        });
+      }
+      targetProjectId = existingProject.id;
+    }
+
+    // 3. Upsert DocumentSuite record
     let dbModel = (prisma as any).documentSuite;
     if (!dbModel) {
       const { PrismaClient } = require("@prisma/client");
@@ -569,13 +619,13 @@ export async function createDocumentSuiteDB(data: {
       update: {
         title: data.title,
         type: data.type as any,
-        totalAmount: data.totalAmount || 0,
+        totalAmount: amountVal,
         date: data.date ? new Date(data.date) : new Date(),
         dueDate: data.dueDate ? new Date(data.dueDate) : null,
-        clientId: data.clientId || null,
+        clientId: targetClientId || null,
         clientName: safeClientName,
         clientEmail: safeClientEmail,
-        projectId: data.projectId || null,
+        projectId: targetProjectId || null,
         contentJson: data.contentJson,
         clausesJson: data.clausesJson || "[]",
       },
@@ -583,13 +633,13 @@ export async function createDocumentSuiteDB(data: {
         documentNumber: docNumber,
         title: data.title,
         type: data.type as any,
-        totalAmount: data.totalAmount || 0,
+        totalAmount: amountVal,
         date: data.date ? new Date(data.date) : new Date(),
         dueDate: data.dueDate ? new Date(data.dueDate) : null,
-        clientId: data.clientId || null,
+        clientId: targetClientId || null,
         clientName: safeClientName,
         clientEmail: safeClientEmail,
-        projectId: data.projectId || null,
+        projectId: targetProjectId || null,
         contentJson: data.contentJson,
         clausesJson: data.clausesJson || "[]",
       },
@@ -597,9 +647,14 @@ export async function createDocumentSuiteDB(data: {
 
     revalidatePath("/");
     revalidatePath("/history");
+    revalidatePath("/projects");
+    revalidatePath("/clients");
     revalidatePath("/invoice");
+    revalidatePath("/quotation");
     revalidatePath("/agreement");
     revalidatePath("/nda");
+    revalidatePath("/receipt");
+    revalidatePath("/certificate");
     return { success: true, id: upserted.id };
   } catch (err) {
     console.error("Error saving document to DB:", err);
