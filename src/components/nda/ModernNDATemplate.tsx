@@ -167,11 +167,11 @@ export function ModernNDATemplate({
                     <span className="text-neutral-900 font-black">SevenX</span>
                     <span className="text-[#a6ce39] font-black">Labs</span>
                   </div>
-                  <p className="text-[10px] italic font-medium text-neutral-400">Innovate. Create. Elevate.</p>
+                  <p className="text-xs italic font-medium text-neutral-400">Innovate. Create. Elevate.</p>
                 </div>
 
                 <div className="mt-4">
-                  <span className="text-[9px] font-extrabold text-neutral-400 uppercase tracking-widest block mb-0.5">
+                  <span className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-widest block mb-0.5">
                     NON-DISCLOSURE AGREEMENT
                   </span>
                   <h2 className="text-lg font-black text-neutral-900 tracking-tight leading-snug">
@@ -190,12 +190,12 @@ export function ModernNDATemplate({
                   {/* Metadata 2-Column Grid */}
                   <div className="grid grid-cols-2 gap-4 text-left text-xs font-medium border-t border-neutral-800 pt-3">
                     <div>
-                      <span className="text-[10px] text-neutral-400 block font-sans">Agreement No.</span>
-                      <span className="font-mono font-bold text-white text-[11px] block mt-0.5 whitespace-nowrap">{ndaNumber}</span>
+                      <span className="text-[11px] text-neutral-400 block font-sans">Agreement No.</span>
+                      <span className="font-mono font-bold text-white text-xs block mt-0.5 whitespace-nowrap">{ndaNumber}</span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-neutral-400 block font-sans">Effective Date</span>
-                      <span className="font-mono font-bold text-white text-[11px] block mt-0.5 whitespace-nowrap">{formatDate(effectiveDate)}</span>
+                      <span className="text-[11px] text-neutral-400 block font-sans">Effective Date</span>
+                      <span className="font-mono font-bold text-white text-xs block mt-0.5 whitespace-nowrap">{formatDate(effectiveDate)}</span>
                     </div>
                   </div>
                 </div>
@@ -211,7 +211,7 @@ export function ModernNDATemplate({
             </div>
 
             {/* Intro Paragraph */}
-            <div className="px-10 mt-3 text-xs text-neutral-700 font-medium leading-relaxed">
+            <div className="px-10 mt-3.5 text-xs text-neutral-800 font-medium leading-relaxed">
               <p>
                 This Mutual Non-Disclosure Agreement (&quot;Agreement&quot;) is entered into on{" "}
                 <strong className="text-neutral-900 font-bold">{formatDate(effectiveDate)}</strong> (&quot;Effective Date&quot;) by and between the Disclosing Party and Receiving Party listed below to protect proprietary business and technical assets.
@@ -219,150 +219,150 @@ export function ModernNDATemplate({
             </div>
 
             {/* Section 1 & 2: Parties Pill Header & 2-Column Grid */}
-            <div className="px-10 mt-2.5" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
-              <div className="bg-[#0a0a0a] text-white rounded-full py-1.5 px-6 flex justify-between items-center text-xs font-black uppercase tracking-wider mb-1.5 shadow-md">
+            <div className="px-10 mt-3" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+              <div className="bg-[#0a0a0a] text-white rounded-full py-2 px-6 flex justify-between items-center text-xs font-black uppercase tracking-wider mb-2 shadow-md">
                 <span className="w-1/2 text-left pl-2">1. DISCLOSING PARTY</span>
                 <span className="w-1/2 text-left pl-4">2. RECEIVING PARTY</span>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 bg-neutral-50 p-2.5 rounded-2xl border border-neutral-200 text-xs">
+              <div className="grid grid-cols-2 gap-4 bg-neutral-50 p-3 rounded-2xl border border-neutral-200 text-xs">
                 {/* Disclosing Party */}
-                <div className="space-y-0.5 pr-3 border-r border-neutral-200">
+                <div className="space-y-1 pr-3 border-r border-neutral-200">
                   <h3 className="text-xs font-black text-neutral-900">{disclosingCompany || disclosingName}</h3>
-                  <p className="text-neutral-600 font-medium text-[10px]">{disclosingAddress}</p>
-                  <div className="pt-0.5 space-y-0.5 text-[10px]">
-                    <p><strong className="text-neutral-500 font-medium">Rep:</strong> {disclosingName}</p>
-                    <p><strong className="text-neutral-500 font-medium">Phone:</strong> {disclosingPhone}</p>
-                    <p><strong className="text-neutral-500 font-medium">Email:</strong> {disclosingEmail}</p>
+                  <p className="text-neutral-700 font-medium text-[11px]">{disclosingAddress}</p>
+                  <div className="pt-0.5 space-y-0.5 text-[11px]">
+                    <p><strong className="text-neutral-600 font-bold">Rep:</strong> {disclosingName}</p>
+                    <p><strong className="text-neutral-600 font-bold">Phone:</strong> {disclosingPhone}</p>
+                    <p><strong className="text-neutral-600 font-bold">Email:</strong> {disclosingEmail}</p>
                   </div>
                 </div>
 
                 {/* Receiving Party */}
-                <div className="space-y-0.5 pl-3">
+                <div className="space-y-1 pl-3">
                   <h3 className="text-xs font-black text-neutral-900">{receivingName}</h3>
-                  {receivingCompany && <p className="text-neutral-700 font-bold text-[10px]">{receivingCompany}</p>}
-                  <p className="text-neutral-600 font-medium text-[10px]">{receivingAddress}</p>
-                  <div className="pt-0.5 space-y-0.5 text-[10px]">
-                    <p><strong className="text-neutral-500 font-medium">Phone:</strong> {receivingPhone}</p>
-                    <p><strong className="text-neutral-500 font-medium">Email:</strong> {receivingEmail}</p>
+                  {receivingCompany && <p className="text-neutral-800 font-bold text-[11px]">{receivingCompany}</p>}
+                  <p className="text-neutral-700 font-medium text-[11px]">{receivingAddress}</p>
+                  <div className="pt-0.5 space-y-0.5 text-[11px]">
+                    <p><strong className="text-neutral-600 font-bold">Phone:</strong> {receivingPhone}</p>
+                    <p><strong className="text-neutral-600 font-bold">Email:</strong> {receivingEmail}</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Page 1 Clauses: Sections 3 - 12 (100% Balanced Fill) */}
-            <div className="px-10 mt-2.5 space-y-2">
+            {/* Page 1 Clauses: Sections 3 - 12 (Legible Typography) */}
+            <div className="px-10 mt-3 space-y-3">
               {/* Section 3 & 4 */}
-              <div className="grid grid-cols-2 gap-2.5">
-                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <FileText className="w-3.5 h-3.5" />
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                  <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
+                    <FileText className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-[10px] font-black text-neutral-900 uppercase tracking-wider">3. PURPOSE OF DISCLOSURE</h4>
-                    <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">{purpose}</p>
+                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">3. PURPOSE OF DISCLOSURE</h4>
+                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium">{purpose}</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <Lock className="w-3.5 h-3.5" />
+                <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                  <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
+                    <Lock className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-[10px] font-black text-neutral-900 uppercase tracking-wider">4. DEFINITION OF CONFIDENTIAL INFO</h4>
-                    <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">{confidentialItems}</p>
+                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">4. DEFINITION OF CONFIDENTIAL INFO</h4>
+                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium">{confidentialItems}</p>
                   </div>
                 </div>
               </div>
 
               {/* Section 5 & 6 */}
-              <div className="grid grid-cols-2 gap-2.5">
-                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <ShieldCheck className="w-3.5 h-3.5" />
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                  <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
+                    <ShieldCheck className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-[10px] font-black text-neutral-900 uppercase tracking-wider">5. OBLIGATIONS OF RECEIVING PARTY</h4>
-                    <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">{obligations}</p>
+                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">5. OBLIGATIONS OF RECEIVING PARTY</h4>
+                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium">{obligations}</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <XCircle className="w-3.5 h-3.5" />
+                <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                  <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
+                    <XCircle className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-[10px] font-black text-neutral-900 uppercase tracking-wider">6. EXCLUSIONS FROM CONFIDENTIALITY</h4>
-                    <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">{exclusions}</p>
+                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">6. EXCLUSIONS FROM CONFIDENTIALITY</h4>
+                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium">{exclusions}</p>
                   </div>
                 </div>
               </div>
 
               {/* Section 7 & 8 */}
-              <div className="grid grid-cols-2 gap-2.5">
-                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <CheckCircle className="w-3.5 h-3.5" />
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                  <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
+                    <CheckCircle className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-[10px] font-black text-neutral-900 uppercase tracking-wider">7. PERMITTED DISCLOSURES</h4>
-                    <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">{permittedDisclosure}</p>
+                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">7. PERMITTED DISCLOSURES</h4>
+                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium">{permittedDisclosure}</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <Clock className="w-3.5 h-3.5" />
+                <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                  <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
+                    <Clock className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-[10px] font-black text-neutral-900 uppercase tracking-wider">8. TERM & SURVIVAL PERIOD</h4>
-                    <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">{termDuration}</p>
+                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">8. TERM & SURVIVAL PERIOD</h4>
+                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium">{termDuration}</p>
                   </div>
                 </div>
               </div>
 
               {/* Section 9 & 10 */}
-              <div className="grid grid-cols-2 gap-2.5">
-                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <FileCheck className="w-3.5 h-3.5" />
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                  <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
+                    <FileCheck className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-[10px] font-black text-neutral-900 uppercase tracking-wider">9. RETURN OR DESTRUCTION OF DATA</h4>
-                    <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">{returnTerm}</p>
+                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">9. RETURN OR DESTRUCTION OF DATA</h4>
+                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium">{returnTerm}</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <Key className="w-3.5 h-3.5" />
+                <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                  <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
+                    <Key className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-[10px] font-black text-neutral-900 uppercase tracking-wider">10. INTELLECTUAL PROPERTY RIGHTS</h4>
-                    <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">{ipClause}</p>
+                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">10. INTELLECTUAL PROPERTY RIGHTS</h4>
+                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium">{ipClause}</p>
                   </div>
                 </div>
               </div>
 
               {/* Section 11 & 12 */}
-              <div className="grid grid-cols-2 gap-2.5">
-                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <UserCheck className="w-3.5 h-3.5" />
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                  <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
+                    <UserCheck className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-[10px] font-black text-neutral-900 uppercase tracking-wider">11. NON-SOLICITATION CLAUSE</h4>
-                    <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">{nonSolicitation}</p>
+                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">11. NON-SOLICITATION CLAUSE</h4>
+                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium">{nonSolicitation}</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <Shield className="w-3.5 h-3.5" />
+                <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                  <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
+                    <Shield className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-[10px] font-black text-neutral-900 uppercase tracking-wider">12. DATA PROTECTION & SECURITY</h4>
-                    <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">{dataProtection}</p>
+                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">12. DATA PROTECTION & SECURITY</h4>
+                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium">{dataProtection}</p>
                   </div>
                 </div>
               </div>
@@ -371,24 +371,24 @@ export function ModernNDATemplate({
 
           {/* Page 1 Footer Bar */}
           <div>
-            <div className="px-10 py-1 flex justify-between items-center text-[10px] text-neutral-400 font-mono">
+            <div className="px-10 py-1 flex justify-between items-center text-xs text-neutral-400 font-mono">
               <span>SevenX Labs • Ref #{ndaNumber}</span>
               <span>Page 1 of 2</span>
             </div>
 
-            <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3 flex justify-between items-center text-xs font-semibold z-20">
+            <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 flex justify-between items-center text-xs font-semibold z-20">
               <div className="flex items-center gap-2">
-                <Phone className="w-3.5 h-3.5 text-white shrink-0" />
+                <Phone className="w-4 h-4 text-white shrink-0" />
                 <span>{disclosingPhone || "8652601566"}</span>
               </div>
 
               <div className="flex items-center gap-2">
-                <Mail className="w-3.5 h-3.5 text-white shrink-0" />
+                <Mail className="w-4 h-4 text-white shrink-0" />
                 <span>{disclosingEmail || "sevenxlabs07@gmail.com"}</span>
               </div>
 
               <div className="flex items-center gap-2">
-                <MapPin className="w-3.5 h-3.5 text-white shrink-0" />
+                <MapPin className="w-4 h-4 text-white shrink-0" />
                 <span>{disclosingAddress || "Thane, Mumbai, Maharashtra"}</span>
               </div>
             </div>
@@ -399,72 +399,72 @@ export function ModernNDATemplate({
       {/* PAGE 2 */}
       {showPage2 && (
         <div className="relative w-full min-h-[297mm] flex flex-col justify-between pt-10 pb-0">
-          <div className="px-10 space-y-3.5">
+          <div className="px-10 space-y-4">
             {/* Section 13 & 14 */}
-            <div className="grid grid-cols-2 gap-3.5">
-              <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
-                  <AlertTriangle className="w-4 h-4" />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
+                  <AlertTriangle className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">13. LIMITATION OF LIABILITY</h4>
-                  <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">{limitationOfLiability}</p>
+                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">13. LIMITATION OF LIABILITY</h4>
+                  <p className="text-[11px] text-neutral-800 mt-1 leading-relaxed font-medium">{limitationOfLiability}</p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
-                  <Gavel className="w-4 h-4" />
+              <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
+                  <Gavel className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">14. BREACH & LEGAL REMEDIES</h4>
-                  <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">{breachRemedies}</p>
+                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">14. BREACH & LEGAL REMEDIES</h4>
+                  <p className="text-[11px] text-neutral-800 mt-1 leading-relaxed font-medium">{breachRemedies}</p>
                 </div>
               </div>
             </div>
 
             {/* Section 15 & 16 */}
-            <div className="grid grid-cols-2 gap-3.5">
-              <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
-                  <Clock className="w-4 h-4" />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
+                  <Clock className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">15. TERMINATION CONDITIONS</h4>
-                  <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">{terminationClause}</p>
+                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">15. TERMINATION CONDITIONS</h4>
+                  <p className="text-[11px] text-neutral-800 mt-1 leading-relaxed font-medium">{terminationClause}</p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
-                  <Building className="w-4 h-4" />
+              <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
+                  <Building className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">16. GOVERNING LAW & JURISDICTION</h4>
-                  <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">{governingLaw}</p>
+                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">16. GOVERNING LAW & JURISDICTION</h4>
+                  <p className="text-[11px] text-neutral-800 mt-1 leading-relaxed font-medium">{governingLaw}</p>
                 </div>
               </div>
             </div>
 
             {/* Section 17 & 18 */}
-            <div className="grid grid-cols-2 gap-3.5">
-              <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
-                  <Handshake className="w-4 h-4" />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
+                  <Handshake className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">17. ENTIRE AGREEMENT & CLAUSES</h4>
-                  <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">{entireAgreement}</p>
+                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">17. ENTIRE AGREEMENT & CLAUSES</h4>
+                  <p className="text-[11px] text-neutral-800 mt-1 leading-relaxed font-medium">{entireAgreement}</p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
-                  <FileText className="w-4 h-4" />
+              <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
+                  <FileText className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">18. ADDITIONAL TERMS & CONDITIONS</h4>
-                  <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">{additionalTerms}</p>
+                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">18. ADDITIONAL TERMS & CONDITIONS</h4>
+                  <p className="text-[11px] text-neutral-800 mt-1 leading-relaxed font-medium">{additionalTerms}</p>
                 </div>
               </div>
             </div>
@@ -473,43 +473,43 @@ export function ModernNDATemplate({
           {/* Bottom Pinned Digital Signatures Block & Footer Bar on Page 2 */}
           <div className="mt-auto">
             {/* Section 19 & 20: Digital Signatures Block Pinned at Bottom */}
-            <div className="px-10 pb-4 pt-4 border-t border-neutral-200 grid grid-cols-2 gap-8 text-xs bg-white" style={{ breakInside: "avoid" }}>
+            <div className="px-10 pb-5 pt-4 border-t border-neutral-200 grid grid-cols-2 gap-8 text-xs bg-white" style={{ breakInside: "avoid" }}>
               <div>
-                <p className="font-extrabold text-[#a6ce39] uppercase text-[10px] tracking-wider mb-1">19. DISCLOSING PARTY SIGNATURE</p>
+                <p className="font-extrabold text-[#a6ce39] uppercase text-xs tracking-wider mb-1">19. DISCLOSING PARTY SIGNATURE</p>
                 <p className="font-bold text-neutral-900 text-xs">{disclosingCompany || disclosingName}</p>
-                <p className="font-mono text-neutral-800 border-b border-neutral-300 pb-1 mt-4 font-bold">{disclosingSignatory}</p>
-                <p className="text-[10px] text-neutral-500 font-medium">{disclosingDesignation}</p>
-                <p className="text-[10px] text-neutral-400 mt-1">Date: {formatDate(effectiveDate)}</p>
+                <p className="font-mono text-neutral-800 border-b border-neutral-300 pb-1 mt-4 font-bold text-xs">{disclosingSignatory}</p>
+                <p className="text-[11px] text-neutral-600 font-medium">{disclosingDesignation}</p>
+                <p className="text-xs text-neutral-400 mt-1">Date: {formatDate(effectiveDate)}</p>
               </div>
 
               <div>
-                <p className="font-extrabold text-[#a6ce39] uppercase text-[10px] tracking-wider mb-1">20. RECEIVING PARTY SIGNATURE</p>
+                <p className="font-extrabold text-[#a6ce39] uppercase text-xs tracking-wider mb-1">20. RECEIVING PARTY SIGNATURE</p>
                 <p className="font-bold text-neutral-900 text-xs">{receivingCompany || receivingName}</p>
-                <p className="font-mono text-neutral-800 border-b border-neutral-300 pb-1 mt-4 font-bold">{receivingSignatory}</p>
-                <p className="text-[10px] text-neutral-500 font-medium">{receivingDesignation}</p>
-                <p className="text-[10px] text-neutral-400 mt-1">Date: {formatDate(effectiveDate)}</p>
+                <p className="font-mono text-neutral-800 border-b border-neutral-300 pb-1 mt-4 font-bold text-xs">{receivingSignatory}</p>
+                <p className="text-[11px] text-neutral-600 font-medium">{receivingDesignation}</p>
+                <p className="text-xs text-neutral-400 mt-1">Date: {formatDate(effectiveDate)}</p>
               </div>
             </div>
 
-            <div className="px-10 py-1 flex justify-between items-center text-[10px] text-neutral-400 font-mono">
+            <div className="px-10 py-1 flex justify-between items-center text-xs text-neutral-400 font-mono">
               <span>SevenX Labs • Ref #{ndaNumber}</span>
               <span>Page 2 of 2</span>
             </div>
 
             {/* Full-Width Black Footer Bar */}
-            <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3 flex justify-between items-center text-xs font-semibold z-20">
+            <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 flex justify-between items-center text-xs font-semibold z-20">
               <div className="flex items-center gap-2">
-                <Phone className="w-3.5 h-3.5 text-white shrink-0" />
+                <Phone className="w-4 h-4 text-white shrink-0" />
                 <span>{disclosingPhone || "8652601566"}</span>
               </div>
 
               <div className="flex items-center gap-2">
-                <Mail className="w-3.5 h-3.5 text-white shrink-0" />
+                <Mail className="w-4 h-4 text-white shrink-0" />
                 <span>{disclosingEmail || "sevenxlabs07@gmail.com"}</span>
               </div>
 
               <div className="flex items-center gap-2">
-                <MapPin className="w-3.5 h-3.5 text-white shrink-0" />
+                <MapPin className="w-4 h-4 text-white shrink-0" />
                 <span>{disclosingAddress || "Thane, Mumbai, Maharashtra"}</span>
               </div>
             </div>
