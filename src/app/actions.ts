@@ -938,10 +938,10 @@ export async function createDocumentSuiteDB(data: {
     const safeClientEmail = data.clientEmail || "client@email.com";
     const amountVal = data.totalAmount || 0;
 
-    // 1. Auto-find or create Client record
-    let targetClientId = data.clientId;
+    // 1. Link Client record if existing client is found
+    let targetClientId = data.clientId || null;
     if (!targetClientId && safeClientName && safeClientName !== "Client") {
-      let existingClient = await prisma.client.findFirst({
+      const existingClient = await prisma.client.findFirst({
         where: {
           OR: [
             { email: { equals: safeClientEmail, mode: "insensitive" } },
@@ -950,41 +950,21 @@ export async function createDocumentSuiteDB(data: {
         },
       });
 
-      if (!existingClient) {
-        existingClient = await prisma.client.create({
-          data: {
-            name: safeClientName,
-            email: safeClientEmail,
-            status: "Active",
-            workType: "Web Dev",
-          },
-        });
+      if (existingClient) {
+        targetClientId = existingClient.id;
       }
-      targetClientId = existingClient.id;
     }
 
-    // 2. Auto-find or create Project record for Client
-    let targetProjectId = data.projectId;
+    // 2. Link Project record if existing project is found for targetClientId
+    let targetProjectId = data.projectId || null;
     if (!targetProjectId && targetClientId) {
-      let existingProject = await prisma.project.findFirst({
+      const existingProject = await prisma.project.findFirst({
         where: { clientId: targetClientId },
       });
 
-      if (!existingProject) {
-        existingProject = await prisma.project.create({
-          data: {
-            name: `${safeClientName} Project`,
-            description: `Project for ${safeClientName}`,
-            budget: amountVal,
-            totalValue: amountVal,
-            amountPaid: 0,
-            amountPending: amountVal,
-            status: "In Progress",
-            clientId: targetClientId,
-          },
-        });
+      if (existingProject) {
+        targetProjectId = existingProject.id;
       }
-      targetProjectId = existingProject.id;
     }
 
     // 3. Upsert DocumentSuite record

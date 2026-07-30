@@ -107,13 +107,15 @@ export default function NDABuilderPage() {
       setIsSaving(true);
       const res = await createNDADB(formData);
       if (res.success) {
-        alert(`NDA Saved successfully to database! Record ID: ${res.id}`);
+        toast.success(`NDA #${formData.ndaNumber} saved successfully!`);
+        const nextNum = await getNextDocumentNumberDB("NDA");
+        setFormData((prev) => ({ ...prev, ndaNumber: nextNum }));
       } else {
-        alert("Failed to save NDA to database.");
+        toast.error("Failed to save NDA to database.");
       }
     } catch (err) {
       console.error(err);
-      alert("Error saving NDA.");
+      toast.error("Error saving NDA.");
     } finally {
       setIsSaving(false);
     }
@@ -123,9 +125,10 @@ export default function NDABuilderPage() {
     <div className="min-h-screen bg-[#F4F0E6] text-neutral-900 pb-16 font-sans">
       {/* Top Navbar */}
       <header className="sticky top-0 z-40 bg-[#EBE7DC]/90 backdrop-blur-md border-b border-[#E2DDD0] px-6 py-3.5 flex items-center justify-between shadow-xs">
+        {/* Title */}
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-[#0a0a0a] text-white rounded-xl shadow-xs">
-            <ShieldCheck className="w-5 h-5 text-[#a6ce39]" />
+          <div className="p-2.5 rounded-2xl bg-emerald-100 text-emerald-800">
+            <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
             <h1 className="text-base font-black text-neutral-900 tracking-tight flex items-center gap-2">
@@ -168,15 +171,16 @@ export default function NDABuilderPage() {
             onClick={() => setIsModalPreviewOpen(true)}
             className="flex items-center gap-1.5 px-3.5 py-2 bg-[#DFD9C9] hover:bg-[#D5CEBC] text-neutral-900 rounded-xl font-bold text-xs transition cursor-pointer"
           >
-            <Eye className="w-4 h-4 text-neutral-700" />
-            <span>Preview</span>
+            <Eye className="w-4 h-4 text-purple-600" />
+            <span>Full Preview</span>
           </button>
 
           {/* 2. Save Button */}
           <button
+            type="button"
             onClick={handleSaveToDB}
             disabled={isSaving}
-            className="flex items-center gap-1.5 px-4 py-2 bg-[#0a0a0a] hover:bg-neutral-800 text-white rounded-xl font-bold text-xs transition shadow-sm cursor-pointer disabled:opacity-50 whitespace-nowrap"
+            className="flex items-center gap-1.5 px-4 py-2 bg-[#121212] hover:bg-neutral-800 text-white rounded-xl font-bold text-xs transition shadow-sm cursor-pointer disabled:opacity-50"
           >
             <Save className="w-4 h-4 text-[#a6ce39]" />
             <span>{isSaving ? "Saving..." : "Save"}</span>
@@ -197,8 +201,9 @@ export default function NDABuilderPage() {
             <div className="absolute right-0 mt-1 w-44 bg-[#0a0a0a] text-white rounded-2xl p-1.5 shadow-xl border border-neutral-800 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all duration-200 z-50">
               <button
                 onClick={async () => {
+                  const currentDocNum = formData.ndaNumber;
+                  await exportToPDF("nda-export-container", `NDA-${currentDocNum}.pdf`);
                   await handleSaveToDB();
-                  exportToPDF("nda-export-container", `${formData.ndaNumber}.pdf`);
                 }}
                 disabled={isExporting}
                 className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold hover:bg-neutral-800 transition flex items-center justify-between cursor-pointer"
@@ -209,8 +214,9 @@ export default function NDABuilderPage() {
 
               <button
                 onClick={async () => {
+                  const currentDocNum = formData.ndaNumber;
+                  await exportToDOCX("nda-export-container", `NDA-${currentDocNum}.docx`);
                   await handleSaveToDB();
-                  exportToDOCX("nda-export-container", `${formData.ndaNumber}.docx`);
                 }}
                 disabled={isExporting}
                 className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold hover:bg-neutral-800 transition flex items-center justify-between cursor-pointer"
@@ -221,8 +227,9 @@ export default function NDABuilderPage() {
 
               <button
                 onClick={async () => {
+                  const currentDocNum = formData.ndaNumber;
+                  await exportToImage("nda-export-container", `NDA-${currentDocNum}.png`);
                   await handleSaveToDB();
-                  exportToImage("nda-export-container", `${formData.ndaNumber}.png`);
                 }}
                 disabled={isExporting}
                 className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold hover:bg-neutral-800 transition flex items-center justify-between cursor-pointer"

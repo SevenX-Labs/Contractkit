@@ -3,114 +3,163 @@
 import { useState } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import { toast } from "sonner";
 
 export function useDocumentExport() {
   const [isExporting, setIsExporting] = useState(false);
 
-  // Helper to sanitize cloned DOM tree for html2canvas (removes unsupported lab(), oklch(), and color-mix() color functions)
+  // Fail-safe DOM sanitizer for html2canvas
+  // Resolves computed colors to explicit RGB inline styles to prevent lab() / oklch() errors
   const sanitizeClonedDoc = (clonedDoc: Document) => {
     try {
-      // 1. Aggressively sanitize entire head HTML (injected <style> tags & CSS variables)
-      if (clonedDoc.head) {
-        clonedDoc.head.innerHTML = clonedDoc.head.innerHTML
-          .replace(/lab\([^)]*\)/gi, "#000000")
-          .replace(/oklch\([^)]*\)/gi, "#000000")
-          .replace(/color-mix\([^)]*\)/gi, "#000000");
-      }
+      const win = clonedDoc.defaultView || window;
+      const allNodes = Array.from(clonedDoc.querySelectorAll<HTMLElement>("*"));
 
-      // 2. Aggressively sanitize entire body HTML (inline style attributes & DOM tags)
-      if (clonedDoc.body) {
-        clonedDoc.body.innerHTML = clonedDoc.body.innerHTML
-          .replace(/lab\([^)]*\)/gi, "#000000")
-          .replace(/oklch\([^)]*\)/gi, "#000000")
-          .replace(/color-mix\([^)]*\)/gi, "#000000");
-      }
-
-      // 3. Traversal fallback on style tags & cssRules
-      const styleTags = Array.from(clonedDoc.querySelectorAll("style"));
-      styleTags.forEach((style) => {
+      allNodes.forEach((node) => {
         try {
-          if (style.textContent) {
-            style.textContent = style.textContent
-              .replace(/lab\([^)]*\)/gi, "#000000")
-              .replace(/oklch\([^)]*\)/gi, "#000000")
-              .replace(/color-mix\([^)]*\)/gi, "#000000");
+          const comp = win.getComputedStyle(node);
+          if (comp) {
+            if (comp.color && (comp.color.includes("lab(") || comp.color.includes("oklch(") || comp.color.includes("color-mix("))) {
+              node.style.color = "#111111";
+            }
+            if (comp.backgroundColor && (comp.backgroundColor.includes("lab(") || comp.backgroundColor.includes("oklch(") || comp.backgroundColor.includes("color-mix("))) {
+              node.style.backgroundColor = comp.backgroundColor.includes("0, 0, 0, 0") || comp.backgroundColor.includes("transparent")
+                ? "transparent"
+                : "#ffffff";
+            }
+            if (comp.borderColor && (comp.borderColor.includes("lab(") || comp.borderColor.includes("oklch(") || comp.borderColor.includes("color-mix("))) {
+              node.style.borderColor = "#e5e7eb";
+            }
           }
         } catch (e) {}
+
+        const styleAttr = node.getAttribute("style") || "";
+        if (styleAttr.includes("lab(") || styleAttr.includes("oklch(") || styleAttr.includes("color-mix(")) {
+          const clean = styleAttr
+            .replace(/lab\([\s\S]*?\)/gi, "rgb(0,0,0)")
+            .replace(/oklch\([\s\S]*?\)/gi, "rgb(0,0,0)")
+            .replace(/color-mix\([\s\S]*?\)/gi, "rgb(0,0,0)");
+          node.setAttribute("style", clean);
+        }
+      });
+
+      const styleTags = Array.from(clonedDoc.querySelectorAll("style"));
+      styleTags.forEach((st) => {
+        if (st.textContent) {
+          st.textContent = st.textContent
+            .replace(/lab\([\s\S]*?\)/gi, "rgb(0,0,0)")
+            .replace(/oklch\([\s\S]*?\)/gi, "rgb(0,0,0)")
+            .replace(/color-mix\([\s\S]*?\)/gi, "rgb(0,0,0)");
+        }
       });
     } catch (e) {
       console.warn("Sanitization warning:", e);
     }
   };
 
-  // 1. Export as PDF
+  // 1. Export as PDF with Multi-Page Canvas Slicing (Supports 1-page, 2-page, N-page documents perfectly)
   const exportToPDF = async (elementId: string, filename: string = "Document.pdf") => {
     const element = document.getElementById(elementId);
-    if (!element) return;
+    if (!element) {
+      toast.error("Document element not found for export.");
+      return;
+    }
 
     try {
       setIsExporting(true);
+
       const canvas = await html2canvas(element, {
-        scale: 2,
+        scale: 2, // Crisp 200 DPI resolution
         useCORS: true,
         logging: false,
         backgroundColor: "#ffffff",
+        windowWidth: 1200,
         onclone: (clonedDoc) => sanitizeClonedDoc(clonedDoc),
       });
 
-      const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF({
         orientation: "portrait",
         unit: "mm",
         format: "a4",
       });
 
-      const imgWidth = 210;
-      const pageHeight = 297;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const a4WidthMm = 210;
+      const a4HeightMm = 297;
 
-      let heightLeft = imgHeight;
-      let position = 0;
+      // Calculate canvas height corresponding to 1 A4 page in canvas pixels
+      const canvasPageHeight = Math.floor((canvas.width * a4HeightMm) / a4WidthMm);
+      const totalPages = Math.max(1, Math.ceil(canvas.height / canvasPageHeight));
 
-      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
+      for (let page = 0; page < totalPages; page++) {
+        if (page > 0) pdf.addPage();
 
-      while (heightLeft > 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
+        const pageCanvas = document.createElement("canvas");
+        pageCanvas.width = canvas.width;
+        pageCanvas.height = canvasPageHeight;
+        const ctx = pageCanvas.getContext("2d");
+
+        if (ctx) {
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+
+          const sourceY = page * canvasPageHeight;
+          const sourceHeight = Math.min(canvasPageHeight, canvas.height - sourceY);
+
+          ctx.drawImage(
+            canvas,
+            0,
+            sourceY,
+            canvas.width,
+            sourceHeight,
+            0,
+            0,
+            canvas.width,
+            sourceHeight
+          );
+
+          const pageImgData = pageCanvas.toDataURL("image/png", 1.0);
+          pdf.addImage(pageImgData, "PNG", 0, 0, a4WidthMm, a4HeightMm, undefined, "FAST");
+        }
       }
 
       pdf.save(filename);
-    } catch (err) {
-      console.error("Error generating PDF:", err);
+      toast.success(`Successfully exported ${totalPages}-page PDF: ${filename}`);
+    } catch (err: any) {
+      console.error("PDF Export error:", err);
+      toast.error("Error exporting PDF.");
     } finally {
       setIsExporting(false);
     }
   };
 
-  // 2. Export as PNG Image
+  // 2. Export as High-Res PNG Image
   const exportToImage = async (elementId: string, filename: string = "Document.png") => {
     const element = document.getElementById(elementId);
-    if (!element) return;
+    if (!element) {
+      toast.error("Document element not found for export.");
+      return;
+    }
 
     try {
       setIsExporting(true);
+
       const canvas = await html2canvas(element, {
         scale: 2,
         useCORS: true,
         logging: false,
         backgroundColor: "#ffffff",
+        windowWidth: 1200,
         onclone: (clonedDoc) => sanitizeClonedDoc(clonedDoc),
       });
 
       const link = document.createElement("a");
-      link.href = canvas.toDataURL("image/png");
+      link.href = canvas.toDataURL("image/png", 1.0);
       link.download = filename;
       link.click();
-    } catch (err) {
-      console.error("Error exporting image:", err);
+      toast.success(`Successfully exported Image: ${filename}`);
+    } catch (err: any) {
+      console.error("Image Export error:", err);
+      toast.error("Error exporting Image.");
     } finally {
       setIsExporting(false);
     }
@@ -119,7 +168,10 @@ export function useDocumentExport() {
   // 3. Export as DOCX Word Document
   const exportToDOCX = async (elementId: string, filename: string = "Document.docx") => {
     const element = document.getElementById(elementId);
-    if (!element) return;
+    if (!element) {
+      toast.error("Document element not found for export.");
+      return;
+    }
 
     try {
       setIsExporting(true);
@@ -153,8 +205,10 @@ export function useDocumentExport() {
       link.download = filename.endsWith(".docx") ? filename : `${filename}.docx`;
       link.click();
       URL.revokeObjectURL(link.href);
-    } catch (err) {
+      toast.success(`Successfully exported DOCX: ${filename}`);
+    } catch (err: any) {
       console.error("Error exporting DOCX:", err);
+      toast.error(`DOCX generation error: ${err?.message}`);
     } finally {
       setIsExporting(false);
     }

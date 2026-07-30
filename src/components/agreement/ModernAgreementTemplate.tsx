@@ -148,6 +148,18 @@ export function ModernAgreementTemplate({
       ? "#ec4899"
       : "#10b981";
 
+  const formattedAgrNumber = (() => {
+    if (!agreementNumber) return "";
+    const parts = agreementNumber.split("-");
+    const last = parts[parts.length - 1];
+    const digits = last.replace(/[^0-9]/g, "");
+    if (digits) {
+      parts[parts.length - 1] = digits.padStart(6, "0");
+      return parts.join("-");
+    }
+    return agreementNumber;
+  })();
+
   const showPage1 = activePage === undefined || activePage === 1;
   const showPage2 = activePage === undefined || activePage === 2;
 
@@ -192,28 +204,28 @@ export function ModernAgreementTemplate({
               </div>
 
               {/* Top Right Black Header Panel */}
-              <div className="relative w-[50%] bg-[#0a0a0a] text-white pt-8 pb-6 px-8 rounded-bl-[50px] shadow-2xl flex flex-col justify-between min-h-[180px] overflow-hidden">
-                <div className="relative z-10">
-                  <h1 className="text-4xl font-black tracking-wider uppercase text-white mb-4">
+              <div className="relative w-[55%] bg-[#0a0a0a] text-white pt-7 pb-6 px-7 rounded-bl-[40px] shadow-xl flex flex-col justify-between min-h-[175px] overflow-hidden">
+                <div className="relative z-10 pr-12">
+                  <h1 className="text-3xl font-black tracking-wider uppercase text-white mb-3">
                     AGREEMENT
                   </h1>
                   
                   {/* Metadata 2-Column Grid */}
-                  <div className="grid grid-cols-2 gap-4 text-left text-xs font-medium border-t border-neutral-800 pt-3">
+                  <div className="grid grid-cols-2 gap-3 text-left text-xs font-medium border-t border-neutral-800 pt-3">
                     <div>
-                      <span className="text-xs text-neutral-400 block font-sans">Agreement No.</span>
-                      <span className="font-mono font-bold text-white text-xs block mt-0.5 whitespace-nowrap">{agreementNumber}</span>
+                      <span className="text-[10px] text-neutral-400 block uppercase font-sans tracking-wider">Agreement No.</span>
+                      <span className="font-mono font-bold text-white text-xs block mt-0.5 whitespace-nowrap">{formattedAgrNumber}</span>
                     </div>
                     <div>
-                      <span className="text-xs text-neutral-400 block font-sans">Effective Date</span>
+                      <span className="text-[10px] text-neutral-400 block uppercase font-sans tracking-wider">Effective Date</span>
                       <span className="font-mono font-bold text-white text-xs block mt-0.5 whitespace-nowrap">{formatDate(effectiveDate)}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Top Right Geometric Accent Triangles */}
-                <div className="absolute bottom-0 right-0 overflow-hidden pointer-events-none z-20">
-                  <svg width="75" height="75" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <div className="absolute bottom-2 right-2 overflow-hidden pointer-events-none z-0 opacity-80">
+                  <svg width="60" height="60" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <polygon points="30,20 100,50 40,90" fill={accentShape} opacity="0.95" />
                     <polygon points="60,30 100,60 70,85" fill={accentShape} opacity="0.65" />
                   </svg>

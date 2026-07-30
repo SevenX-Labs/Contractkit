@@ -123,12 +123,16 @@ export default function AgreementPage() {
 
   useEffect(() => {
     Promise.all([getProfileDB(), getNextDocumentNumberDB("AGREEMENT")]).then(([profile, num]) => {
-      const seq = num.split("-").pop() || "000001";
-      setAgrSeq(seq);
+      const rawSeq = num.split("-").pop() || "001";
+      const cleanSeq = rawSeq.replace(/[^0-9]/g, "") || "001";
+      setAgrSeq(cleanSeq);
+
+      const year = new Date().getFullYear();
+      const fullDocNum = `SXL-AGR-${year}-${cleanSeq}`;
 
       setFormData((prev) => ({
         ...prev,
-        agreementNumber: num,
+        agreementNumber: fullDocNum,
         freelancerName: profile.name || "Sahil Hode",
         freelancerCompany: "SevenX Labs",
         freelancerAddress: profile.address || "Thane, Mumbai, Maharashtra",
@@ -218,9 +222,9 @@ export default function AgreementPage() {
     setIsSaving(false);
 
     if (res.success) {
+      toast.success(`Agreement #${formData.agreementNumber} saved successfully!`);
       const nextNum = await getNextDocumentNumberDB("AGREEMENT");
       setFormData((prev) => ({ ...prev, agreementNumber: nextNum }));
-      toast.success(`Agreement #${formData.agreementNumber} saved to Prisma database!`);
     } else {
       toast.error(`Error saving agreement: ${res.error}`);
     }
@@ -229,18 +233,21 @@ export default function AgreementPage() {
   const [activePreviewPage, setActivePreviewPage] = useState<number>(1);
 
   const handleExportPDF = async () => {
+    const currentDocNum = formData.agreementNumber;
+    await exportToPDF("agreement-pdf-preview", `Agreement-${currentDocNum}.pdf`);
     await handleSave();
-    await exportToPDF("agreement-pdf-preview", `Agreement-${formData.agreementNumber}.pdf`);
   };
 
   const handleExportDOCX = async () => {
+    const currentDocNum = formData.agreementNumber;
+    await exportToDOCX("agreement-pdf-preview", `Agreement-${currentDocNum}.docx`);
     await handleSave();
-    await exportToDOCX("agreement-pdf-preview", `Agreement-${formData.agreementNumber}.docx`);
   };
 
   const handleExportPNG = async () => {
+    const currentDocNum = formData.agreementNumber;
+    await exportToImage("agreement-pdf-preview", `Agreement-${currentDocNum}.png`);
     await handleSave();
-    await exportToImage("agreement-pdf-preview", `Agreement-${formData.agreementNumber}.png`);
   };
 
   const renderAgreementContent = (page?: number, elementId = "agreement-pdf-preview") => (
@@ -382,10 +389,10 @@ export default function AgreementPage() {
                               const year = new Date().getFullYear();
                               setFormData((prev) => ({
                                 ...prev,
-                                agreementNumber: `SXL-AGR-${year}-${val.padStart(6, "0")}`,
+                                agreementNumber: `SXL-AGR-${year}-${val || "001"}`,
                               }));
                             }}
-                            placeholder="000001"
+                            placeholder="001"
                             className="flex-1 bg-transparent px-2 py-2 text-xs font-mono font-bold text-neutral-900 focus:outline-none"
                           />
                         </div>

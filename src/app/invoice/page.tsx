@@ -186,27 +186,30 @@ export default function InvoicePage() {
     setIsSaving(false);
 
     if (res.success) {
+      toast.success(`Invoice #${formData.invoiceNumber} saved successfully!`);
       const nextInv = await getNextInvoiceNumberDB();
       setFormData((prev: InvoiceData) => ({ ...prev, invoiceNumber: nextInv }));
-      toast.success(`Invoice #${formData.invoiceNumber} saved to Prisma Database!`);
     } else {
       toast.error(`Error saving invoice: ${res.error}`);
     }
   };
 
   const handleExportPDF = async () => {
+    const currentDocNum = formData.invoiceNumber;
+    await exportToPDF("invoice-pdf-preview", `Invoice-${currentDocNum}.pdf`);
     await handleSave();
-    await exportToPDF("invoice-pdf-preview", `Invoice-${formData.invoiceNumber}.pdf`);
   };
 
   const handleExportDOCX = async () => {
+    const currentDocNum = formData.invoiceNumber;
+    await exportToDOCX("invoice-pdf-preview", `Invoice-${currentDocNum}.docx`);
     await handleSave();
-    await exportToDOCX("invoice-pdf-preview", `Invoice-${formData.invoiceNumber}.docx`);
   };
 
   const handleExportImage = async () => {
+    const currentDocNum = formData.invoiceNumber;
+    await exportToImage("invoice-pdf-preview", `Invoice-${currentDocNum}.png`);
     await handleSave();
-    await exportToImage("invoice-pdf-preview", `Invoice-${formData.invoiceNumber}.png`);
   };
 
   const invoicePreviewContent = (
