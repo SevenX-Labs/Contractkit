@@ -20,6 +20,8 @@ import {
   Trash2,
   ChevronDown,
   ChevronUp,
+  ChevronLeft,
+  ChevronRight,
   CheckSquare,
   Square,
 } from "lucide-react";
@@ -354,6 +356,8 @@ export default function AgreementPage() {
     }
   };
 
+  const [activePreviewPage, setActivePreviewPage] = useState<number>(1);
+
   const handleExportPDF = async () => {
     await handleSave();
     await exportToPDF("agreement-pdf-preview", `Agreement-${formData.agreementNumber}.pdf`);
@@ -369,9 +373,10 @@ export default function AgreementPage() {
     await exportToImage("agreement-pdf-preview", `Agreement-${formData.agreementNumber}.png`);
   };
 
-  const agreementPreviewContent = (
+  const renderAgreementContent = (page?: number, elementId = "agreement-pdf-preview") => (
     <ModernAgreementTemplate
-      id="agreement-pdf-preview"
+      id={elementId}
+      activePage={page}
       agreementNumber={formData.agreementNumber}
       effectiveDate={formData.date}
       expiryDate={formData.deadline}
@@ -776,11 +781,38 @@ export default function AgreementPage() {
         <div className="lg:col-span-6 flex flex-col gap-4">
           <div className="flex items-center justify-between px-2">
             <span className="text-xs font-bold text-neutral-700 uppercase tracking-wider">Live Contract Preview</span>
-            <span className="text-[11px] text-neutral-500 font-semibold">Updates dynamically</span>
+            
+            {/* Page Arrow Switcher */}
+            <div className="flex items-center gap-2 bg-[#EBE7DC] px-3 py-1 rounded-full border border-[#E2DDD0] shadow-xs">
+              <button
+                disabled={activePreviewPage === 1}
+                onClick={() => setActivePreviewPage(1)}
+                className="p-1 rounded-full hover:bg-[#DFD9C9] disabled:opacity-30 transition cursor-pointer text-neutral-900"
+                title="Previous Page"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <span className="text-xs font-bold font-mono text-neutral-900">
+                Page {activePreviewPage} of 2
+              </span>
+              <button
+                disabled={activePreviewPage === 2}
+                onClick={() => setActivePreviewPage(2)}
+                className="p-1 rounded-full hover:bg-[#DFD9C9] disabled:opacity-30 transition cursor-pointer text-neutral-900"
+                title="Next Page"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           <div className="overflow-x-auto shadow-xl rounded-3xl bg-[#EBE7DC] p-3 border border-[#E2DDD0]">
-            {agreementPreviewContent}
+            {renderAgreementContent(activePreviewPage, "agreement-preview-onscreen")}
+          </div>
+
+          {/* Hidden Offscreen Container for PDF Export (Both Pages) */}
+          <div className="fixed -left-[9999px] -top-[9999px]">
+            {renderAgreementContent(undefined, "agreement-pdf-preview")}
           </div>
         </div>
       </div>
@@ -796,6 +828,27 @@ export default function AgreementPage() {
               </div>
 
               <div className="flex items-center gap-3">
+                {/* Modal Page Switcher */}
+                <div className="flex items-center gap-2 bg-[#DFD9C9] px-3 py-1 rounded-full border border-[#D5CEBC]">
+                  <button
+                    disabled={activePreviewPage === 1}
+                    onClick={() => setActivePreviewPage(1)}
+                    className="p-1 rounded-full hover:bg-neutral-900 hover:text-white disabled:opacity-30 transition cursor-pointer"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <span className="text-xs font-bold font-mono text-neutral-900">
+                    Page {activePreviewPage} of 2
+                  </span>
+                  <button
+                    disabled={activePreviewPage === 2}
+                    onClick={() => setActivePreviewPage(2)}
+                    className="p-1 rounded-full hover:bg-neutral-900 hover:text-white disabled:opacity-30 transition cursor-pointer"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+
                 <ExportDropdown
                   onExportPDF={handleExportPDF}
                   onExportDOCX={handleExportDOCX}
@@ -812,7 +865,7 @@ export default function AgreementPage() {
             </div>
 
             <div className="overflow-y-auto p-4 bg-neutral-950/20 rounded-2xl flex justify-center">
-              {agreementPreviewContent}
+              {renderAgreementContent(activePreviewPage, "agreement-preview-modal")}
             </div>
           </div>
         </div>
