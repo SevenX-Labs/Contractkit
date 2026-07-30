@@ -48,8 +48,9 @@ export interface AgreementTemplateProps {
   businessGoal?: string;
   projectType?: string;
   techStack?: string;
-  platforms?: string;
   includedScope?: string;
+  excludedScope?: string;
+  platforms?: string;
 
   startDate?: string;
   deliveryDate?: string;

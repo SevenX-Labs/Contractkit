@@ -43,7 +43,11 @@ import {
   Sparkles,
   Layers,
   UserCheck,
-  FileCode2,
+  MapPin,
+  CircleDot,
+  CheckCircle,
+  AlertCircle,
+  IndianRupee,
 } from "lucide-react";
 import { formatCurrency, formatDate } from "../../lib/utils";
 import { useDocumentExport } from "../../hooks/useDocumentExport";
@@ -62,7 +66,7 @@ interface PaymentItem {
   amount: number;
   dueDate?: string | null;
   paidDate?: string | null;
-  status: "PENDING" | "PAID" | "OVERDUE";
+  status: string; // PENDING | PARTIALLY_PAID | PAID | OVERDUE
   note?: string | null;
 }
 
@@ -109,6 +113,35 @@ interface ProjectItem {
   documents: DocumentItem[];
 }
 
+interface MilestoneMeta {
+  description: string;
+  workStatus: "Not Started" | "In Progress" | "Completed";
+  notes: string;
+}
+
+// Helper to parse JSON string inside ProjectPayment.note
+function parseMilestoneNote(note?: string | null, paymentStatus?: string): MilestoneMeta {
+  const normPay = (paymentStatus || "").toUpperCase();
+  const defaultWork = normPay === "PAID" ? "Completed" : "Not Started";
+
+  if (!note) {
+    return { description: "", workStatus: defaultWork, notes: "" };
+  }
+  try {
+    const parsed = JSON.parse(note);
+    if (parsed && typeof parsed === "object") {
+      return {
+        description: parsed.description || "",
+        workStatus: parsed.workStatus || defaultWork,
+        notes: parsed.notes || "",
+      };
+    }
+  } catch (e) {
+    return { description: note, workStatus: defaultWork, notes: "" };
+  }
+  return { description: "", workStatus: defaultWork, notes: "" };
+}
+
 export default function ProjectsPage() {
   const { exportToPDF, isExporting } = useDocumentExport();
   const [projects, setProjects] = useState<ProjectItem[]>([]);
@@ -145,22 +178,30 @@ export default function ProjectsPage() {
     budget: 0,
   });
 
-  // Edit Payment Milestone State
-  const [editingPayment, setEditingPayment] = useState<PaymentItem | null>(null);
-  const [paymentEditForm, setPaymentEditForm] = useState({
-    label: "",
-    amount: 0,
-    dueDate: "",
-    status: "PENDING" as "PENDING" | "PAID" | "OVERDUE",
-  });
-
-  // Add Payment Milestone State
-  const [addingPaymentProjectId, setAddingPaymentProjectId] = useState<string | null>(null);
-  const [newPaymentForm, setNewPaymentForm] = useState({
-    label: "",
-    amount: 10000,
+  // Milestone Form State (Used for both Create & Edit)
+  const [milestoneModalState, setMilestoneModalState] = useState<{
+    isOpen: boolean;
+    mode: "CREATE" | "EDIT";
+    projectId: string | null;
+    paymentId?: string;
+    name: string;
+    description: string;
+    workStatus: "Not Started" | "In Progress" | "Completed";
+    dueDate: string;
+    amount: number;
+    paymentStatus: "Pending" | "Partially Paid" | "Paid";
+    notes: string;
+  }>({
+    isOpen: false,
+    mode: "CREATE",
+    projectId: null,
+    name: "",
+    description: "",
+    workStatus: "Not Started",
     dueDate: new Date().toISOString().split("T")[0],
-    status: "PENDING" as "PENDING" | "PAID" | "OVERDUE",
+    amount: 10000,
+    paymentStatus: "Pending",
+    notes: "",
   });
 
   // Floating Document Preview Modal State
@@ -276,89 +317,143 @@ export default function ProjectsPage() {
     }
   };
 
-  const handleMarkPaid = async (paymentId: string, label: string) => {
-    const res = await updatePaymentStatusDB(paymentId, "PAID");
-    if (res.success) {
-      toast.success(`Marked "${label}" as PAID! Project progress updated.`);
-      fetchInitialData();
-    } else {
-      toast.error(`Error updating payment: ${res.error}`);
-    }
-  };
-
-  const handleStartEditPayment = (payment: PaymentItem) => {
-    setEditingPayment(payment);
-    setPaymentEditForm({
-      label: payment.label,
-      amount: payment.amount,
-      dueDate: payment.dueDate ? new Date(payment.dueDate).toISOString().split("T")[0] : "",
-      status: payment.status,
+  // Open Milestone Modal for Creation
+  const handleOpenAddMilestone = (projectId: string, existingCount: number) => {
+    setMilestoneModalState({
+      isOpen: true,
+      mode: "CREATE",
+      projectId,
+      name: "",
+      description: "",
+      workStatus: "Not Started",
+      dueDate: new Date().toISOString().split("T")[0],
+      amount: 10000,
+      paymentStatus: "Pending",
+      notes: "",
     });
   };
 
-  const handleSavePaymentEdit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingPayment) return;
+  // Open Milestone Modal for Editing
+  const handleOpenEditMilestone = (payment: PaymentItem) => {
+    const meta = parseMilestoneNote(payment.note, payment.status);
 
-    if (!paymentEditForm.label || paymentEditForm.amount <= 0) {
-      toast.error("Please enter a valid milestone label and amount.");
+    let normPayStatus: "Pending" | "Partially Paid" | "Paid" = "Pending";
+    const statusUpper = (payment.status || "").toUpperCase();
+    if (statusUpper === "PAID") normPayStatus = "Paid";
+    else if (statusUpper === "PARTIALLY_PAID" || statusUpper === "PARTIALLY PAID") normPayStatus = "Partially Paid";
+    else normPayStatus = "Pending";
+
+    setMilestoneModalState({
+      isOpen: true,
+      mode: "EDIT",
+      projectId: null,
+      paymentId: payment.id,
+      name: payment.label || "",
+      description: meta.description || "",
+      workStatus: meta.workStatus || "Not Started",
+      dueDate: payment.dueDate ? new Date(payment.dueDate).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
+      amount: payment.amount || 0,
+      paymentStatus: normPayStatus,
+      notes: meta.notes || "",
+    });
+  };
+
+  // Save Milestone (Create or Update)
+  const handleSaveMilestoneForm = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!milestoneModalState.name) {
+      toast.error("Please enter a Milestone Name.");
       return;
     }
 
-    const res = await updateProjectPaymentDB(editingPayment.id, {
-      label: paymentEditForm.label,
-      amount: Number(paymentEditForm.amount),
-      dueDate: paymentEditForm.dueDate || null,
-      status: paymentEditForm.status,
+    const notePayload = JSON.stringify({
+      description: milestoneModalState.description,
+      workStatus: milestoneModalState.workStatus,
+      notes: milestoneModalState.notes,
     });
 
-    if (res.success) {
-      toast.success("Payment milestone updated successfully!");
-      setEditingPayment(null);
-      fetchInitialData();
-    } else {
-      toast.error(`Error updating payment: ${res.error}`);
-    }
-  };
+    const statusMap: Record<string, string> = {
+      Pending: "PENDING",
+      "Partially Paid": "PARTIALLY_PAID",
+      Paid: "PAID",
+    };
+    const dbStatus = statusMap[milestoneModalState.paymentStatus] || "PENDING";
 
-  const handleAddPayment = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!addingPaymentProjectId) return;
-
-    if (!newPaymentForm.label || newPaymentForm.amount <= 0) {
-      toast.error("Please enter a valid milestone label and amount.");
-      return;
-    }
-
-    const res = await addProjectPaymentDB(addingPaymentProjectId, {
-      label: newPaymentForm.label,
-      amount: Number(newPaymentForm.amount),
-      dueDate: newPaymentForm.dueDate || undefined,
-      status: newPaymentForm.status,
-    });
-
-    if (res.success) {
-      toast.success(`New milestone "${newPaymentForm.label}" added!`);
-      setAddingPaymentProjectId(null);
-      setNewPaymentForm({
-        label: "",
-        amount: 10000,
-        dueDate: new Date().toISOString().split("T")[0],
-        status: "PENDING",
+    if (milestoneModalState.mode === "CREATE" && milestoneModalState.projectId) {
+      const res = await addProjectPaymentDB(milestoneModalState.projectId, {
+        label: milestoneModalState.name,
+        amount: Number(milestoneModalState.amount),
+        dueDate: milestoneModalState.dueDate,
+        status: dbStatus,
+        note: notePayload,
       });
-      fetchInitialData();
-    } else {
-      toast.error(`Error adding milestone: ${res.error}`);
+
+      if (res.success) {
+        toast.success(`Milestone "${milestoneModalState.name}" created!`);
+        setMilestoneModalState((prev) => ({ ...prev, isOpen: false }));
+        fetchInitialData();
+      } else {
+        toast.error(`Error creating milestone: ${res.error}`);
+      }
+    } else if (milestoneModalState.mode === "EDIT" && milestoneModalState.paymentId) {
+      const res = await updateProjectPaymentDB(milestoneModalState.paymentId, {
+        label: milestoneModalState.name,
+        amount: Number(milestoneModalState.amount),
+        dueDate: milestoneModalState.dueDate,
+        status: dbStatus as any,
+        note: notePayload,
+      });
+
+      if (res.success) {
+        toast.success(`Milestone "${milestoneModalState.name}" updated!`);
+        setMilestoneModalState((prev) => ({ ...prev, isOpen: false }));
+        fetchInitialData();
+      } else {
+        toast.error(`Error updating milestone: ${res.error}`);
+      }
     }
   };
 
-  const handleDeletePayment = async (paymentId: string, label: string) => {
-    const res = await deleteProjectPaymentDB(paymentId);
+  const handleDeleteMilestone = async () => {
+    if (!milestoneModalState.paymentId) return;
+    const res = await deleteProjectPaymentDB(milestoneModalState.paymentId);
     if (res.success) {
-      toast.success(`Deleted milestone "${label}"`);
+      toast.success(`Deleted milestone "${milestoneModalState.name}"`);
+      setMilestoneModalState((prev) => ({ ...prev, isOpen: false }));
       fetchInitialData();
     } else {
       toast.error(`Error deleting milestone: ${res.error}`);
+    }
+  };
+
+  const handleToggleMarkPaid = async (payment: PaymentItem) => {
+    const meta = parseMilestoneNote(payment.note, payment.status);
+    const isCurrentlyPaid = payment.status.toUpperCase() === "PAID";
+    const nextStatus = isCurrentlyPaid ? "PENDING" : "PAID";
+    const nextWorkStatus = isCurrentlyPaid ? meta.workStatus : "Completed";
+
+    const notePayload = JSON.stringify({
+      ...meta,
+      workStatus: nextWorkStatus,
+    });
+
+    const res = await updateProjectPaymentDB(payment.id, {
+      label: payment.label,
+      amount: payment.amount,
+      dueDate: payment.dueDate ? new Date(payment.dueDate).toISOString().split("T")[0] : null,
+      status: nextStatus as any,
+      note: notePayload,
+    });
+
+    if (res.success) {
+      toast.success(
+        isCurrentlyPaid
+          ? `Marked "${payment.label}" as PENDING`
+          : `Marked "${payment.label}" as PAID & Work Completed!`
+      );
+      fetchInitialData();
+    } else {
+      toast.error(`Error updating payment: ${res.error}`);
     }
   };
 
@@ -536,7 +631,7 @@ export default function ProjectsPage() {
               Projects & Milestone Hub
             </h1>
             <p className="text-xs text-neutral-600 font-medium">
-              Select client to auto-fetch Project Title & Summary passage, add payment structure & milestone dates
+              Manage project work status, milestone progress, payment breakdown, and document suites
             </p>
           </div>
         </div>
@@ -582,8 +677,34 @@ export default function ProjectsPage() {
       ) : (
         <div className="flex flex-col gap-3">
           {filteredProjects.map((p) => {
-            const totalVal = p.totalValue || p.budget || 1;
-            const progressPct = Math.min(100, Math.round((p.amountPaid / totalVal) * 100));
+            // Milestone Calculations derived from Work Status & Payment Status
+            const totalMilestones = p.payments.length;
+            const milestoneMetas = p.payments.map((pm) => ({
+              payment: pm,
+              meta: parseMilestoneNote(pm.note, pm.status),
+            }));
+
+            const completedMilestones = milestoneMetas.filter(
+              (m) => m.meta.workStatus === "Completed"
+            ).length;
+            const remainingMilestones = Math.max(0, totalMilestones - completedMilestones);
+
+            // Progress calculated from Work Status
+            const workProgressPct =
+              totalMilestones > 0 ? Math.round((completedMilestones / totalMilestones) * 100) : 0;
+
+            // Financial Summary calculated from Payment Status
+            const totalMilestoneAmount = p.payments.reduce((acc, pm) => acc + pm.amount, 0);
+            const totalPaidAmount = p.payments
+              .filter((pm) => (pm.status || "").toUpperCase() === "PAID")
+              .reduce((acc, pm) => acc + pm.amount, 0);
+            const totalPartiallyPaidAmount = p.payments
+              .filter((pm) => (pm.status || "").toUpperCase() === "PARTIALLY_PAID" || (pm.status || "").toUpperCase() === "PARTIALLY PAID")
+              .reduce((acc, pm) => acc + pm.amount * 0.5, 0); // 50% calculated for partial
+
+            const effectivePaidAmount = totalPaidAmount + totalPartiallyPaidAmount;
+            const totalPendingAmount = Math.max(0, totalMilestoneAmount - effectivePaidAmount);
+
             const isDocsExpanded = expandedDocsProjectId === p.id;
             const isMilestonesExpanded = expandedMilestonesProjectId === p.id;
 
@@ -601,7 +722,7 @@ export default function ProjectsPage() {
                 key={p.id}
                 className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-2xl p-4 shadow-sm hover:border-[#D5CEBC] transition flex flex-col gap-3"
               >
-                {/* Single Compact Row: Title, Client, Budget Progress & Actions */}
+                {/* Single Compact Row: Title, Client, Work Progress & Actions */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                   {/* Left: Project Title + Badges + Client Name */}
                   <div className="flex-1 min-w-0">
@@ -635,21 +756,21 @@ export default function ProjectsPage() {
                     )}
                   </div>
 
-                  {/* Right: Inline Progress Bar + Financial Stats + Action Buttons */}
+                  {/* Right: Work Progress Bar + Stats + Financial Summary + Action Buttons */}
                   <div className="flex items-center gap-4 shrink-0">
-                    {/* Inline Progress */}
+                    {/* Work Progress Calculation */}
                     <div className="flex flex-col text-right">
                       <span className="text-[10px] text-neutral-500 font-bold">
-                        Paid / Total Budget ({progressPct}%)
+                        Project Progress: <strong className="text-neutral-900">{workProgressPct}%</strong> ({completedMilestones}/{totalMilestones} Milestones)
                       </span>
                       <span className="text-xs font-extrabold text-neutral-900 font-mono">
-                        {formatCurrency(p.amountPaid, "₹")} / {formatCurrency(totalVal, "₹")}
+                        Paid: {formatCurrency(effectivePaidAmount, "₹")} / Total: {formatCurrency(totalMilestoneAmount || p.totalValue || p.budget, "₹")}
                       </span>
-                      {/* Mini Bar */}
-                      <div className="w-28 bg-[#DFD9C9] h-1.5 rounded-full overflow-hidden mt-1 self-end border border-[#D5CEBC]">
+                      {/* Progress Bar from Work Status */}
+                      <div className="w-36 bg-[#DFD9C9] h-2 rounded-full overflow-hidden mt-1 self-end border border-[#D5CEBC]">
                         <div
-                          className="bg-emerald-600 h-full rounded-full"
-                          style={{ width: `${progressPct}%` }}
+                          className="bg-emerald-600 h-full rounded-full transition-all duration-300"
+                          style={{ width: `${workProgressPct}%` }}
                         />
                       </div>
                     </div>
@@ -706,14 +827,20 @@ export default function ProjectsPage() {
                       }`}
                     >
                       <Clock className="w-3 h-3 text-amber-500" />
-                      <span>Milestones ({p.payments.length})</span>
+                      <span>Milestones ({totalMilestones})</span>
                       {isMilestonesExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                     </button>
                   </div>
 
-                  <span className="text-[10px] text-pink-700 font-bold font-mono">
-                    Pending: {formatCurrency(p.amountPending, "₹")}
-                  </span>
+                  {/* Real-time Financial Breakdown */}
+                  <div className="flex items-center gap-3 text-[10px] font-mono">
+                    <span className="text-neutral-600 font-bold">
+                      Completed: <strong className="text-emerald-800 font-sans">{completedMilestones}</strong> | Remaining: <strong className="text-amber-800 font-sans">{remainingMilestones}</strong>
+                    </span>
+                    <span className="text-pink-700 font-bold">
+                      Pending Payment: {formatCurrency(totalPendingAmount, "₹")}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Collapsible Documents Suite Grid */}
@@ -772,85 +899,117 @@ export default function ProjectsPage() {
 
                 {/* Collapsible Milestones Breakdown */}
                 {isMilestonesExpanded && (
-                  <div className="mt-1 bg-[#F4F0E6] p-3 rounded-2xl border border-[#E2DDD0] flex flex-col gap-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-extrabold uppercase text-neutral-700 tracking-wider">
-                        Milestone Payment Breakdown
-                      </span>
+                  <div className="mt-1 bg-[#F4F0E6] p-3 rounded-2xl border border-[#E2DDD0] flex flex-col gap-3">
+                    <div className="flex items-center justify-between border-b border-[#E2DDD0] pb-2">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-purple-600" />
+                        <span className="text-[11px] font-extrabold uppercase text-neutral-900 tracking-wider">
+                          Project Milestones ({totalMilestones})
+                        </span>
+                      </div>
 
                       <button
-                        onClick={() => {
-                          setAddingPaymentProjectId(p.id);
-                          setNewPaymentForm({
-                            label: `Milestone ${p.payments.length + 1}`,
-                            amount: 10000,
-                            dueDate: new Date().toISOString().split("T")[0],
-                            status: "PENDING",
-                          });
-                        }}
-                        className="flex items-center gap-1 text-[11px] font-bold text-blue-700 hover:text-blue-900 cursor-pointer"
+                        onClick={() => handleOpenAddMilestone(p.id, totalMilestones)}
+                        className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#121212] text-white text-[11px] font-bold hover:bg-neutral-800 transition cursor-pointer shadow-xs"
                       >
-                        <Plus className="w-3 h-3" />
-                        <span>Add Milestone</span>
+                        <Plus className="w-3.5 h-3.5 text-[#a6ce39]" />
+                        <span>Add Project Milestone</span>
                       </button>
                     </div>
 
-                    <div className="flex flex-col gap-1.5">
-                      {p.payments.map((pm) => (
-                        <div
-                          key={pm.id}
-                          className="flex items-center justify-between p-2 rounded-xl bg-[#EBE7DC] border border-[#E2DDD0] text-xs gap-2"
-                        >
-                          <div className="flex items-center gap-2">
-                            {pm.status === "PAID" ? (
-                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                            ) : (
-                              <Clock className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                            )}
-                            <span className="font-bold text-neutral-900">{pm.label}</span>
-                            {pm.dueDate && (
-                              <span className="text-[10px] text-neutral-500 font-mono">
-                                (Due: {formatDate(pm.dueDate as any)})
+                    <div className="flex flex-col gap-2">
+                      {p.payments.map((pm) => {
+                        const meta = parseMilestoneNote(pm.note, pm.status);
+                        const isPaid = (pm.status || "").toUpperCase() === "PAID";
+                        const isPartiallyPaid = (pm.status || "").toUpperCase() === "PARTIALLY_PAID" || (pm.status || "").toUpperCase() === "PARTIALLY PAID";
+
+                        return (
+                          <div
+                            key={pm.id}
+                            className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-2xl bg-[#EBE7DC] border border-[#E2DDD0] text-xs gap-3 shadow-xs hover:border-[#D5CEBC] transition"
+                          >
+                            {/* Left: Milestone Info & Badges */}
+                            <div className="flex flex-col gap-1 flex-1 min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="font-extrabold text-neutral-900 text-xs">
+                                  {pm.label}
+                                </span>
+
+                                {/* Work Status Badge */}
+                                <span
+                                  className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold flex items-center gap-1 ${
+                                    meta.workStatus === "Completed"
+                                      ? "bg-emerald-100 text-emerald-900 border border-emerald-300"
+                                      : meta.workStatus === "In Progress"
+                                      ? "bg-blue-100 text-blue-900 border border-blue-300"
+                                      : "bg-neutral-200 text-neutral-700 border border-neutral-300"
+                                  }`}
+                                >
+                                  {meta.workStatus === "Completed" ? (
+                                    <CheckCircle className="w-3 h-3 text-emerald-700" />
+                                  ) : meta.workStatus === "In Progress" ? (
+                                    <CircleDot className="w-3 h-3 text-blue-700 animate-pulse" />
+                                  ) : (
+                                    <AlertCircle className="w-3 h-3 text-neutral-500" />
+                                  )}
+                                  <span>{meta.workStatus}</span>
+                                </span>
+
+                                {/* Payment Status Badge */}
+                                <span
+                                  className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${
+                                    isPaid
+                                      ? "bg-emerald-200 text-emerald-900"
+                                      : isPartiallyPaid
+                                      ? "bg-amber-200 text-amber-900"
+                                      : "bg-pink-100 text-pink-900"
+                                  }`}
+                                >
+                                  {isPaid ? "Payment: Paid" : isPartiallyPaid ? "Payment: Partially Paid" : "Payment: Pending"}
+                                </span>
+                              </div>
+
+                              {meta.description && (
+                                <p className="text-[11px] text-neutral-600 font-medium leading-relaxed line-clamp-2">
+                                  {meta.description}
+                                </p>
+                              )}
+
+                              {pm.dueDate && (
+                                <span className="text-[10px] text-neutral-500 font-mono">
+                                  Due Date: {formatDate(pm.dueDate as any)}
+                                </span>
+                              )}
+                            </div>
+
+                            {/* Right: Payment Amount & Action Buttons */}
+                            <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
+                              <span className="font-mono font-extrabold text-neutral-900 text-sm">
+                                {formatCurrency(pm.amount, "₹")}
                               </span>
-                            )}
-                          </div>
 
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono font-extrabold text-neutral-900 text-xs">
-                              {formatCurrency(pm.amount, "₹")}
-                            </span>
-
-                            <button
-                              onClick={() => handleStartEditPayment(pm)}
-                              className="p-1 rounded-full bg-blue-100 text-blue-900 hover:bg-blue-200 transition cursor-pointer"
-                              title="Edit Milestone"
-                            >
-                              <Pencil className="w-3 h-3" />
-                            </button>
-
-                            {pm.status !== "PAID" ? (
                               <button
-                                onClick={() => handleMarkPaid(pm.id, pm.label)}
-                                className="px-2.5 py-0.5 rounded-full bg-emerald-700 text-white text-[9px] font-extrabold hover:bg-emerald-800 transition cursor-pointer"
+                                onClick={() => handleToggleMarkPaid(pm)}
+                                className={`px-3 py-1 rounded-full text-[10px] font-extrabold transition cursor-pointer ${
+                                  isPaid
+                                    ? "bg-emerald-200 text-emerald-900 hover:bg-emerald-300"
+                                    : "bg-[#121212] text-white hover:bg-neutral-800"
+                                }`}
                               >
-                                Mark PAID
+                                {isPaid ? "✓ PAID" : "Mark Paid"}
                               </button>
-                            ) : (
-                              <span className="px-2 py-0.2 rounded-full bg-emerald-200 text-emerald-900 text-[9px] font-extrabold uppercase">
-                                PAID
-                              </span>
-                            )}
 
-                            <button
-                              onClick={() => handleDeletePayment(pm.id, pm.label)}
-                              className="p-1 rounded-full bg-pink-100 text-pink-800 hover:bg-pink-200 transition cursor-pointer"
-                              title="Delete Milestone"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
+                              <button
+                                onClick={() => handleOpenEditMilestone(pm)}
+                                className="p-1.5 rounded-full bg-blue-100 text-blue-900 hover:bg-blue-200 transition cursor-pointer"
+                                title="Edit Project Milestone"
+                              >
+                                <Pencil className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -957,173 +1116,185 @@ export default function ProjectsPage() {
         </div>
       )}
 
-      {/* Edit Milestone Payment Modal */}
-      {editingPayment && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-6 max-w-md w-full shadow-2xl flex flex-col gap-4">
+      {/* Redesigned 📍 Add / Edit Project Milestone Dialog Modal */}
+      {milestoneModalState.isOpen && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto animate-in fade-in zoom-in-95">
+          <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-[24px] p-6 max-w-lg w-full shadow-2xl flex flex-col gap-4 my-auto">
+            {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-[#D5CEBC] pb-3">
               <div className="flex items-center gap-2">
-                <Pencil className="w-4 h-4 text-blue-600" />
-                <h3 className="text-base font-extrabold text-neutral-900">Edit Payment Milestone</h3>
+                <div className="p-2 rounded-xl bg-purple-100 text-purple-700">
+                  <MapPin className="w-5 h-5" />
+                </div>
+                <h3 className="text-base font-extrabold text-neutral-900">
+                  📍 {milestoneModalState.mode === "CREATE" ? "Add Project Milestone" : "Edit Project Milestone"}
+                </h3>
               </div>
               <button
-                onClick={() => setEditingPayment(null)}
+                onClick={() => setMilestoneModalState((prev) => ({ ...prev, isOpen: false }))}
                 className="p-1 rounded-full bg-[#DFD9C9] text-neutral-800 hover:bg-neutral-900 hover:text-white transition cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSavePaymentEdit} className="flex flex-col gap-3">
+            <form onSubmit={handleSaveMilestoneForm} className="flex flex-col gap-4">
+              {/* Field 1: Milestone Name */}
               <div>
-                <label className="text-xs font-bold text-neutral-700 block mb-1">Milestone Label *</label>
+                <label className="text-xs font-bold text-neutral-700 block mb-1">
+                  1. Milestone Name *
+                </label>
                 <input
                   type="text"
                   required
-                  value={paymentEditForm.label}
-                  onChange={(e) => setPaymentEditForm({ ...paymentEditForm, label: e.target.value })}
-                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 focus:outline-none"
-                  placeholder="e.g. Advance Deposit (50%)"
+                  placeholder="e.g. UI Design, Homepage Development, SEO Optimization, Testing, Deployment"
+                  value={milestoneModalState.name}
+                  onChange={(e) => setMilestoneModalState({ ...milestoneModalState, name: e.target.value })}
+                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3.5 py-2.5 text-xs font-bold text-neutral-900 focus:outline-none"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-bold text-neutral-700 block mb-1">Amount (₹) *</label>
-                  <input
-                    type="number"
-                    min={1}
-                    required
-                    value={paymentEditForm.amount}
-                    onChange={(e) => setPaymentEditForm({ ...paymentEditForm, amount: Number(e.target.value) })}
-                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-mono font-extrabold text-neutral-900 focus:outline-none"
-                  />
-                </div>
+              {/* Field 2: Description (Optional) */}
+              <div>
+                <label className="text-xs font-bold text-neutral-700 block mb-1">
+                  2. Description (Optional)
+                </label>
+                <textarea
+                  rows={2}
+                  placeholder="Describe what needs to be completed in this milestone..."
+                  value={milestoneModalState.description}
+                  onChange={(e) => setMilestoneModalState({ ...milestoneModalState, description: e.target.value })}
+                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3.5 py-2.5 text-xs text-neutral-900 font-medium focus:outline-none resize-none"
+                />
+              </div>
 
+              {/* Field 3 & 4: Work Status & Due Date */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-bold text-neutral-700 block mb-1">Payment Status</label>
+                  <label className="text-xs font-bold text-neutral-700 block mb-1">
+                    3. Work Status *
+                  </label>
                   <select
-                    value={paymentEditForm.status}
-                    onChange={(e) => setPaymentEditForm({ ...paymentEditForm, status: e.target.value as any })}
+                    value={milestoneModalState.workStatus}
+                    onChange={(e) =>
+                      setMilestoneModalState({
+                        ...milestoneModalState,
+                        workStatus: e.target.value as any,
+                      })
+                    }
                     className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 focus:outline-none cursor-pointer"
                   >
-                    <option value="PENDING">PENDING</option>
-                    <option value="PAID">PAID</option>
-                    <option value="OVERDUE">OVERDUE</option>
+                    <option value="Not Started">Not Started</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
                   </select>
                 </div>
-              </div>
 
-              <div>
-                <label className="text-xs font-bold text-neutral-700 block mb-1">Due Date</label>
-                <input
-                  type="date"
-                  value={paymentEditForm.dueDate}
-                  onChange={(e) => setPaymentEditForm({ ...paymentEditForm, dueDate: e.target.value })}
-                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-medium text-neutral-900 focus:outline-none"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-3 pt-2 border-t border-[#D5CEBC] mt-2">
-                <button
-                  type="button"
-                  onClick={() => setEditingPayment(null)}
-                  className="px-4 py-2 rounded-full bg-[#DFD9C9] text-neutral-800 text-xs font-bold hover:bg-[#D5CEBC] transition cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition shadow-md cursor-pointer"
-                >
-                  Save Milestone Changes
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Add New Milestone Modal */}
-      {addingPaymentProjectId && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-6 max-w-md w-full shadow-2xl flex flex-col gap-4">
-            <div className="flex items-center justify-between border-b border-[#D5CEBC] pb-3">
-              <div className="flex items-center gap-2">
-                <Plus className="w-4 h-4 text-purple-600" />
-                <h3 className="text-base font-extrabold text-neutral-900">Add Milestone Payment</h3>
-              </div>
-              <button
-                onClick={() => setAddingPaymentProjectId(null)}
-                className="p-1 rounded-full bg-[#DFD9C9] text-neutral-800 hover:bg-neutral-900 hover:text-white transition cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleAddPayment} className="flex flex-col gap-3">
-              <div>
-                <label className="text-xs font-bold text-neutral-700 block mb-1">Milestone Label *</label>
-                <input
-                  type="text"
-                  required
-                  value={newPaymentForm.label}
-                  onChange={(e) => setNewPaymentForm({ ...newPaymentForm, label: e.target.value })}
-                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 focus:outline-none"
-                  placeholder="e.g. Milestone 3 — Final Review"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-bold text-neutral-700 block mb-1">Amount (₹) *</label>
+                  <label className="text-xs font-bold text-neutral-700 block mb-1">
+                    4. Due Date *
+                  </label>
                   <input
-                    type="number"
-                    min={1}
+                    type="date"
                     required
-                    value={newPaymentForm.amount}
-                    onChange={(e) => setNewPaymentForm({ ...newPaymentForm, amount: Number(e.target.value) })}
-                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-mono font-extrabold text-neutral-900 focus:outline-none"
+                    value={milestoneModalState.dueDate}
+                    onChange={(e) => setMilestoneModalState({ ...milestoneModalState, dueDate: e.target.value })}
+                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-medium text-neutral-900 focus:outline-none"
                   />
                 </div>
+              </div>
 
-                <div>
-                  <label className="text-xs font-bold text-neutral-700 block mb-1">Status</label>
-                  <select
-                    value={newPaymentForm.status}
-                    onChange={(e) => setNewPaymentForm({ ...newPaymentForm, status: e.target.value as any })}
-                    className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 focus:outline-none cursor-pointer"
-                  >
-                    <option value="PENDING">PENDING</option>
-                    <option value="PAID">PAID</option>
-                  </select>
+              {/* Payment Information Section Divider & Heading */}
+              <div className="border-t border-[#D5CEBC] pt-3 mt-1">
+                <div className="flex items-center gap-1.5 mb-3">
+                  <IndianRupee className="w-4 h-4 text-emerald-700" />
+                  <span className="text-xs font-extrabold uppercase text-neutral-800 tracking-wider">
+                    Payment Information
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {/* Field 5: Payment Amount */}
+                  <div>
+                    <label className="text-xs font-bold text-neutral-700 block mb-1">
+                      5. Payment Amount (₹)
+                    </label>
+                    <input
+                      type="number"
+                      min={0}
+                      value={milestoneModalState.amount}
+                      onChange={(e) => setMilestoneModalState({ ...milestoneModalState, amount: Number(e.target.value) })}
+                      className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-mono font-extrabold text-neutral-900 focus:outline-none"
+                    />
+                  </div>
+
+                  {/* Field 6: Payment Status */}
+                  <div>
+                    <label className="text-xs font-bold text-neutral-700 block mb-1">
+                      6. Payment Status
+                    </label>
+                    <select
+                      value={milestoneModalState.paymentStatus}
+                      onChange={(e) =>
+                        setMilestoneModalState({
+                          ...milestoneModalState,
+                          paymentStatus: e.target.value as any,
+                        })
+                      }
+                      className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 focus:outline-none cursor-pointer"
+                    >
+                      <option value="Pending">Pending</option>
+                      <option value="Partially Paid">Partially Paid</option>
+                      <option value="Paid">Paid</option>
+                    </select>
+                  </div>
                 </div>
               </div>
 
+              {/* Field 7: Notes (Optional) */}
               <div>
-                <label className="text-xs font-bold text-neutral-700 block mb-1">Due Date</label>
-                <input
-                  type="date"
-                  value={newPaymentForm.dueDate}
-                  onChange={(e) => setNewPaymentForm({ ...newPaymentForm, dueDate: e.target.value })}
-                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-medium text-neutral-900 focus:outline-none"
+                <label className="text-xs font-bold text-neutral-700 block mb-1">
+                  7. Notes (Optional Internal Notes)
+                </label>
+                <textarea
+                  rows={2}
+                  placeholder="Add any internal client or developer notes..."
+                  value={milestoneModalState.notes}
+                  onChange={(e) => setMilestoneModalState({ ...milestoneModalState, notes: e.target.value })}
+                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3.5 py-2 text-xs text-neutral-900 font-medium focus:outline-none resize-none"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-2 border-t border-[#D5CEBC] mt-2">
-                <button
-                  type="button"
-                  onClick={() => setAddingPaymentProjectId(null)}
-                  className="px-4 py-2 rounded-full bg-[#DFD9C9] text-neutral-800 text-xs font-bold hover:bg-[#D5CEBC] transition cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-full bg-[#121212] hover:bg-neutral-800 text-white text-xs font-bold transition shadow-md cursor-pointer"
-                >
-                  Add Milestone
-                </button>
+              {/* Modal Buttons */}
+              <div className="flex items-center justify-between pt-3 border-t border-[#D5CEBC] mt-2">
+                {milestoneModalState.mode === "EDIT" ? (
+                  <button
+                    type="button"
+                    onClick={handleDeleteMilestone}
+                    className="flex items-center gap-1 px-4 py-2 rounded-full bg-pink-100 text-pink-800 text-xs font-bold hover:bg-pink-200 transition cursor-pointer"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Delete</span>
+                  </button>
+                ) : (
+                  <div />
+                )}
+
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setMilestoneModalState((prev) => ({ ...prev, isOpen: false }))}
+                    className="px-4 py-2 rounded-full bg-[#DFD9C9] text-neutral-800 text-xs font-bold hover:bg-[#D5CEBC] transition cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2 rounded-full bg-[#121212] hover:bg-neutral-800 text-white text-xs font-bold transition shadow-md cursor-pointer"
+                  >
+                    {milestoneModalState.mode === "CREATE" ? "Create Milestone" : "Save Changes"}
+                  </button>
+                </div>
               </div>
             </form>
           </div>

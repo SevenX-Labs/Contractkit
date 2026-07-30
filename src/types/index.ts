@@ -118,6 +118,10 @@ export interface AgreementData {
   id?: string;
   agreementNumber: string;
   date: string;
+  version?: string;
+  excludedScope?: string;
+  clientPhone?: string;
+  clientAddress?: string;
   
   freelancerName: string;
   freelancerCompany: string;
@@ -184,11 +188,14 @@ export interface NDAData {
   // 18-Section Clauses
   purpose?: string;
   confidentialItems?: string;
+  confidentialInfoDefinition?: string;
   obligations?: string;
   exclusions?: string;
   permittedDisclosure?: string;
   termDuration?: string;
+  duration?: string;
   returnTerm?: string;
+  returnDestroyClause?: string;
   ipClause?: string;
   dataProtection?: string;
   limitationOfLiability?: string;

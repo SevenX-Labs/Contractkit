@@ -328,7 +328,8 @@ export async function addProjectPaymentDB(
     label: string;
     amount: number;
     dueDate?: string;
-    status?: "PAID" | "PENDING" | "OVERDUE";
+    status?: string;
+    note?: string;
   }
 ) {
   try {
@@ -339,7 +340,8 @@ export async function addProjectPaymentDB(
         amount: data.amount,
         dueDate: data.dueDate ? new Date(data.dueDate) : null,
         status: data.status || "PENDING",
-        paidDate: data.status === "PAID" ? new Date() : null,
+        paidDate: data.status === "PAID" || data.status === "Paid" ? new Date() : null,
+        note: data.note || null,
       },
     });
 
@@ -729,7 +731,17 @@ export async function createProjectDB(data: {
         dueDate: data.deliveryDate ? new Date(data.deliveryDate) : undefined,
       });
     } else if (structure === "Monthly Retainer") {
-      paymentRows.push({ label: "Monthly Retainer (Month 1)", amount: val, dueDate: new Date() });
+      const today = new Date();
+      const month2 = new Date();
+      month2.setDate(today.getDate() + 30);
+      const month3 = new Date();
+      month3.setDate(today.getDate() + 60);
+
+      paymentRows.push(
+        { label: "Monthly Retainer — Month 1", amount: val, dueDate: today },
+        { label: "Monthly Retainer — Month 2", amount: val, dueDate: month2 },
+        { label: "Monthly Retainer — Month 3", amount: val, dueDate: month3 }
+      );
     } else {
       paymentRows.push(
         { label: "Advance Payment (50%)", amount: val * 0.5, dueDate: new Date() },
