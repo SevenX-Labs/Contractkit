@@ -42,6 +42,7 @@ export default function InvoicePage() {
     dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
     projectName: "E-Commerce Website",
     invoiceType: "Advance Payment",
+    miniDescription: "Advance payment for design, development, and deployment of E-Commerce Website as per agreed scope.",
     
     senderName: "Sahil Hode",
     senderCompany: "SevenX Labs",
@@ -357,38 +358,52 @@ export default function InvoicePage() {
             </div>
             <div>
               <label className="text-[10px] font-bold text-neutral-600 uppercase block mb-1">Invoice Type Option</label>
-              <div className="flex gap-2">
-                <select
-                  value={
-                    ["Full Payment", "Advance Payment", "50% Advance / 50% Final", "Milestone Payment", "Final Payment"].includes(formData.invoiceType || "")
-                      ? formData.invoiceType
-                      : "Custom"
+              <select
+                value={
+                  ["Full Payment", "Advance Payment", "50% Advance / 50% Final", "Milestone Payment", "Final Payment"].includes(formData.invoiceType || "")
+                    ? formData.invoiceType
+                    : "Custom"
+                }
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val !== "Custom") {
+                    setFormData({ ...formData, invoiceType: val });
                   }
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    if (val !== "Custom") {
-                      setFormData({ ...formData, invoiceType: val });
-                    }
-                  }}
-                  className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-2 py-2 text-xs font-bold text-neutral-900 focus:outline-none cursor-pointer"
-                >
-                  <option value="Full Payment">Full Payment</option>
-                  <option value="Advance Payment">Advance Payment</option>
-                  <option value="50% Advance / 50% Final">50% Advance / 50% Final</option>
-                  <option value="Milestone Payment">Milestone Payment</option>
-                  <option value="Final Payment">Final Payment</option>
-                  <option value="Custom">Custom Text</option>
-                </select>
+                }}
+                className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 focus:outline-none cursor-pointer mb-1.5"
+              >
+                <option value="Full Payment">Full Payment</option>
+                <option value="Advance Payment">Advance Payment</option>
+                <option value="50% Advance / 50% Final">50% Advance / 50% Final</option>
+                <option value="Milestone Payment">Milestone Payment</option>
+                <option value="Final Payment">Final Payment</option>
+                <option value="Custom">Custom Text...</option>
+              </select>
 
+              {(!["Full Payment", "Advance Payment", "50% Advance / 50% Final", "Milestone Payment", "Final Payment"].includes(formData.invoiceType || "") || formData.invoiceType === "Custom") && (
                 <input
                   type="text"
-                  placeholder="Custom Type"
+                  placeholder="Type custom invoice type..."
                   value={formData.invoiceType || ""}
                   onChange={(e) => setFormData({ ...formData, invoiceType: e.target.value })}
-                  className="flex-1 bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 focus:outline-none"
+                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 focus:outline-none"
                 />
-              </div>
+              )}
             </div>
+          </div>
+
+          {/* Invoice Summary / Scope Description Note */}
+          <div>
+            <label className="text-[10px] font-bold text-neutral-600 uppercase block mb-1">
+              Invoice Summary / Scope Description (Above Item Table)
+            </label>
+            <textarea
+              rows={2}
+              placeholder="e.g. Advance payment for design, development, and deployment of E-Commerce Website..."
+              value={formData.miniDescription || ""}
+              onChange={(e) => setFormData({ ...formData, miniDescription: e.target.value })}
+              className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium focus:outline-none resize-none"
+            />
           </div>
 
           <hr className="border-[#D5CEBC]" />

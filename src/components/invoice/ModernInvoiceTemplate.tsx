@@ -58,6 +58,7 @@ export interface InvoiceTemplateProps {
   currencySymbol?: string;
   projectName?: string;
   invoiceType?: string;
+  miniDescription?: string;
   accentColor?: "lime" | "purple" | "pink" | "emerald";
 }
 
@@ -100,6 +101,7 @@ export function ModernInvoiceTemplate({
   currencySymbol = "₹",
   projectName = "E-Commerce Website",
   invoiceType = "Advance Payment",
+  miniDescription = "Advance payment for design, development, and deployment of E-Commerce Website as per the agreed proposal.",
   accentColor = "lime",
 }: InvoiceTemplateProps) {
   // Color configuration
@@ -205,8 +207,20 @@ export function ModernInvoiceTemplate({
           </div>
         </div>
 
+        {/* Work Description / Mini Summary Note Above Item Table */}
+        {miniDescription && (
+          <div className="px-10 mt-6">
+            <div className="bg-neutral-50 border-l-4 border-[#0a0a0a] rounded-r-2xl p-3.5 text-xs text-neutral-800 font-medium leading-relaxed shadow-xs flex items-start gap-3">
+              <span className="font-black text-neutral-900 uppercase text-[10px] tracking-wider bg-[#0a0a0a] text-white px-2 py-0.5 rounded shrink-0">
+                SUMMARY
+              </span>
+              <p className="flex-1 text-neutral-700">{miniDescription}</p>
+            </div>
+          </div>
+        )}
+
         {/* Invoice Table Container */}
-        <div className="px-10 mt-10">
+        <div className="px-10 mt-6">
           {/* Black Full-Width Header Row */}
           <div className="bg-[#0a0a0a] text-white rounded-full py-3.5 px-6 flex justify-between items-center text-xs font-black uppercase tracking-wider mb-2 shadow-md">
             <span className="w-16 text-center">SR NO.</span>

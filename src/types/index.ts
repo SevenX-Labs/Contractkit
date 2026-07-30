@@ -33,6 +33,7 @@ export interface InvoiceData {
   dueDate: string;
   projectName?: string;
   invoiceType?: string;
+  miniDescription?: string;
   
   senderName: string;
   senderCompany: string;
