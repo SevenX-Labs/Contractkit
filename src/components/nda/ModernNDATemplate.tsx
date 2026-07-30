@@ -211,7 +211,7 @@ export function ModernNDATemplate({
             </div>
 
             {/* Intro Paragraph */}
-            <div className="px-10 mt-4 text-xs text-neutral-700 font-medium leading-relaxed">
+            <div className="px-10 mt-3 text-xs text-neutral-700 font-medium leading-relaxed">
               <p>
                 This Mutual Non-Disclosure Agreement (&quot;Agreement&quot;) is entered into on{" "}
                 <strong className="text-neutral-900 font-bold">{formatDate(effectiveDate)}</strong> (&quot;Effective Date&quot;) by and between the Disclosing Party and Receiving Party listed below to protect proprietary business and technical assets.
@@ -219,13 +219,13 @@ export function ModernNDATemplate({
             </div>
 
             {/* Section 1 & 2: Parties Pill Header & 2-Column Grid */}
-            <div className="px-10 mt-3" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
-              <div className="bg-[#0a0a0a] text-white rounded-full py-2 px-6 flex justify-between items-center text-xs font-black uppercase tracking-wider mb-2 shadow-md">
+            <div className="px-10 mt-2.5" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+              <div className="bg-[#0a0a0a] text-white rounded-full py-1.5 px-6 flex justify-between items-center text-xs font-black uppercase tracking-wider mb-1.5 shadow-md">
                 <span className="w-1/2 text-left pl-2">1. DISCLOSING PARTY</span>
                 <span className="w-1/2 text-left pl-4">2. RECEIVING PARTY</span>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 bg-neutral-50/80 p-3 rounded-2xl border border-neutral-200/80 text-xs">
+              <div className="grid grid-cols-2 gap-4 bg-neutral-50 p-2.5 rounded-2xl border border-neutral-200 text-xs">
                 {/* Disclosing Party */}
                 <div className="space-y-0.5 pr-3 border-r border-neutral-200">
                   <h3 className="text-xs font-black text-neutral-900">{disclosingCompany || disclosingName}</h3>
@@ -250,13 +250,13 @@ export function ModernNDATemplate({
               </div>
             </div>
 
-            {/* Page 1 Clauses: Sections 3 - 10 */}
-            <div className="px-10 mt-4 space-y-3.5">
+            {/* Page 1 Clauses: Sections 3 - 12 (100% Balanced Fill) */}
+            <div className="px-10 mt-2.5 space-y-2">
               {/* Section 3 & 4 */}
-              <div className="grid grid-cols-2 gap-3.5">
-                <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <FileText className="w-4 h-4" />
+              <div className="grid grid-cols-2 gap-2.5">
+                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
+                    <FileText className="w-3.5 h-3.5" />
                   </div>
                   <div>
                     <h4 className="text-[10px] font-black text-neutral-900 uppercase tracking-wider">3. PURPOSE OF DISCLOSURE</h4>
@@ -264,9 +264,9 @@ export function ModernNDATemplate({
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <Lock className="w-4 h-4" />
+                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
+                    <Lock className="w-3.5 h-3.5" />
                   </div>
                   <div>
                     <h4 className="text-[10px] font-black text-neutral-900 uppercase tracking-wider">4. DEFINITION OF CONFIDENTIAL INFO</h4>
@@ -276,10 +276,10 @@ export function ModernNDATemplate({
               </div>
 
               {/* Section 5 & 6 */}
-              <div className="grid grid-cols-2 gap-3.5">
-                <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <ShieldCheck className="w-4 h-4" />
+              <div className="grid grid-cols-2 gap-2.5">
+                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
+                    <ShieldCheck className="w-3.5 h-3.5" />
                   </div>
                   <div>
                     <h4 className="text-[10px] font-black text-neutral-900 uppercase tracking-wider">5. OBLIGATIONS OF RECEIVING PARTY</h4>
@@ -287,9 +287,9 @@ export function ModernNDATemplate({
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <XCircle className="w-4 h-4" />
+                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
+                    <XCircle className="w-3.5 h-3.5" />
                   </div>
                   <div>
                     <h4 className="text-[10px] font-black text-neutral-900 uppercase tracking-wider">6. EXCLUSIONS FROM CONFIDENTIALITY</h4>
@@ -299,10 +299,10 @@ export function ModernNDATemplate({
               </div>
 
               {/* Section 7 & 8 */}
-              <div className="grid grid-cols-2 gap-3.5">
-                <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <CheckCircle className="w-4 h-4" />
+              <div className="grid grid-cols-2 gap-2.5">
+                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
+                    <CheckCircle className="w-3.5 h-3.5" />
                   </div>
                   <div>
                     <h4 className="text-[10px] font-black text-neutral-900 uppercase tracking-wider">7. PERMITTED DISCLOSURES</h4>
@@ -310,9 +310,9 @@ export function ModernNDATemplate({
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <Clock className="w-4 h-4" />
+                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
+                    <Clock className="w-3.5 h-3.5" />
                   </div>
                   <div>
                     <h4 className="text-[10px] font-black text-neutral-900 uppercase tracking-wider">8. TERM & SURVIVAL PERIOD</h4>
@@ -322,10 +322,10 @@ export function ModernNDATemplate({
               </div>
 
               {/* Section 9 & 10 */}
-              <div className="grid grid-cols-2 gap-3.5">
-                <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <FileCheck className="w-4 h-4" />
+              <div className="grid grid-cols-2 gap-2.5">
+                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
+                    <FileCheck className="w-3.5 h-3.5" />
                   </div>
                   <div>
                     <h4 className="text-[10px] font-black text-neutral-900 uppercase tracking-wider">9. RETURN OR DESTRUCTION OF DATA</h4>
@@ -333,13 +333,36 @@ export function ModernNDATemplate({
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <Key className="w-4 h-4" />
+                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
+                    <Key className="w-3.5 h-3.5" />
                   </div>
                   <div>
                     <h4 className="text-[10px] font-black text-neutral-900 uppercase tracking-wider">10. INTELLECTUAL PROPERTY RIGHTS</h4>
                     <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">{ipClause}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 11 & 12 */}
+              <div className="grid grid-cols-2 gap-2.5">
+                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
+                    <UserCheck className="w-3.5 h-3.5" />
+                  </div>
+                  <div>
+                    <h4 className="text-[10px] font-black text-neutral-900 uppercase tracking-wider">11. NON-SOLICITATION CLAUSE</h4>
+                    <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">{nonSolicitation}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
+                    <Shield className="w-3.5 h-3.5" />
+                  </div>
+                  <div>
+                    <h4 className="text-[10px] font-black text-neutral-900 uppercase tracking-wider">12. DATA PROTECTION & SECURITY</h4>
+                    <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">{dataProtection}</p>
                   </div>
                 </div>
               </div>
@@ -376,33 +399,10 @@ export function ModernNDATemplate({
       {/* PAGE 2 */}
       {showPage2 && (
         <div className="relative w-full min-h-[297mm] flex flex-col justify-between pt-10 pb-0">
-          <div className="px-10 space-y-3">
-            {/* Section 11 & 12 */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid" }}>
-                <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
-                  <UserCheck className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">11. NON-SOLICITATION CLAUSE</h4>
-                  <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">{nonSolicitation}</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid" }}>
-                <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
-                  <Shield className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">12. DATA PROTECTION & SECURITY</h4>
-                  <p className="text-[10px] text-neutral-600 mt-0.5 leading-relaxed">{dataProtection}</p>
-                </div>
-              </div>
-            </div>
-
+          <div className="px-10 space-y-3.5">
             {/* Section 13 & 14 */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid" }}>
+            <div className="grid grid-cols-2 gap-3.5">
+              <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
                 <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
                   <AlertTriangle className="w-4 h-4" />
                 </div>
@@ -412,7 +412,7 @@ export function ModernNDATemplate({
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid" }}>
+              <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
                 <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
                   <Gavel className="w-4 h-4" />
                 </div>
@@ -424,8 +424,8 @@ export function ModernNDATemplate({
             </div>
 
             {/* Section 15 & 16 */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid" }}>
+            <div className="grid grid-cols-2 gap-3.5">
+              <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
                 <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
                   <Clock className="w-4 h-4" />
                 </div>
@@ -435,7 +435,7 @@ export function ModernNDATemplate({
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid" }}>
+              <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
                 <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
                   <Building className="w-4 h-4" />
                 </div>
@@ -447,8 +447,8 @@ export function ModernNDATemplate({
             </div>
 
             {/* Section 17 & 18 */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid" }}>
+            <div className="grid grid-cols-2 gap-3.5">
+              <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
                 <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
                   <Handshake className="w-4 h-4" />
                 </div>
@@ -458,7 +458,7 @@ export function ModernNDATemplate({
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid" }}>
+              <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
                 <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
                   <FileText className="w-4 h-4" />
                 </div>

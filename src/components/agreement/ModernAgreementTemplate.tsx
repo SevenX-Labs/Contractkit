@@ -245,7 +245,7 @@ export function ModernAgreementTemplate({
                 <span className="w-1/2 text-left pl-4">2. CLIENT</span>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 bg-neutral-50/80 p-4 rounded-2xl border border-neutral-200/80 text-xs">
+              <div className="grid grid-cols-2 gap-4 bg-neutral-50 p-4 rounded-2xl border border-neutral-200 text-xs">
                 {/* Service Provider */}
                 <div className="space-y-1 pr-3 border-r border-neutral-200">
                   <h3 className="text-xs font-black text-neutral-900">{providerCompany || providerName}</h3>
@@ -274,7 +274,7 @@ export function ModernAgreementTemplate({
             {/* Sections 3, 4, 5, 6 on Page 1 */}
             <div className="px-10 mt-4 space-y-3">
               {/* Section 3: Project Overview */}
-              <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+              <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
                 <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
                   <Briefcase className="w-4 h-4" />
                 </div>
@@ -292,7 +292,7 @@ export function ModernAgreementTemplate({
               </div>
 
               {/* Section 4: Scope of Work */}
-              <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+              <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
                 <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
                   <Target className="w-4 h-4" />
                 </div>
@@ -308,7 +308,7 @@ export function ModernAgreementTemplate({
               </div>
 
               {/* Section 5: Timeline & Milestones */}
-              <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+              <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
                 <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
                   <Calendar className="w-4 h-4" />
                 </div>
@@ -326,7 +326,7 @@ export function ModernAgreementTemplate({
               </div>
 
               {/* Section 6: Payment Terms */}
-              <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+              <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
                 <div className={`p-2.5 rounded-full shrink-0 ${accentBadgeBg}`}>
                   <IndianRupee className="w-4 h-4" />
                 </div>
@@ -377,7 +377,7 @@ export function ModernAgreementTemplate({
         <div className="relative w-full min-h-[297mm] flex flex-col justify-between pt-10 pb-0">
           <div className="px-10 space-y-4">
             {/* Section 7: Intellectual Property Rights */}
-            <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+            <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
               <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
                 <FileCheck className="w-5 h-5" />
               </div>
@@ -388,7 +388,7 @@ export function ModernAgreementTemplate({
             </div>
 
             {/* Section 8: Deliverables & Code Handover */}
-            <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+            <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
               <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
                 <Code className="w-5 h-5" />
               </div>
@@ -399,7 +399,7 @@ export function ModernAgreementTemplate({
             </div>
 
             {/* Section 9: Confidentiality & Non-Disclosure */}
-            <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+            <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
               <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
                 <Lock className="w-5 h-5" />
               </div>
@@ -410,7 +410,7 @@ export function ModernAgreementTemplate({
             </div>
 
             {/* Section 10: Warranty, Support & Revision Policy */}
-            <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-neutral-200/80 shadow-xs" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+            <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
               <div className={`p-3 rounded-full shrink-0 ${accentBadgeBg}`}>
                 <ShieldCheck className="w-5 h-5" />
               </div>

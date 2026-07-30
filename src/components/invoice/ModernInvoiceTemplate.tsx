@@ -236,7 +236,7 @@ export function ModernInvoiceTemplate({
             <h3 className="text-xs font-black text-neutral-900 tracking-tight uppercase mb-1.5 ml-1">
               {paymentMethod}
             </h3>
-            <div className="text-xs text-neutral-900 font-semibold space-y-1.5 bg-neutral-50/95 p-4 rounded-2xl border border-neutral-200/80 shadow-sm backdrop-blur-sm relative z-20">
+            <div className="text-xs text-neutral-900 font-semibold space-y-1.5 bg-neutral-50 p-4 rounded-2xl border border-neutral-200 shadow-sm relative z-20">
               {paymentDetails ? (
                 paymentDetails.split("|").map((line, i) => (
                   <p key={i} className="text-neutral-900 font-bold font-mono">{line.trim()}</p>

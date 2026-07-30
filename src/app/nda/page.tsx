@@ -237,8 +237,8 @@ export default function NDAPage() {
                 {showAllSections
                   ? "All Form Sections (1 - 20)"
                   : activePreviewPage === 1
-                  ? "Page 1 Sections (Sections 1 - 10)"
-                  : "Page 2 Sections (Sections 11 - 20)"}
+                  ? "Page 1 Sections (Sections 1 - 12)"
+                  : "Page 2 Sections (Sections 13 - 20)"}
               </h3>
               <p className="text-[10px] text-neutral-500 font-medium">
                 {showAllSections
@@ -571,12 +571,6 @@ export default function NDAPage() {
                   </div>
                 )}
               </div>
-            </>
-          )}
-
-          {/* PAGE 2 SECTIONS (11 - 20) */}
-          {(showAllSections || activePreviewPage === 2) && (
-            <>
               {/* SECTION 11: Intellectual Property */}
               <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-2xl overflow-hidden shadow-sm">
                 <button
@@ -618,6 +612,12 @@ export default function NDAPage() {
                   </div>
                 )}
               </div>
+            </>
+          )}
+
+          {/* PAGE 2 SECTIONS (13 - 20) */}
+          {(showAllSections || activePreviewPage === 2) && (
+            <>
 
               {/* SECTION 13: Data Protection & Security */}
               <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-2xl overflow-hidden shadow-sm">

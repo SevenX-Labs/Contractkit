@@ -9,34 +9,40 @@ export function useDocumentExport() {
 
   // Helper to sanitize cloned DOM tree for html2canvas (removes unsupported lab() and oklch() color functions)
   const sanitizeClonedDoc = (clonedDoc: Document) => {
-    // Clean all inline styles
-    const allElements = clonedDoc.querySelectorAll("*");
+    // 1. Clean style elements
+    const styleTags = Array.from(clonedDoc.querySelectorAll("style"));
+    styleTags.forEach((style) => {
+      try {
+        if (style.textContent) {
+          style.textContent = style.textContent
+            .replace(/lab\([^)]+\)/gi, "rgba(0, 0, 0, 0.1)")
+            .replace(/oklch\([^)]+\)/gi, "rgba(0, 0, 0, 0.1)");
+        }
+      } catch (e) {
+        // Ignore cross-origin stylesheet errors
+      }
+    });
+
+    // 2. Clean element inline styles & CSS custom properties
+    const allElements = Array.from(clonedDoc.querySelectorAll("*"));
     allElements.forEach((el) => {
       const htmlEl = el as HTMLElement;
       if (htmlEl.style) {
         const styleAttr = htmlEl.getAttribute("style") || "";
         if (styleAttr.includes("lab(") || styleAttr.includes("oklch(")) {
           const cleanedStyle = styleAttr
-            .replace(/lab\([^)]+\)/g, "#111111")
-            .replace(/oklch\([^)]+\)/g, "#111111");
+            .replace(/lab\([^)]+\)/gi, "rgba(0, 0, 0, 0.1)")
+            .replace(/oklch\([^)]+\)/gi, "rgba(0, 0, 0, 0.1)");
           htmlEl.setAttribute("style", cleanedStyle);
         }
-      }
-    });
 
-    // Clean stylesheet text contents
-    const styleSheets = Array.from(clonedDoc.querySelectorAll("style, link[rel='stylesheet']"));
-    styleSheets.forEach((sheet) => {
-      try {
-        const cssText = sheet.textContent || "";
-        if (cssText.includes("lab(") || cssText.includes("oklch(")) {
-          const cleanedCss = cssText
-            .replace(/lab\([^)]+\)/g, "#111111")
-            .replace(/oklch\([^)]+\)/g, "#111111");
-          sheet.textContent = cleanedCss;
+        // Reset any inline shadow or filter that triggers lab/oklch color parsing in html2canvas
+        if (htmlEl.style.boxShadow && (htmlEl.style.boxShadow.includes("lab(") || htmlEl.style.boxShadow.includes("oklch("))) {
+          htmlEl.style.boxShadow = "none";
         }
-      } catch (e) {
-        // Ignore cross-origin stylesheet errors
+        if (htmlEl.style.borderColor && (htmlEl.style.borderColor.includes("lab(") || htmlEl.style.borderColor.includes("oklch("))) {
+          htmlEl.style.borderColor = "#e5e5e5";
+        }
       }
     });
   };
@@ -158,5 +164,10 @@ export function useDocumentExport() {
     }
   };
 
-  return { exportToPDF, exportToImage, exportToDOCX, isExporting };
+  return {
+    exportToPDF,
+    exportToImage,
+    exportToDOCX,
+    isExporting,
+  };
 }
