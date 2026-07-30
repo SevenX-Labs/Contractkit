@@ -376,7 +376,41 @@ export async function getProjectsDB() {
       },
       orderBy: { createdAt: "desc" },
     });
-    return projects;
+
+    const allDocs = await prisma.documentSuite.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+
+    // Merge documents matching client name, client email, or project ID
+    const enrichedProjects = projects.map((p) => {
+      const existingDocIds = new Set((p.documents || []).map((d) => d.id));
+      const matchingDocs = allDocs.filter((d) => {
+        if (existingDocIds.has(d.id)) return false;
+        if (d.projectId === p.id) return true;
+        if (
+          p.client &&
+          p.client.name &&
+          d.clientName &&
+          d.clientName.toLowerCase().trim() === p.client.name.toLowerCase().trim()
+        )
+          return true;
+        if (
+          p.client &&
+          p.client.email &&
+          d.clientEmail &&
+          d.clientEmail.toLowerCase().trim() === p.client.email.toLowerCase().trim()
+        )
+          return true;
+        return false;
+      });
+
+      return {
+        ...p,
+        documents: [...(p.documents || []), ...matchingDocs],
+      };
+    });
+
+    return enrichedProjects;
   } catch (err) {
     console.error("Error fetching projects:", err);
     return [];
