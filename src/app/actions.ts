@@ -55,15 +55,15 @@ export async function getProfileDB(): Promise<FreelancerProfile> {
 
     return {
       name: profile.name || "Sahil Hode",
-      company: "SevenX Labs",
-      email: "sevenxlabs07@gmail.com",
-      phone: "8652601566",
-      address: "Thane, Mumbai, Maharashtra",
-      upiId: profile.upiId || "",
-      bankName: profile.bankName || "",
-      bankAccount: profile.bankAccount || "",
-      bankIfsc: profile.bankIfsc || "",
-      paypalEmail: profile.paypalEmail || "",
+      company: profile.company || "SevenX Labs",
+      email: profile.email || "sevenxlabs07@gmail.com",
+      phone: profile.phone || "8652601566",
+      address: profile.address || "Thane, Mumbai, Maharashtra",
+      upiId: profile.upiId || "sevenxlabs@upi",
+      bankName: profile.bankName || "HDFC Bank",
+      bankAccount: profile.bankAccount || "50100234567890",
+      bankIfsc: profile.bankIfsc || "HDFC0001234",
+      paypalEmail: profile.paypalEmail || "sevenxlabs07@gmail.com",
       invoicePrefix: profile.invoicePrefix || "SXL-INV-",
     };
   } catch (err) {
@@ -74,11 +74,11 @@ export async function getProfileDB(): Promise<FreelancerProfile> {
       email: "sevenxlabs07@gmail.com",
       phone: "8652601566",
       address: "Thane, Mumbai, Maharashtra",
-      upiId: "",
-      bankName: "",
-      bankAccount: "",
-      bankIfsc: "",
-      paypalEmail: "",
+      upiId: "sevenxlabs@upi",
+      bankName: "HDFC Bank",
+      bankAccount: "50100234567890",
+      bankIfsc: "HDFC0001234",
+      paypalEmail: "sevenxlabs07@gmail.com",
       invoicePrefix: "SXL-INV-",
     };
   }

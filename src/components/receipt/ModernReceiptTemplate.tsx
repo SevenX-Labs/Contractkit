@@ -45,6 +45,10 @@ export interface ReceiptTemplateProps {
   paymentMethod?: string;
   transactionId?: string;
   paymentDate?: string;
+  bankName?: string;
+  bankAccount?: string;
+  bankIfsc?: string;
+  upiId?: string;
 
   // Itemized Table
   items?: ReceiptItem[];
@@ -83,8 +87,12 @@ export function ModernReceiptTemplate({
   invoiceNumber = "INV-2026-112",
   invoiceDate = "2026-07-20",
   paymentMethod = "Bank Transfer",
-  transactionId = "TXN1234567890",
+  transactionId = "TXN-2026-88991",
   paymentDate = "2026-07-30",
+  bankName = "HDFC Bank",
+  bankAccount = "50100234567890",
+  bankIfsc = "HDFC0001234",
+  upiId = "sevenxlabs@upi",
 
   items = [
     {
@@ -270,7 +278,7 @@ export function ModernReceiptTemplate({
 
             <div className="flex items-center">
               <span className="w-44 font-black uppercase text-neutral-900 text-[11px]">PAYMENT METHOD</span>
-              <span className="font-bold text-neutral-900">: {paymentMethod}</span>
+              <span className="font-bold text-neutral-900">: {paymentMethod} {bankName ? `(${bankName} - A/C: ${bankAccount})` : ""}</span>
             </div>
 
             <div className="flex items-center">

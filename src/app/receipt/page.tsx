@@ -98,6 +98,10 @@ export default function ReceiptBuilderPage() {
         providerEmail: profile.email || "contact@sevenxlabs.com",
         providerPhone: profile.phone || "+91 98765 43210",
         signatoryName: profile.name || "Sahil Hode",
+        bankName: profile.bankName || "HDFC Bank",
+        bankAccount: profile.bankAccount || "50100234567890",
+        bankIfsc: profile.bankIfsc || "HDFC0001234",
+        upiId: profile.upiId || "sevenxlabs@upi",
       }));
     });
   }, []);

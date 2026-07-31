@@ -62,6 +62,11 @@ export interface AgreementTemplateProps {
   currencySymbol?: string;
   paymentSchedule?: string;
 
+  bankName?: string;
+  bankAccount?: string;
+  bankIfsc?: string;
+  upiId?: string;
+
   ipClause?: string;
   deliverables?: string;
   confidentialityClause?: string;
@@ -115,7 +120,11 @@ export function ModernAgreementTemplate({
   advanceAmount = 125000,
   balanceAmount = 125000,
   currencySymbol = "₹",
-  paymentSchedule = "50% advance deposit upon contract signing; 50% balance payment upon project completion and code handover.",
+  paymentSchedule = "50% Advance upon agreement signing, 50% upon final source code handover and deployment.",
+  bankName = "HDFC Bank",
+  bankAccount = "50100234567890",
+  bankIfsc = "HDFC0001234",
+  upiId = "sevenxlabs@upi",
 
   ipClause = "Upon full and final payment, SevenX Labs assigns all intellectual property rights, source code ownership, and patent rights for custom software created under this agreement to the Client.",
   deliverables = "• Complete Clean Source Code (GitHub Repository access)\n• Production Build Deployment Files & Environment Configs\n• Admin Dashboard & API Documentation\n• User Manual & System Walkthrough Video",
@@ -346,6 +355,12 @@ export function ModernAgreementTemplate({
                     <p><strong className="text-neutral-600 font-bold">Total Project Fee:</strong> <span className="font-extrabold text-neutral-900">{formatCurrency(totalAmount, currencySymbol)}</span></p>
                     <p><strong className="text-neutral-600 font-bold">Advance Deposit (50%):</strong> {formatCurrency(advanceAmount, currencySymbol)}</p>
                     <p><strong className="text-neutral-600 font-bold">Balance Handover (50%):</strong> {formatCurrency(balanceAmount, currencySymbol)}</p>
+                    {bankName && (
+                      <div className="mt-1.5 pt-1.5 border-t border-neutral-200 text-[10px] text-neutral-700 font-mono">
+                        <p><strong>Bank:</strong> {bankName} {bankAccount ? `| A/C: ${bankAccount}` : ""} {bankIfsc ? `| IFSC: ${bankIfsc}` : ""}</p>
+                        {upiId && <p><strong>UPI:</strong> {upiId}</p>}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

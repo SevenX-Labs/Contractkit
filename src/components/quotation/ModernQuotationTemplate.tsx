@@ -54,6 +54,11 @@ export interface QuotationTemplateProps {
   designation?: string;
   signatureUrl?: string;
 
+  bankName?: string;
+  bankAccount?: string;
+  bankIfsc?: string;
+  upiId?: string;
+
   currencySymbol?: string;
   accentColor?: "lime" | "purple" | "pink" | "emerald";
 }
@@ -152,8 +157,12 @@ export function ModernQuotationTemplate({
   ],
 
   signatoryName = "Sahil Hode",
-  designation = "Founder",
+  designation = "Founder & Lead Developer",
   signatureUrl,
+  bankName = "HDFC Bank",
+  bankAccount = "50100234567890",
+  bankIfsc = "HDFC0001234",
+  upiId = "sevenxlabs@upi",
   currencySymbol = "₹",
   accentColor = "lime",
 }: QuotationTemplateProps) {
@@ -456,6 +465,11 @@ export function ModernQuotationTemplate({
                   <span className="leading-snug">{term}</span>
                 </div>
               ))}
+              {bankName && (
+                <div className="mt-2 pt-2 border-t border-neutral-200 font-mono text-[10px] text-neutral-800">
+                  <p><strong>Bank:</strong> {bankName} {bankAccount ? `| A/C: ${bankAccount}` : ""} {bankIfsc ? `| IFSC: ${bankIfsc}` : ""} {upiId ? `| UPI: ${upiId}` : ""}</p>
+                </div>
+              )}
             </div>
           </div>
 

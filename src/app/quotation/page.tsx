@@ -153,6 +153,10 @@ export default function QuotationPage() {
         senderAddress: profile.address || "Thane, Mumbai, Maharashtra",
         senderEmail: profile.email || "contact@sevenxlabs.com",
         senderPhone: profile.phone || "+91 98765 43210",
+        bankName: profile.bankName || "HDFC Bank",
+        bankAccount: profile.bankAccount || "50100234567890",
+        bankIfsc: profile.bankIfsc || "HDFC0001234",
+        upiId: profile.upiId || "sevenxlabs@upi",
       }));
     });
   }, []);
