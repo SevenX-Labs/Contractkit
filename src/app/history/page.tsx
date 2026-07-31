@@ -111,18 +111,24 @@ export default function HistoryPage() {
       {/* Filter Bar */}
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-[#EBE7DC] border border-[#E2DDD0] p-4 rounded-2xl">
         {/* Type Tabs */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
+        <div className="flex items-center gap-1.5 flex-wrap overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {(["all", "invoice", "quotation", "agreement", "nda", "certificate", "receipt"] as const).map((type) => (
             <button
               key={type}
               onClick={() => setActiveType(type)}
-              className={`px-4 py-1.5 rounded-full text-xs font-bold capitalize whitespace-nowrap transition ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition cursor-pointer ${
                 activeType === type
-                  ? "bg-[#121212] text-white shadow"
+                  ? "bg-[#121212] text-white shadow-sm"
                   : "bg-[#DFD9C9] text-neutral-800 hover:bg-[#D5CEBC]"
               }`}
             >
-              {type === "all" ? "All Documents" : `${type}s`}
+              {type === "all"
+                ? "All Documents"
+                : type === "nda"
+                ? "NDAs"
+                : type === "receipt"
+                ? "Receipts"
+                : `${type.charAt(0).toUpperCase() + type.slice(1)}s`}
             </button>
           ))}
         </div>
