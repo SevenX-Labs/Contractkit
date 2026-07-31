@@ -288,11 +288,11 @@ export default function HistoryPage() {
       {selectedDoc && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-6 max-w-5xl w-full shadow-2xl flex flex-col gap-4 my-auto max-h-[95vh]">
-            {/* Modal Header Controls */}
-            <div className="flex flex-wrap items-center justify-between border-b border-[#D5CEBC] pb-4 gap-3">
+            {/* Modal Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 border-b border-[#D5CEBC]">
               <div>
                 <h3 className="text-base font-extrabold text-neutral-900">{selectedDoc.title}</h3>
-                <p className="text-xs text-neutral-600 font-mono">#{selectedDoc.documentNumber} • {formatDate(selectedDoc.date)}</p>
+                <p className="text-xs text-neutral-600 font-mono">#{selectedDoc.documentNumber} • {selectedDoc.clientName}</p>
               </div>
 
               <div className="flex items-center gap-2 flex-wrap">
@@ -301,18 +301,11 @@ export default function HistoryPage() {
                   value={selectedDoc.status.toUpperCase()}
                   onChange={async (e) => {
                     const newStatus = e.target.value;
-                    const res = await updateDocumentStatusDB(selectedDoc.id, newStatus);
-                    if (res.success) {
-                      setDocuments((prev) =>
-                        prev.map((d) => (d.id === selectedDoc.id ? { ...d, status: newStatus.toLowerCase() as any } : d))
-                      );
-                      setSelectedDoc((prev: any) => prev ? { ...prev, status: newStatus.toLowerCase() } : null);
-                      toast.success(`Document status updated to ${newStatus}`);
-                    } else {
-                      toast.error("Failed to update status");
-                    }
+                    setSelectedDoc({ ...selectedDoc, status: newStatus.toLowerCase() as any });
+                    await updateDocumentStatusDB(selectedDoc.id, newStatus);
+                    fetchDocs();
                   }}
-                  className="px-3 py-1.5 rounded-full text-xs font-extrabold uppercase border border-neutral-300 bg-white text-neutral-900 cursor-pointer outline-none shadow-sm"
+                  className="bg-[#121212] text-white border border-neutral-700 rounded-full px-3 py-1.5 text-xs font-black focus:outline-none cursor-pointer"
                 >
                   <option value="DRAFT">DRAFT</option>
                   <option value="SENT">SENT</option>
@@ -329,7 +322,7 @@ export default function HistoryPage() {
                     setSelectedDoc(null);
                     handleEditDoc(docToEdit);
                   }}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-600 text-white text-xs font-bold shadow hover:bg-blue-700 transition"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-600 text-white text-xs font-bold shadow-xs hover:bg-blue-700 transition cursor-pointer"
                 >
                   <Edit3 className="w-3.5 h-3.5" />
                   <span>Edit</span>
@@ -338,7 +331,7 @@ export default function HistoryPage() {
                 {/* PDF Export */}
                 <button
                   onClick={() => exportToPDF("floating-vault-doc", `${selectedDoc.documentNumber}.pdf`)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#121212] text-white text-xs font-bold shadow hover:bg-neutral-800 transition"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#121212] text-white text-xs font-bold shadow-xs hover:bg-neutral-800 transition cursor-pointer"
                 >
                   <Download className="w-3.5 h-3.5 text-pink-400" />
                   <span>PDF</span>
@@ -347,7 +340,7 @@ export default function HistoryPage() {
                 {/* PNG / ZIP Export */}
                 <button
                   onClick={() => exportToImage("floating-vault-doc", `${selectedDoc.documentNumber}.png`)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-700 text-white text-xs font-bold shadow hover:bg-emerald-800 transition"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-700 text-white text-xs font-bold shadow-xs hover:bg-emerald-800 transition cursor-pointer"
                 >
                   <ImageIcon className="w-3.5 h-3.5" />
                   <span>Image</span>
@@ -356,7 +349,7 @@ export default function HistoryPage() {
                 {/* DOCX Export */}
                 <button
                   onClick={() => exportToDOCX("floating-vault-doc", `${selectedDoc.documentNumber}.docx`)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-700 text-white text-xs font-bold shadow hover:bg-indigo-800 transition"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-700 text-white text-xs font-bold shadow-xs hover:bg-indigo-800 transition cursor-pointer"
                 >
                   <FileType className="w-3.5 h-3.5" />
                   <span>Word</span>
@@ -365,37 +358,39 @@ export default function HistoryPage() {
                 {/* Close Modal */}
                 <button
                   onClick={() => setSelectedDoc(null)}
-                  className="p-1.5 rounded-full bg-[#DFD9C9] text-neutral-800 hover:bg-neutral-900 hover:text-white transition"
+                  className="p-1.5 rounded-full bg-[#DFD9C9] text-neutral-800 hover:bg-neutral-900 hover:text-white transition cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
             </div>
 
-            {/* Real Template Printable Container */}
-            <div className="overflow-y-auto p-4 bg-neutral-900/10 rounded-2xl flex justify-center max-h-[80vh]">
-              {(() => {
-                const docData = selectedDoc.data || {};
-                const docType = selectedDoc.type.toLowerCase();
+            {/* Real Template Printable Container with Mobile Scaling */}
+            <div className="overflow-y-auto overflow-x-auto p-2 sm:p-4 bg-neutral-900/10 rounded-2xl flex justify-center items-start max-h-[80vh] [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+              <div className="scale-[0.45] sm:scale-[0.75] md:scale-100 origin-top my-2 shrink-0">
+                {(() => {
+                  const docData = selectedDoc.data || {};
+                  const docType = selectedDoc.type.toLowerCase();
 
-                switch (docType) {
-                  case "invoice":
-                    return <ModernInvoiceTemplate id="floating-vault-doc" {...docData} />;
-                  case "agreement":
-                    return <ModernAgreementTemplate id="floating-vault-doc" {...docData} />;
-                  case "nda":
-                    return <ModernNDATemplate id="floating-vault-doc" {...docData} />;
-                  case "quotation":
-                    return <ModernQuotationTemplate id="floating-vault-doc" {...docData} />;
-                  case "receipt":
-                  case "payment_receipt":
-                    return <ModernReceiptTemplate id="floating-vault-doc" {...docData} />;
-                  case "certificate":
-                    return <ModernCertificateTemplate id="floating-vault-doc" {...docData} />;
-                  default:
-                    return <ModernInvoiceTemplate id="floating-vault-doc" {...docData} />;
-                }
-              })()}
+                  switch (docType) {
+                    case "invoice":
+                      return <ModernInvoiceTemplate id="floating-vault-doc" {...docData} />;
+                    case "agreement":
+                      return <ModernAgreementTemplate id="floating-vault-doc" {...docData} />;
+                    case "nda":
+                      return <ModernNDATemplate id="floating-vault-doc" {...docData} />;
+                    case "quotation":
+                      return <ModernQuotationTemplate id="floating-vault-doc" {...docData} />;
+                    case "receipt":
+                    case "payment_receipt":
+                      return <ModernReceiptTemplate id="floating-vault-doc" {...docData} />;
+                    case "certificate":
+                      return <ModernCertificateTemplate id="floating-vault-doc" {...docData} />;
+                    default:
+                      return <ModernInvoiceTemplate id="floating-vault-doc" {...docData} />;
+                  }
+                })()}
+              </div>
             </div>
           </div>
         </div>
