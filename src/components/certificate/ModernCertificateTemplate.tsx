@@ -249,26 +249,26 @@ export function ModernCertificateTemplate({
 
         {/* Scope of Work */}
         <div className="px-10 mt-5">
-          <div className="bg-[#0a0a0a] text-white rounded-full py-1.5 px-5 inline-block text-[11px] font-black uppercase tracking-wider mb-2 shadow-sm">
-            SCOPE OF WORK
-          </div>
-          <p className="text-xs text-neutral-800 font-medium leading-relaxed pl-1">
+          <span className="text-[11px] font-black uppercase text-neutral-900 tracking-wider block mb-1.5">
+            SCOPE OF WORK:
+          </span>
+          <div className="bg-neutral-50 border-l-4 border-[#0a0a0a] rounded-r-xl p-3.5 text-xs text-neutral-800 font-semibold leading-relaxed shadow-2xs">
             {scopeOfWork}
-          </p>
+          </div>
         </div>
 
         {/* Deliverables Grid */}
         <div className="px-10 mt-5">
-          <div className="bg-[#0a0a0a] text-white rounded-full py-1.5 px-5 inline-block text-[11px] font-black uppercase tracking-wider mb-2 shadow-sm">
-            DELIVERABLES
-          </div>
-          <div className="grid grid-cols-2 gap-2 pl-1 text-xs font-semibold text-neutral-800">
+          <span className="text-[11px] font-black uppercase text-neutral-900 tracking-wider block mb-2">
+            DELIVERABLES:
+          </span>
+          <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-3.5 grid grid-cols-2 gap-3 text-xs font-bold text-neutral-800 shadow-2xs">
             {deliverables.map((item, idx) => (
-              <div key={idx} className="flex items-center gap-2">
-                <div className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${accentBadgeBg}`}>
-                  <Check className="w-3 h-3 stroke-[3]" />
+              <div key={idx} className="flex items-center gap-2.5">
+                <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 shadow-2xs ${accentBadgeBg}`}>
+                  <Check className="w-3.5 h-3.5 stroke-[3]" />
                 </div>
-                <span>{item}</span>
+                <span className="text-neutral-900 font-bold">{item}</span>
               </div>
             ))}
           </div>
@@ -276,12 +276,12 @@ export function ModernCertificateTemplate({
 
         {/* Certification Note */}
         <div className="px-10 mt-5">
-          <div className="bg-[#0a0a0a] text-white rounded-full py-1.5 px-5 inline-block text-[11px] font-black uppercase tracking-wider mb-2 shadow-sm">
-            CERTIFICATION
-          </div>
-          <p className="text-xs text-neutral-800 font-medium leading-relaxed pl-1">
+          <span className="text-[11px] font-black uppercase text-neutral-900 tracking-wider block mb-1.5">
+            CERTIFICATION & CONFIRMATION:
+          </span>
+          <div className="bg-neutral-50 border-l-4 border-[#a6ce39] rounded-r-xl p-3.5 text-xs text-neutral-800 font-semibold leading-relaxed shadow-2xs">
             {confirmationNote}
-          </p>
+          </div>
         </div>
       </div>
 
