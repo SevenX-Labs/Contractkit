@@ -344,21 +344,8 @@ export function ModernInvoiceTemplate({
       </div>
 
       {/* Full-Width Black Footer Bar */}
-      <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-4 flex justify-between items-center text-xs font-semibold z-20">
-        <div className="flex items-center gap-2">
-          <Phone className="w-3.5 h-3.5 text-white shrink-0" />
-          <span>{senderPhone || "8652601566"}</span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Mail className="w-3.5 h-3.5 text-white shrink-0" />
-          <span>{senderEmail || "sevenxlabs07@gmail.com"}</span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <MapPin className="w-3.5 h-3.5 text-white shrink-0" />
-          <span>{senderAddress || "Thane, Mumbai, Maharashtra"}</span>
-        </div>
+      <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 flex justify-center items-center text-xs font-semibold z-20">
+        <span>Made with SevenX Labs</span>
       </div>
     </div>
   );

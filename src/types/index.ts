@@ -184,8 +184,12 @@ export interface NDAData {
   // Legacy / Alternate party naming fallback
   freelancerName?: string;
   freelancerCompany?: string;
+  freelancerSignature?: string;
+  freelancerSignDate?: string;
   clientName?: string;
   clientCompany?: string;
+  clientSignature?: string;
+  clientSignDate?: string;
   
   // 18-Section Clauses
   purpose?: string;

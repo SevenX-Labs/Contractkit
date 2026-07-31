@@ -10,19 +10,83 @@ export function useDocumentExport() {
 
   /**
    * Comprehensive DOM sanitizer for html2canvas.
-   * 1. Resolves lab()/oklch()/color-mix() to RGB fallbacks
-   * 2. Fixes SVG icon alignment inside flex containers (the main cause of icon-shift)
-   * 3. Forces explicit inline styles for flex alignment that html2canvas handles reliably
+   * 1. Resets all ancestor transforms, scale, zoom & negative margins on cloned element
+   * 2. Removes duplicate elements with the target ID in clonedDoc
+   * 3. Resolves lab()/oklch()/color-mix() to RGB fallbacks
+   * 4. Removes text-shadow and text node transforms which cause duplicate text layers in html2canvas
+   * 5. Fixes SVG icon alignment inside flex containers
    */
-  const sanitizeClonedDoc = (clonedDoc: Document) => {
+  const sanitizeClonedDoc = (clonedDoc: Document, clonedElement?: HTMLElement) => {
     try {
       const win = clonedDoc.defaultView || window;
+
+      // 1. If clonedElement is provided, fix duplicate IDs and reset ancestor transforms
+      if (clonedElement) {
+        if (clonedElement.id) {
+          const matchingElements = Array.from(clonedDoc.querySelectorAll(`#${clonedElement.id}`));
+          if (matchingElements.length > 1) {
+            for (let i = 1; i < matchingElements.length; i++) {
+              if (matchingElements[i] !== clonedElement) {
+                matchingElements[i].remove();
+              }
+            }
+          }
+        }
+
+        // Reset styling on target element
+        clonedElement.style.transform = "none";
+        clonedElement.style.webkitTransform = "none";
+        clonedElement.style.boxShadow = "none";
+        clonedElement.style.margin = "0 auto";
+
+        // Reset transforms, scale, zoom, filters and margins on all ancestor containers up to body
+        let curr = clonedElement.parentElement;
+        while (curr && curr !== clonedDoc.body) {
+          curr.style.transform = "none";
+          curr.style.webkitTransform = "none";
+          curr.style.zoom = "1";
+          curr.style.margin = "0";
+          curr.style.padding = "0";
+          curr.style.filter = "none";
+          curr.style.backdropFilter = "none";
+          curr.style.display = "block";
+          curr.style.width = "auto";
+          curr.style.height = "auto";
+          curr = curr.parentElement;
+        }
+      }
+
+      // Reset root body element in clone
+      if (clonedDoc.body) {
+        clonedDoc.body.style.transform = "none";
+        clonedDoc.body.style.webkitTransform = "none";
+        clonedDoc.body.style.zoom = "1";
+        clonedDoc.body.style.margin = "0";
+        clonedDoc.body.style.padding = "0";
+        clonedDoc.body.style.backgroundColor = "#ffffff";
+      }
+
+      // 2. Sanitize all nodes in the document
       const allNodes = Array.from(clonedDoc.querySelectorAll<HTMLElement>("*"));
 
       allNodes.forEach((node) => {
         try {
           const comp = win.getComputedStyle(node);
           if (comp) {
+            // Text shadow causes html2canvas to draw double text!
+            if (comp.textShadow && comp.textShadow !== "none") {
+              node.style.textShadow = "none";
+            }
+
+            // Text transform (rotate/scale on text elements) causes double text rendering in html2canvas
+            const tag = node.tagName.toLowerCase();
+            if (tag === "span" || tag === "p" || tag === "h1" || tag === "h2" || tag === "h3" || tag === "h4" || tag === "div") {
+              if (comp.transform && comp.transform !== "none") {
+                node.style.transform = "none";
+                node.style.webkitTransform = "none";
+              }
+            }
+
             // Fix unsupported color functions
             if (comp.color && (comp.color.includes("lab(") || comp.color.includes("oklch(") || comp.color.includes("color-mix("))) {
               node.style.color = "#111111";
@@ -124,7 +188,7 @@ export function useDocumentExport() {
       logging: false,
       backgroundColor: "#ffffff",
       windowWidth: 1200,
-      onclone: (clonedDoc) => sanitizeClonedDoc(clonedDoc),
+      onclone: (clonedDoc, clonedElement) => sanitizeClonedDoc(clonedDoc, clonedElement),
     });
   };
 

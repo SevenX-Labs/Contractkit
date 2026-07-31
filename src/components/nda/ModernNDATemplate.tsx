@@ -345,21 +345,8 @@ export function ModernNDATemplate({
               <span>Page 1 of 2</span>
             </div>
 
-            <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 flex justify-between items-center text-xs font-semibold z-20">
-              <div className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-white shrink-0" />
-                <span>{disclosingPhone || "8652601566"}</span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-white shrink-0" />
-                <span>{disclosingEmail || "sevenxlabs07@gmail.com"}</span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-white shrink-0" />
-                <span>{disclosingAddress || "Thane, Mumbai, Maharashtra"}</span>
-              </div>
+            <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 flex justify-center items-center text-xs font-semibold z-20">
+              <span>Made with SevenX Labs</span>
             </div>
           </div>
         </div>
@@ -469,22 +456,8 @@ export function ModernNDATemplate({
               <span>Page 2 of 2</span>
             </div>
 
-            {/* Full-Width Black Footer Bar */}
-            <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 flex justify-between items-center text-xs font-semibold z-20">
-              <div className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-white shrink-0" />
-                <span>{disclosingPhone || "8652601566"}</span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-white shrink-0" />
-                <span>{disclosingEmail || "sevenxlabs07@gmail.com"}</span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-white shrink-0" />
-                <span>{disclosingAddress || "Thane, Mumbai, Maharashtra"}</span>
-              </div>
+            <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 flex justify-center items-center text-xs font-semibold z-20">
+              <span>Made with SevenX Labs</span>
             </div>
           </div>
         </div>

@@ -359,21 +359,8 @@ export function ModernAgreementTemplate({
               <span>Page 1 of 2</span>
             </div>
 
-            <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px", fontWeight: 600 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <Phone style={{ width: "16px", height: "16px", color: "white", flexShrink: 0, display: "block" }} />
-                <span style={{ lineHeight: "1", display: "block" }}>{providerPhone || "8652601566"}</span>
-              </div>
-
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <Mail style={{ width: "16px", height: "16px", color: "white", flexShrink: 0, display: "block" }} />
-                <span style={{ lineHeight: "1", display: "block" }}>{providerEmail || "sevenxlabs07@gmail.com"}</span>
-              </div>
-
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <MapPin style={{ width: "16px", height: "16px", color: "white", flexShrink: 0, display: "block" }} />
-                <span style={{ lineHeight: "1", display: "block" }}>{providerAddress || "Thane, Mumbai, Maharashtra"}</span>
-              </div>
+            <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20" style={{ display: "flex", justifyContent: "center", alignItems: "center", fontSize: "12px", fontWeight: 600 }}>
+              <span>Made with SevenX Labs</span>
             </div>
           </div>
         </div>
@@ -471,21 +458,8 @@ export function ModernAgreementTemplate({
             </div>
 
             {/* Full-Width Black Footer Bar */}
-            <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px", fontWeight: 600 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <Phone style={{ width: "16px", height: "16px", color: "white", flexShrink: 0, display: "block" }} />
-                <span style={{ lineHeight: "1", display: "block" }}>{providerPhone || "8652601566"}</span>
-              </div>
-
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <Mail style={{ width: "16px", height: "16px", color: "white", flexShrink: 0, display: "block" }} />
-                <span style={{ lineHeight: "1", display: "block" }}>{providerEmail || "sevenxlabs07@gmail.com"}</span>
-              </div>
-
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <MapPin style={{ width: "16px", height: "16px", color: "white", flexShrink: 0, display: "block" }} />
-                <span style={{ lineHeight: "1", display: "block" }}>{providerAddress || "Thane, Mumbai, Maharashtra"}</span>
-              </div>
+            <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20" style={{ display: "flex", justifyContent: "center", alignItems: "center", fontSize: "12px", fontWeight: 600 }}>
+              <span>Made with SevenX Labs</span>
             </div>
           </div>
         </div>

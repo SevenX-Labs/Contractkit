@@ -484,25 +484,8 @@ export function ModernQuotationTemplate({
       </div>
 
       {/* Full-Width Black Contact Footer Bar */}
-      <div className="mt-6 mb-6 mx-10 bg-[#0a0a0a] text-white px-8 py-3.5 rounded-full shadow-xl" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px", fontWeight: 600 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <Phone style={{ width: "14px", height: "14px", color: "white", flexShrink: 0, display: "block" }} />
-          <span style={{ lineHeight: "1", display: "block" }}>{senderPhone}</span>
-        </div>
-
-        <span className="text-neutral-600 font-normal" style={{ lineHeight: "1" }}>|</span>
-
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <Mail style={{ width: "14px", height: "14px", color: "white", flexShrink: 0, display: "block" }} />
-          <span style={{ lineHeight: "1", display: "block" }}>{senderEmail}</span>
-        </div>
-
-        <span className="text-neutral-600 font-normal" style={{ lineHeight: "1" }}>|</span>
-
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <Globe style={{ width: "14px", height: "14px", color: "white", flexShrink: 0, display: "block" }} />
-          <span style={{ lineHeight: "1", display: "block" }}>{senderWebsite}</span>
-        </div>
+      <div className="mt-6 mb-6 mx-10 bg-[#0a0a0a] text-white px-8 py-3.5 rounded-full shadow-xl" style={{ display: "flex", justifyContent: "center", alignItems: "center", fontSize: "12px", fontWeight: 600 }}>
+        <span>Made with SevenX Labs</span>
       </div>
     </div>
   );
