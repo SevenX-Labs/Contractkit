@@ -170,7 +170,7 @@ export function ModernInvoiceTemplate({
           </div>
 
           {/* Top Right Black Header Panel */}
-          <div className="relative w-[50%] bg-[#0a0a0a] text-white pt-10 pb-8 px-8 rounded-bl-[50px] shadow-2xl flex flex-col justify-between min-h-[200px]">
+          <div className="relative w-[52%] bg-[#0a0a0a] text-white pt-10 pb-8 px-8 rounded-bl-[50px] shadow-2xl flex flex-col justify-between min-h-[200px] overflow-hidden">
             <div className="relative z-10">
               <h1 className="text-6xl font-black tracking-wider uppercase text-white mb-6">
                 INVOICE
@@ -190,18 +190,18 @@ export function ModernInvoiceTemplate({
                   <span className="text-[11px] text-neutral-400 block font-sans">Invoice Type</span>
                   <span className="font-bold text-[#a6ce39] text-xs block mt-0.5 whitespace-nowrap">{invoiceType || "Advance Payment"}</span>
                 </div>
-                <div>
+                <div className="pr-4">
                   <span className="text-[11px] text-neutral-400 block font-sans">Project Name</span>
-                  <span className="font-bold text-white text-xs block mt-0.5 whitespace-nowrap truncate">{projectName || "E-Commerce Website"}</span>
+                  <span className="font-bold text-white text-xs block mt-0.5 leading-snug break-words">{projectName || "E-Commerce Website"}</span>
                 </div>
               </div>
             </div>
 
             {/* Top Right Geometric Accent Triangles */}
-            <div className="absolute -bottom-6 -right-6 pointer-events-none z-20">
-              <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <polygon points="20,10 90,50 30,90" fill={accentShape} opacity="0.95" />
-                <polygon points="50,20 100,50 60,80" fill={accentShape} opacity="0.65" />
+            <div className="absolute -bottom-6 -right-6 pointer-events-none z-0 opacity-80">
+              <svg width="90" height="90" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="20,10 90,50 30,90" fill={accentShape} opacity="0.75" />
+                <polygon points="50,20 100,50 60,80" fill={accentShape} opacity="0.45" />
               </svg>
             </div>
           </div>
@@ -210,11 +210,11 @@ export function ModernInvoiceTemplate({
         {/* Work Description / Mini Summary Note Above Item Table */}
         {miniDescription && (
           <div className="px-10 mt-6">
-            <div className="bg-neutral-50 border-l-4 border-[#0a0a0a] rounded-r-2xl p-3.5 text-xs text-neutral-800 font-medium leading-relaxed shadow-xs flex items-start gap-3">
-              <span className="font-black text-neutral-900 uppercase text-[10px] tracking-wider bg-[#0a0a0a] text-white px-2 py-0.5 rounded shrink-0">
+            <div className="bg-neutral-50 border-l-4 border-[#0a0a0a] rounded-r-2xl p-3.5 text-xs text-neutral-800 font-medium leading-relaxed shadow-xs flex items-center gap-3">
+              <span className="font-black uppercase text-[11px] tracking-wider bg-[#0a0a0a] text-white px-3 py-1 rounded-md shrink-0 leading-none inline-flex items-center justify-center">
                 SUMMARY
               </span>
-              <p className="flex-1 text-neutral-700">{miniDescription}</p>
+              <p className="flex-1 text-neutral-700 leading-relaxed">{miniDescription}</p>
             </div>
           </div>
         )}
