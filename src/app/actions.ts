@@ -53,12 +53,44 @@ export async function getProfileDB(): Promise<FreelancerProfile> {
       };
     }
 
+    let isUSDemo = profile.phone?.includes("555") || profile.bankName?.includes("Silicon") || profile.address?.includes("CA 94107");
+    if (isUSDemo) {
+      const updated = await prisma.profile.update({
+        where: { id: profile.id },
+        data: {
+          name: profile.name || "Sahil Hode",
+          company: "SevenX Labs Studio",
+          email: "sevenxlabs07@gmail.com",
+          phone: "+91 8652601566",
+          address: "Thane, Mumbai, Maharashtra, India",
+          bankName: "HDFC Bank",
+          bankAccount: "50100234567890",
+          bankIfsc: "HDFC0001234",
+          paypalEmail: "sevenxlabs07@gmail.com",
+          upiId: "sevenxlabs@upi",
+        },
+      });
+      return {
+        name: updated.name,
+        company: updated.company,
+        email: updated.email,
+        phone: updated.phone,
+        address: updated.address,
+        upiId: updated.upiId,
+        bankName: updated.bankName,
+        bankAccount: updated.bankAccount,
+        bankIfsc: updated.bankIfsc,
+        paypalEmail: updated.paypalEmail,
+        invoicePrefix: updated.invoicePrefix || "SXL-INV-",
+      };
+    }
+
     return {
       name: profile.name || "Sahil Hode",
-      company: profile.company || "SevenX Labs",
+      company: profile.company || "SevenX Labs Studio",
       email: profile.email || "sevenxlabs07@gmail.com",
       phone: profile.phone ? (profile.phone.startsWith("+") ? profile.phone : `+91 ${profile.phone}`) : "+91 8652601566",
-      address: profile.address || "Thane, Mumbai, Maharashtra",
+      address: profile.address || "Thane, Mumbai, Maharashtra, India",
       upiId: profile.upiId || "sevenxlabs@upi",
       bankName: profile.bankName || "HDFC Bank",
       bankAccount: profile.bankAccount || "50100234567890",
