@@ -130,6 +130,17 @@ export default function QuotationPage() {
   });
 
   useEffect(() => {
+    const savedEdit = localStorage.getItem("edit_quotation");
+    if (savedEdit) {
+      try {
+        const parsed = JSON.parse(savedEdit);
+        setFormData(parsed);
+        localStorage.removeItem("edit_quotation");
+        toast.success("Document loaded into editor!");
+        return;
+      } catch (e) {}
+    }
+
     Promise.all([getProfileDB(), getNextQuotationNumberDB()]).then(([profile, quoNum]) => {
       const seq = quoNum.split("-").pop() || "000001";
       setQuoSeq(seq);

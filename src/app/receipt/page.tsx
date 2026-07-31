@@ -78,6 +78,17 @@ export default function ReceiptBuilderPage() {
   };
 
   useEffect(() => {
+    const savedEdit = localStorage.getItem("edit_receipt");
+    if (savedEdit) {
+      try {
+        const parsed = JSON.parse(savedEdit);
+        setFormData(parsed);
+        localStorage.removeItem("edit_receipt");
+        toast.success("Document loaded into editor!");
+        return;
+      } catch (e) {}
+    }
+
     Promise.all([getProfileDB(), getNextReceiptNumberDB()]).then(([profile, num]) => {
       setFormData((prev) => ({
         ...prev,

@@ -95,12 +95,23 @@ export default function NDABuilderPage() {
     entireAgreement: "This Agreement represents the complete understanding between parties regarding confidentiality, superseding all prior oral or written discussions.",
     additionalTerms: "Special Conditions: Custom project clauses, remote work protocols, and communication guidelines agreed upon by both parties.",
 
-    // Signatures
     disclosingSignatory: "Sahil Hode",
     disclosingDesignation: "Founder & Lead Developer",
     receivingSignatory: "Sophia Smith",
     receivingDesignation: "Managing Director",
   });
+
+  useEffect(() => {
+    const savedEdit = localStorage.getItem("edit_nda");
+    if (savedEdit) {
+      try {
+        const parsed = JSON.parse(savedEdit);
+        setFormData(parsed);
+        localStorage.removeItem("edit_nda");
+        toast.success("Document loaded into editor!");
+      } catch (e) {}
+    }
+  }, []);
 
   // Save to Database Handler
   const handleSaveToDB = async () => {

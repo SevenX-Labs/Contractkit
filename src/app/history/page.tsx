@@ -1,10 +1,15 @@
-"use client";
-
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { getAllDocumentsDB, deleteDocumentDB, updateDocumentStatusDB } from "../actions";
 import { SavedDocument, DocumentType, DocumentStatus } from "../../types";
 import { formatCurrency, formatDate } from "../../lib/utils";
 import { useDocumentExport } from "../../hooks/useDocumentExport";
+import ModernInvoiceTemplate from "../../components/invoice/ModernInvoiceTemplate";
+import ModernAgreementTemplate from "../../components/agreement/ModernAgreementTemplate";
+import ModernNDATemplate from "../../components/nda/ModernNDATemplate";
+import ModernQuotationTemplate from "../../components/quotation/ModernQuotationTemplate";
+import ModernReceiptTemplate from "../../components/receipt/ModernReceiptTemplate";
+import ModernCertificateTemplate from "../../components/certificate/ModernCertificateTemplate";
 import {
   History,
   Search,
@@ -13,23 +18,34 @@ import {
   ShieldCheck,
   Trash2,
   Eye,
+  Edit3,
   X,
   RefreshCw,
   Download,
   FileSignature,
   Award,
   Receipt as ReceiptIcon,
+  FileType,
+  Image as ImageIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 
-export default function HistoryPage() {
+  const router = useRouter();
   const [documents, setDocuments] = useState<SavedDocument[]>([]);
   const [activeType, setActiveType] = useState<"all" | DocumentType>("all");
   const [statusFilter, setStatusFilter] = useState<"all" | DocumentStatus>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDoc, setSelectedDoc] = useState<SavedDocument | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { exportToPDF } = useDocumentExport();
+  const { exportToPDF, exportToImage, exportToDOCX } = useDocumentExport();
+
+  const handleEditDoc = (doc: SavedDocument) => {
+    const docType = doc.type.toLowerCase();
+    const route = docType === "payment_receipt" ? "receipt" : docType;
+    localStorage.setItem(`edit_${route}`, JSON.stringify(doc.data || {}));
+    toast.info(`Opening ${doc.documentNumber} in editor...`);
+    router.push(`/${route}`);
+  };
 
   const fetchDocs = async () => {
     setIsLoading(true);
@@ -236,6 +252,13 @@ export default function HistoryPage() {
                           <Eye className="w-3.5 h-3.5" />
                         </button>
                         <button
+                          onClick={() => handleEditDoc(doc)}
+                          className="p-1.5 rounded-full bg-blue-100 text-blue-800 hover:bg-blue-200 transition"
+                          title="Edit Document"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
                           onClick={() => handleDelete(doc)}
                           className="p-1.5 rounded-full bg-pink-100 text-pink-800 hover:bg-pink-200 transition"
                           title="Delete"
@@ -252,24 +275,85 @@ export default function HistoryPage() {
         )}
       </div>
 
-      {/* Floating Printable A4 Document Preview Modal */}
+      {/* Floating Printable A4 Real Document Preview Modal */}
       {selectedDoc && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-6 max-w-4xl w-full shadow-2xl flex flex-col gap-4 my-auto max-h-[90vh]">
-            <div className="flex items-center justify-between border-b border-[#D5CEBC] pb-4">
+          <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-6 max-w-5xl w-full shadow-2xl flex flex-col gap-4 my-auto max-h-[95vh]">
+            {/* Modal Header Controls */}
+            <div className="flex flex-wrap items-center justify-between border-b border-[#D5CEBC] pb-4 gap-3">
               <div>
-                <h3 className="text-base font-extrabold text-neutral-900">Floating Live Document Preview</h3>
-                <p className="text-xs text-neutral-600 font-mono">{selectedDoc.title} (#{selectedDoc.documentNumber})</p>
+                <h3 className="text-base font-extrabold text-neutral-900">{selectedDoc.title}</h3>
+                <p className="text-xs text-neutral-600 font-mono">#{selectedDoc.documentNumber} • {formatDate(selectedDoc.date)}</p>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 flex-wrap">
+                {/* Status Dropdown */}
+                <select
+                  value={selectedDoc.status.toUpperCase()}
+                  onChange={async (e) => {
+                    const newStatus = e.target.value;
+                    const res = await updateDocumentStatusDB(selectedDoc.id, newStatus);
+                    if (res.success) {
+                      setDocuments((prev) =>
+                        prev.map((d) => (d.id === selectedDoc.id ? { ...d, status: newStatus.toLowerCase() as any } : d))
+                      );
+                      setSelectedDoc((prev: any) => prev ? { ...prev, status: newStatus.toLowerCase() } : null);
+                      toast.success(`Document status updated to ${newStatus}`);
+                    } else {
+                      toast.error("Failed to update status");
+                    }
+                  }}
+                  className="px-3 py-1.5 rounded-full text-xs font-extrabold uppercase border border-neutral-300 bg-white text-neutral-900 cursor-pointer outline-none shadow-sm"
+                >
+                  <option value="DRAFT">DRAFT</option>
+                  <option value="SENT">SENT</option>
+                  <option value="PAID">PAID</option>
+                  <option value="SIGNED">SIGNED</option>
+                  <option value="PENDING">PENDING</option>
+                  <option value="CANCELLED">CANCELLED</option>
+                </select>
+
+                {/* Edit Button */}
+                <button
+                  onClick={() => {
+                    const docToEdit = selectedDoc;
+                    setSelectedDoc(null);
+                    handleEditDoc(docToEdit);
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-600 text-white text-xs font-bold shadow hover:bg-blue-700 transition"
+                >
+                  <Edit3 className="w-3.5 h-3.5" />
+                  <span>Edit</span>
+                </button>
+
+                {/* PDF Export */}
                 <button
                   onClick={() => exportToPDF("floating-vault-doc", `${selectedDoc.documentNumber}.pdf`)}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#121212] text-white text-xs font-bold shadow hover:bg-neutral-800 transition"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#121212] text-white text-xs font-bold shadow hover:bg-neutral-800 transition"
                 >
                   <Download className="w-3.5 h-3.5 text-pink-400" />
-                  <span>Download PDF</span>
+                  <span>PDF</span>
                 </button>
+
+                {/* PNG / ZIP Export */}
+                <button
+                  onClick={() => exportToImage("floating-vault-doc", `${selectedDoc.documentNumber}.png`)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-700 text-white text-xs font-bold shadow hover:bg-emerald-800 transition"
+                >
+                  <ImageIcon className="w-3.5 h-3.5" />
+                  <span>Image</span>
+                </button>
+
+                {/* DOCX Export */}
+                <button
+                  onClick={() => exportToDOCX("floating-vault-doc", `${selectedDoc.documentNumber}.docx`)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-700 text-white text-xs font-bold shadow hover:bg-indigo-800 transition"
+                >
+                  <FileType className="w-3.5 h-3.5" />
+                  <span>Word</span>
+                </button>
+
+                {/* Close Modal */}
                 <button
                   onClick={() => setSelectedDoc(null)}
                   className="p-1.5 rounded-full bg-[#DFD9C9] text-neutral-800 hover:bg-neutral-900 hover:text-white transition"
@@ -279,74 +363,30 @@ export default function HistoryPage() {
               </div>
             </div>
 
-            {/* Printable A4 Card */}
-            <div className="overflow-y-auto p-4 bg-neutral-950/20 rounded-2xl flex justify-center">
-              <div
-                id="floating-vault-doc"
-                className="w-[210mm] min-h-[297mm] bg-white text-neutral-900 p-10 shadow-2xl rounded-xl flex flex-col justify-between"
-                style={{ fontFamily: "Arial, sans-serif" }}
-              >
-                <div>
-                  <div className="border-b-2 border-neutral-900 pb-4 mb-6 flex justify-between items-end">
-                    <div>
-                      <h1 className="text-xl font-bold tracking-tight text-neutral-900 uppercase">
-                        {selectedDoc.title}
-                      </h1>
-                      <p className="text-xs text-neutral-500 mt-1 font-mono">Ref #: {selectedDoc.documentNumber}</p>
-                    </div>
-                    <div className="text-right text-xs text-neutral-600">
-                      <p>Date: {formatDate(selectedDoc.date)}</p>
-                      <div className="mt-1 flex items-center justify-end gap-1">
-                        <span className="font-bold text-neutral-900 uppercase">Status:</span>
-                        <select
-                          value={selectedDoc.status.toUpperCase()}
-                          onChange={async (e) => {
-                            const newStatus = e.target.value;
-                            const res = await updateDocumentStatusDB(selectedDoc.id, newStatus);
-                            if (res.success) {
-                              setDocuments((prev) =>
-                                prev.map((d) => (d.id === selectedDoc.id ? { ...d, status: newStatus.toLowerCase() as any } : d))
-                              );
-                              setSelectedDoc((prev: any) => prev ? { ...prev, status: newStatus.toLowerCase() } : null);
-                              toast.success(`Document status updated to ${newStatus}`);
-                            } else {
-                              toast.error("Failed to update status");
-                            }
-                          }}
-                          className="px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase border border-neutral-300 bg-white text-neutral-900 cursor-pointer outline-none"
-                        >
-                          <option value="DRAFT">DRAFT</option>
-                          <option value="SENT">SENT</option>
-                          <option value="PAID">PAID</option>
-                          <option value="SIGNED">SIGNED</option>
-                          <option value="PENDING">PENDING</option>
-                          <option value="CANCELLED">CANCELLED</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
+            {/* Real Template Printable Container */}
+            <div className="overflow-y-auto p-4 bg-neutral-900/10 rounded-2xl flex justify-center max-h-[80vh]">
+              {(() => {
+                const docData = selectedDoc.data || {};
+                const docType = selectedDoc.type.toLowerCase();
 
-                  <div className="text-xs text-neutral-800 leading-relaxed mb-6 bg-neutral-50 p-4 rounded border border-neutral-100">
-                    <p className="font-bold text-neutral-900 text-sm mb-1">CLIENT DETAILS:</p>
-                    <p className="text-sm font-extrabold text-neutral-900">{selectedDoc.clientName}</p>
-                    {selectedDoc.amount ? (
-                      <p className="text-neutral-700 mt-1 font-mono font-bold">Total Amount: {formatCurrency(selectedDoc.amount, "₹")}</p>
-                    ) : null}
-                  </div>
-
-                  {selectedDoc.data && (
-                    <div className="text-xs text-neutral-700 space-y-3 font-mono bg-neutral-50 p-4 rounded border border-neutral-200">
-                      {(selectedDoc.data as any).projectTitle && <p><strong>Project:</strong> {(selectedDoc.data as any).projectTitle}</p>}
-                      {(selectedDoc.data as any).projectDescription && <p><strong>Scope:</strong> {(selectedDoc.data as any).projectDescription}</p>}
-                      {(selectedDoc.data as any).deliverables && <p className="whitespace-pre-line"><strong>Deliverables:</strong><br />{(selectedDoc.data as any).deliverables}</p>}
-                    </div>
-                  )}
-                </div>
-
-                <div className="border-t border-neutral-300 pt-4 text-center text-[10px] text-neutral-400">
-                  <p>SevenX Labs Studio • Official Record #{selectedDoc.documentNumber}</p>
-                </div>
-              </div>
+                switch (docType) {
+                  case "invoice":
+                    return <ModernInvoiceTemplate id="floating-vault-doc" {...docData} />;
+                  case "agreement":
+                    return <ModernAgreementTemplate id="floating-vault-doc" {...docData} />;
+                  case "nda":
+                    return <ModernNDATemplate id="floating-vault-doc" {...docData} />;
+                  case "quotation":
+                    return <ModernQuotationTemplate id="floating-vault-doc" {...docData} />;
+                  case "receipt":
+                  case "payment_receipt":
+                    return <ModernReceiptTemplate id="floating-vault-doc" {...docData} />;
+                  case "certificate":
+                    return <ModernCertificateTemplate id="floating-vault-doc" {...docData} />;
+                  default:
+                    return <ModernInvoiceTemplate id="floating-vault-doc" {...docData} />;
+                }
+              })()}
             </div>
           </div>
         </div>

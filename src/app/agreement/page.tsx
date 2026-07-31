@@ -122,6 +122,17 @@ export default function AgreementPage() {
   const [agrSeq, setAgrSeq] = useState("000001");
 
   useEffect(() => {
+    const savedEdit = localStorage.getItem("edit_agreement");
+    if (savedEdit) {
+      try {
+        const parsed = JSON.parse(savedEdit);
+        setFormData(parsed);
+        localStorage.removeItem("edit_agreement");
+        toast.success("Document loaded into editor!");
+        return;
+      } catch (e) {}
+    }
+
     Promise.all([getProfileDB(), getNextDocumentNumberDB("AGREEMENT")]).then(([profile, num]) => {
       const rawSeq = num.split("-").pop() || "001";
       const cleanSeq = rawSeq.replace(/[^0-9]/g, "") || "001";

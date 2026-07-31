@@ -80,6 +80,17 @@ export default function CertificateBuilderPage() {
   };
 
   useEffect(() => {
+    const savedEdit = localStorage.getItem("edit_certificate");
+    if (savedEdit) {
+      try {
+        const parsed = JSON.parse(savedEdit);
+        setFormData(parsed);
+        localStorage.removeItem("edit_certificate");
+        toast.success("Document loaded into editor!");
+        return;
+      } catch (e) {}
+    }
+
     Promise.all([getProfileDB(), getNextCertificateNumberDB()]).then(([profile, num]) => {
       setFormData((prev) => ({
         ...prev,

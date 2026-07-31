@@ -81,6 +81,17 @@ export default function InvoicePage() {
   });
 
   useEffect(() => {
+    const savedEdit = localStorage.getItem("edit_invoice");
+    if (savedEdit) {
+      try {
+        const parsed = JSON.parse(savedEdit);
+        setFormData(parsed);
+        localStorage.removeItem("edit_invoice");
+        toast.success("Document loaded into editor!");
+        return;
+      } catch (e) {}
+    }
+
     Promise.all([getProfileDB(), getNextInvoiceNumberDB()]).then(([profile, invNum]) => {
       const hName = profile.name || "SevenX Labs";
       const bName = profile.bankName || "HDFC Bank";
