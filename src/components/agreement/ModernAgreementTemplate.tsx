@@ -443,7 +443,10 @@ export function ModernAgreementTemplate({
                 <div>
                   <p className="font-extrabold text-neutral-900 uppercase text-xs tracking-wider mb-2">AUTHORIZED SIGNATURE:</p>
                   <div className="py-2 border-b border-neutral-300">
-                    <span className="font-signature text-3xl font-extrabold text-neutral-900 tracking-wider select-none transform -rotate-3 border-b-2 border-neutral-900/80 pb-0.5 px-2">
+                    <span
+                      className="font-signature text-3xl text-neutral-900 tracking-wider select-none transform -rotate-3 border-b-2 border-neutral-900/80 pb-0.5 px-2"
+                      style={{ fontFamily: "'Dancing Script', 'Caveat', cursive" }}
+                    >
                       shode
                     </span>
                   </div>

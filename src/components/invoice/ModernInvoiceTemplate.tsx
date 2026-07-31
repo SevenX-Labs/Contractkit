@@ -210,11 +210,11 @@ export function ModernInvoiceTemplate({
         {/* Work Description / Mini Summary Note Above Item Table */}
         {miniDescription && (
           <div className="px-10 mt-6">
-            <div className="bg-neutral-50 border-l-4 border-[#0a0a0a] rounded-r-2xl p-3.5 text-xs text-neutral-800 font-medium leading-relaxed shadow-xs flex items-center gap-3">
-              <span className="font-black uppercase text-[11px] tracking-wider bg-[#0a0a0a] text-white px-3 py-1 rounded-md shrink-0 leading-none inline-flex items-center justify-center">
-                SUMMARY
+            <div className="bg-neutral-50 border-l-4 border-[#0a0a0a] rounded-r-2xl p-3.5 text-xs text-neutral-800 font-medium leading-relaxed shadow-xs flex items-baseline gap-2">
+              <span className="font-black text-neutral-900 uppercase text-xs tracking-wider shrink-0 font-mono">
+                SUMMARY:
               </span>
-              <p className="flex-1 text-neutral-700 leading-relaxed">{miniDescription}</p>
+              <p className="flex-1 text-neutral-800 leading-relaxed font-semibold">{miniDescription}</p>
             </div>
           </div>
         )}
@@ -325,7 +325,10 @@ export function ModernInvoiceTemplate({
               {signatureUrl ? (
                 <img src={signatureUrl} alt="Signature" className="h-10 object-contain mb-1" />
               ) : (
-                <span className="font-signature text-3xl font-extrabold text-neutral-900 tracking-wider select-none transform -rotate-3 border-b-2 border-neutral-900/80 pb-0.5 px-2 mb-1">
+                <span
+                  className="font-signature text-3xl text-neutral-900 tracking-wider select-none transform -rotate-3 border-b-2 border-neutral-900/80 pb-0.5 px-2 mb-1"
+                  style={{ fontFamily: "'Dancing Script', 'Caveat', cursive" }}
+                >
                   shode
                 </span>
               )}

@@ -295,7 +295,10 @@ export function ModernCertificateTemplate({
           <div className="border border-neutral-200 rounded-2xl p-4 relative overflow-hidden">
             <p className="font-extrabold text-neutral-900 uppercase text-[11px] tracking-wider mb-2">AUTHORIZED SIGNATURE</p>
             <div className="h-10 flex items-center mb-2">
-              <span className="font-signature text-3xl font-extrabold text-neutral-900 tracking-wider select-none transform -rotate-3 border-b-2 border-neutral-900/80 pb-0.5 px-2">
+              <span
+                className="font-signature text-3xl text-neutral-900 tracking-wider select-none transform -rotate-3 border-b-2 border-neutral-900/80 pb-0.5 px-2"
+                style={{ fontFamily: "'Dancing Script', 'Caveat', cursive" }}
+              >
                 shode
               </span>
             </div>

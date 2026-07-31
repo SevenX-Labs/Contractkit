@@ -482,7 +482,10 @@ export function ModernQuotationTemplate({
               {signatureUrl ? (
                 <img src={signatureUrl} alt="Signature" className="h-12 object-contain" />
               ) : (
-                <span className="font-signature text-3xl font-extrabold text-neutral-900 tracking-wider select-none transform -rotate-3 border-b-2 border-neutral-900/80 pb-0.5 px-2">
+                <span
+                  className="font-signature text-3xl text-neutral-900 tracking-wider select-none transform -rotate-3 border-b-2 border-neutral-900/80 pb-0.5 px-2"
+                  style={{ fontFamily: "'Dancing Script', 'Caveat', cursive" }}
+                >
                   shode
                 </span>
               )}

@@ -1,7 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Dancing+Script:wght@700&family=Great+Vibes&display=swap');
 @import "tailwindcss";
 
 .font-signature {
-  font-family: 'Dancing Script', 'Caveat', 'Great Vibes', cursive, serif;
+  font-family: 'Dancing Script', 'Caveat', 'Great Vibes', cursive, serif !important;
 }
 
 @layer base {
