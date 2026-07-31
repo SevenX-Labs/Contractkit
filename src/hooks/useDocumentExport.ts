@@ -291,9 +291,12 @@ export function useDocumentExport() {
         }
       }
 
-      pdf.save(filename);
-      const pageCount = pageContainers.length > 1 ? pageContainers.length : 1;
-      toast.success(`Successfully exported ${pageCount}-page PDF: ${filename}`);
+      const pdfBlob = pdf.output("blob");
+      const saved = await saveBlobWithPrompt(pdfBlob, filename, "PDF Document", "application/pdf", ".pdf");
+      if (saved) {
+        const pageCount = pageContainers.length > 1 ? pageContainers.length : 1;
+        toast.success(`Successfully saved ${pageCount}-page PDF: ${filename}`);
+      }
     } catch (err: any) {
       console.error("PDF Export error:", err);
       toast.error("Error exporting PDF.");
@@ -340,14 +343,10 @@ export function useDocumentExport() {
         }
 
         const zipBlob = await zip.generateAsync({ type: "blob" });
-        const zipUrl = URL.createObjectURL(zipBlob);
-        const link = document.createElement("a");
-        link.href = zipUrl;
-        link.download = `${baseName}.zip`;
-        link.click();
-        URL.revokeObjectURL(zipUrl);
-
-        toast.success(`Successfully exported ${pageContainers.length}-page Images ZIP: ${baseName}.zip`);
+        const saved = await saveBlobWithPrompt(zipBlob, `${baseName}.zip`, "ZIP Archive", "application/zip", ".zip");
+        if (saved) {
+          toast.success(`Successfully saved ${pageContainers.length}-page Images ZIP: ${baseName}.zip`);
+        }
       } else {
         // Single container element: capture and slice if content spans multiple A4 pages
         const canvas = await captureElement(element);
@@ -355,67 +354,54 @@ export function useDocumentExport() {
 
         if (canvas.height <= canvasPageHeight + 30) {
           // 1 page content: direct PNG download
-          const link = document.createElement("a");
-          link.href = canvas.toDataURL("image/png", 1.0);
-          link.download = filename.endsWith(".png") ? filename : `${filename}.png`;
-          link.click();
-          toast.success(`Successfully exported Image: ${link.download}`);
+          const canvasData = canvas.toDataURL("image/png", 1.0);
+          const res = await fetch(canvasData);
+          const pngBlob = await res.blob();
+          const pngFilename = filename.endsWith(".png") ? filename : `${filename}.png`;
+          const saved = await saveBlobWithPrompt(pngBlob, pngFilename, "PNG Image", "image/png", ".png");
+          if (saved) {
+            toast.success(`Successfully saved Image: ${pngFilename}`);
+          }
         } else {
-          // Spans multiple pages: slice into individual page images and pack into ZIP
-          let totalPages = Math.floor(canvas.height / canvasPageHeight);
-          const remainder = canvas.height % canvasPageHeight;
-          if (remainder > 30) totalPages += 1;
-          totalPages = Math.max(1, totalPages);
+          // Content exceeds 1 page: render pages and ZIP them
+          const totalPages = Math.ceil(canvas.height / canvasPageHeight);
+          const zip = new JSZip();
 
-          if (totalPages > 1) {
-            const zip = new JSZip();
+          for (let page = 0; page < totalPages; page++) {
+            const pageCanvas = document.createElement("canvas");
+            pageCanvas.width = canvas.width;
+            pageCanvas.height = canvasPageHeight;
+            const ctx = pageCanvas.getContext("2d");
 
-            for (let page = 0; page < totalPages; page++) {
-              const pageCanvas = document.createElement("canvas");
-              pageCanvas.width = canvas.width;
-              pageCanvas.height = canvasPageHeight;
-              const ctx = pageCanvas.getContext("2d");
+            if (ctx) {
+              ctx.fillStyle = "#ffffff";
+              ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
 
-              if (ctx) {
-                ctx.fillStyle = "#ffffff";
-                ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+              const sourceY = page * canvasPageHeight;
+              const sourceHeight = Math.min(canvasPageHeight, canvas.height - sourceY);
 
-                const sourceY = page * canvasPageHeight;
-                const sourceHeight = Math.min(canvasPageHeight, canvas.height - sourceY);
+              ctx.drawImage(
+                canvas,
+                0,
+                sourceY,
+                canvas.width,
+                sourceHeight,
+                0,
+                0,
+                canvas.width,
+                sourceHeight
+              );
 
-                ctx.drawImage(
-                  canvas,
-                  0,
-                  sourceY,
-                  canvas.width,
-                  sourceHeight,
-                  0,
-                  0,
-                  canvas.width,
-                  sourceHeight
-                );
-
-                const dataUrl = pageCanvas.toDataURL("image/png", 1.0);
-                const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
-                zip.file(`${baseName}_page_${page + 1}.png`, base64Data, { base64: true });
-              }
+              const dataUrl = pageCanvas.toDataURL("image/png", 1.0);
+              const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
+              zip.file(`${baseName}_page_${page + 1}.png`, base64Data, { base64: true });
             }
+          }
 
-            const zipBlob = await zip.generateAsync({ type: "blob" });
-            const zipUrl = URL.createObjectURL(zipBlob);
-            const link = document.createElement("a");
-            link.href = zipUrl;
-            link.download = `${baseName}.zip`;
-            link.click();
-            URL.revokeObjectURL(zipUrl);
-
-            toast.success(`Successfully exported ${totalPages}-page Images ZIP: ${baseName}.zip`);
-          } else {
-            const link = document.createElement("a");
-            link.href = canvas.toDataURL("image/png", 1.0);
-            link.download = filename.endsWith(".png") ? filename : `${filename}.png`;
-            link.click();
-            toast.success(`Successfully exported Image: ${link.download}`);
+          const zipBlob = await zip.generateAsync({ type: "blob" });
+          const saved = await saveBlobWithPrompt(zipBlob, `${baseName}.zip`, "ZIP Archive", "application/zip", ".zip");
+          if (saved) {
+            toast.success(`Successfully saved ${totalPages}-page Images ZIP: ${baseName}.zip`);
           }
         }
       }
@@ -462,12 +448,11 @@ export function useDocumentExport() {
         type: "application/msword",
       });
 
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = filename.endsWith(".docx") ? filename : `${filename}.docx`;
-      link.click();
-      URL.revokeObjectURL(link.href);
-      toast.success(`Successfully exported DOCX: ${filename}`);
+      const docxFilename = filename.endsWith(".docx") ? filename : `${filename}.docx`;
+      const saved = await saveBlobWithPrompt(blob, docxFilename, "Word Document", "application/msword", ".docx");
+      if (saved) {
+        toast.success(`Successfully saved Word document: ${docxFilename}`);
+      }
     } catch (err: any) {
       console.error("Error exporting DOCX:", err);
       toast.error(`DOCX generation error: ${err?.message}`);
@@ -482,4 +467,51 @@ export function useDocumentExport() {
     exportToDOCX,
     isExporting,
   };
+}
+
+/**
+ * Prompts user with native file save dialog asking WHERE to save the file.
+ * Fallback to automatic download link if File System Access API is not supported or declined.
+ */
+async function saveBlobWithPrompt(
+  blob: Blob,
+  suggestedFilename: string,
+  description: string,
+  mimeType: string,
+  extension: string
+): Promise<boolean> {
+  if (typeof window !== "undefined" && "showSaveFilePicker" in window) {
+    try {
+      const handle = await (window as any).showSaveFilePicker({
+        suggestedName: suggestedFilename,
+        types: [
+          {
+            description: description,
+            accept: {
+              [mimeType]: [extension],
+            },
+          },
+        ],
+      });
+      const writable = await handle.createWritable();
+      await writable.write(blob);
+      await writable.close();
+      return true;
+    } catch (err: any) {
+      if (err.name === "AbortError") {
+        toast.info("Export cancelled");
+        return false;
+      }
+      console.warn("showSaveFilePicker error, falling back to download link:", err);
+    }
+  }
+
+  // Fallback link download
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = suggestedFilename;
+  link.click();
+  URL.revokeObjectURL(url);
+  return true;
 }
