@@ -929,6 +929,7 @@ export async function createDocumentSuiteDB(data: {
   clientName: string;
   clientEmail: string;
   projectId?: string;
+  status?: string;
   contentJson: string;
   clausesJson?: string;
 }) {
@@ -972,14 +973,14 @@ export async function createDocumentSuiteDB(data: {
     if (!dbModel) {
       const { PrismaClient } = require("@prisma/client");
       const freshPrisma = new PrismaClient();
-      dbModel = freshPrisma.documentSuite;
-    }
+    const validStatus = data.status ? (data.status.toUpperCase() as any) : "SENT";
 
     const upserted = await dbModel.upsert({
       where: { documentNumber: docNumber },
       update: {
         title: data.title,
         type: data.type as any,
+        status: validStatus,
         totalAmount: amountVal,
         date: data.date ? new Date(data.date) : new Date(),
         dueDate: data.dueDate ? new Date(data.dueDate) : null,
@@ -994,6 +995,7 @@ export async function createDocumentSuiteDB(data: {
         documentNumber: docNumber,
         title: data.title,
         type: data.type as any,
+        status: validStatus,
         totalAmount: amountVal,
         date: data.date ? new Date(data.date) : new Date(),
         dueDate: data.dueDate ? new Date(data.dueDate) : null,
@@ -1040,6 +1042,7 @@ export async function createInvoiceDB(data: InvoiceData) {
     documentNumber: data.invoiceNumber,
     title: `Tax Invoice #${data.invoiceNumber}`,
     type: "INVOICE",
+    status: data.status,
     totalAmount: data.total,
     date: data.invoiceDate,
     dueDate: data.dueDate,
@@ -1054,6 +1057,7 @@ export async function createAgreementDB(data: AgreementData | any) {
     documentNumber: data.agreementNumber,
     title: `Agreement - ${data.projectTitle}`,
     type: "AGREEMENT",
+    status: data.status,
     totalAmount: data.totalAmount,
     date: data.date,
     dueDate: data.deadline,
@@ -1071,6 +1075,7 @@ export async function createNDADB(data: NDAData) {
     documentNumber: data.ndaNumber,
     title: `Mutual NDA - ${clientName}`,
     type: "NDA",
+    status: data.status,
     totalAmount: 0,
     date: data.effectiveDate,
     clientName: clientName,
@@ -1096,6 +1101,7 @@ export async function createQuotationDB(data: QuotationData) {
     documentNumber: data.quotationNumber,
     title: `Quotation #${data.quotationNumber} - ${data.clientName}`,
     type: "QUOTATION",
+    status: data.status,
     totalAmount: data.totalAmount,
     date: data.quotationDate,
     clientName: data.clientName,
@@ -1135,6 +1141,7 @@ export async function createCertificateDB(data: any) {
     documentNumber: data.certificateNumber,
     title: `Completion Certificate - ${data.projectTitle || clientName}`,
     type: "CERTIFICATE",
+    status: data.status,
     totalAmount: 0,
     date: data.date,
     clientName: clientName,
@@ -1150,12 +1157,30 @@ export async function createReceiptDB(data: any) {
     documentNumber: data.receiptNumber,
     title: `Payment Receipt #${data.receiptNumber} - ${clientName}`,
     type: "PAYMENT_RECEIPT",
+    status: data.status,
     totalAmount: data.totalReceived || data.amountReceived || 0,
     date: data.date,
     clientName: clientName,
     clientEmail: "receipt@client.com",
     contentJson: JSON.stringify(data),
   });
+}
+
+export async function updateDocumentStatusDB(id: string, status: string) {
+  try {
+    const validStatus = status.toUpperCase() as any;
+    const updated = await prisma.documentSuite.update({
+      where: { id },
+      data: { status: validStatus },
+    });
+    revalidatePath("/history");
+    revalidatePath("/dashboard");
+    revalidatePath("/");
+    return { success: true, updated };
+  } catch (err) {
+    console.error("Error updating document status:", err);
+    return { success: false, error: String(err) };
+  }
 }
 
 export async function getAllDocumentsDB(): Promise<SavedDocument[]> {

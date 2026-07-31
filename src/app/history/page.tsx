@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { getAllDocumentsDB, deleteDocumentDB } from "../actions";
+import { getAllDocumentsDB, deleteDocumentDB, updateDocumentStatusDB } from "../actions";
 import { SavedDocument, DocumentType, DocumentStatus } from "../../types";
 import { formatCurrency, formatDate } from "../../lib/utils";
 import { useDocumentExport } from "../../hooks/useDocumentExport";
@@ -189,15 +189,42 @@ export default function HistoryPage() {
                       {doc.amount ? formatCurrency(doc.amount, "₹") : "N/A"}
                     </td>
                     <td className="py-4 px-4">
-                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase ${
-                        doc.status === "paid" || doc.status === "signed"
-                          ? "bg-emerald-200 text-emerald-900"
-                          : doc.status === "sent"
-                          ? "bg-blue-200 text-blue-900"
-                          : "bg-pink-200 text-pink-900"
-                      }`}>
-                        {doc.status}
-                      </span>
+                      <select
+                        value={doc.status.toUpperCase()}
+                        onChange={async (e) => {
+                          const newStatus = e.target.value;
+                          const res = await updateDocumentStatusDB(doc.id, newStatus);
+                          if (res.success) {
+                            setDocuments((prev) =>
+                              prev.map((d) => (d.id === doc.id ? { ...d, status: newStatus.toLowerCase() as any } : d))
+                            );
+                            if (selectedDoc && selectedDoc.id === doc.id) {
+                              setSelectedDoc((prev: any) => prev ? { ...prev, status: newStatus.toLowerCase() } : null);
+                            }
+                            toast.success(`Document status updated to ${newStatus}`);
+                          } else {
+                            toast.error("Failed to update status");
+                          }
+                        }}
+                        className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase outline-none cursor-pointer border-0 shadow-sm transition ${
+                          doc.status.toUpperCase() === "PAID" || doc.status.toUpperCase() === "SIGNED"
+                            ? "bg-emerald-200 text-emerald-900 hover:bg-emerald-300"
+                            : doc.status.toUpperCase() === "SENT"
+                            ? "bg-blue-200 text-blue-900 hover:bg-blue-300"
+                            : doc.status.toUpperCase() === "DRAFT"
+                            ? "bg-amber-200 text-amber-900 hover:bg-amber-300"
+                            : doc.status.toUpperCase() === "CANCELLED"
+                            ? "bg-red-200 text-red-900 hover:bg-red-300"
+                            : "bg-purple-200 text-purple-900 hover:bg-purple-300"
+                        }`}
+                      >
+                        <option value="DRAFT" className="bg-white text-neutral-900 font-sans">DRAFT</option>
+                        <option value="SENT" className="bg-white text-neutral-900 font-sans">SENT</option>
+                        <option value="PAID" className="bg-white text-neutral-900 font-sans">PAID</option>
+                        <option value="SIGNED" className="bg-white text-neutral-900 font-sans">SIGNED</option>
+                        <option value="PENDING" className="bg-white text-neutral-900 font-sans">PENDING</option>
+                        <option value="CANCELLED" className="bg-white text-neutral-900 font-sans">CANCELLED</option>
+                      </select>
                     </td>
                     <td className="py-4 px-4 text-right">
                       <div className="flex items-center justify-end gap-2">
@@ -269,7 +296,33 @@ export default function HistoryPage() {
                     </div>
                     <div className="text-right text-xs text-neutral-600">
                       <p>Date: {formatDate(selectedDoc.date)}</p>
-                      <p className="font-bold text-neutral-900 uppercase mt-0.5">Status: {selectedDoc.status}</p>
+                      <div className="mt-1 flex items-center justify-end gap-1">
+                        <span className="font-bold text-neutral-900 uppercase">Status:</span>
+                        <select
+                          value={selectedDoc.status.toUpperCase()}
+                          onChange={async (e) => {
+                            const newStatus = e.target.value;
+                            const res = await updateDocumentStatusDB(selectedDoc.id, newStatus);
+                            if (res.success) {
+                              setDocuments((prev) =>
+                                prev.map((d) => (d.id === selectedDoc.id ? { ...d, status: newStatus.toLowerCase() as any } : d))
+                              );
+                              setSelectedDoc((prev: any) => prev ? { ...prev, status: newStatus.toLowerCase() } : null);
+                              toast.success(`Document status updated to ${newStatus}`);
+                            } else {
+                              toast.error("Failed to update status");
+                            }
+                          }}
+                          className="px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase border border-neutral-300 bg-white text-neutral-900 cursor-pointer outline-none"
+                        >
+                          <option value="DRAFT">DRAFT</option>
+                          <option value="SENT">SENT</option>
+                          <option value="PAID">PAID</option>
+                          <option value="SIGNED">SIGNED</option>
+                          <option value="PENDING">PENDING</option>
+                          <option value="CANCELLED">CANCELLED</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
 
