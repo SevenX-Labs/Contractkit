@@ -171,7 +171,7 @@ export function ModernAgreementTemplate({
     >
       {/* PAGE 1 */}
       {showPage1 && (
-        <div className="relative w-full h-[297mm] flex flex-col justify-between pb-0 overflow-hidden page-break-after-always" style={{ breakAfter: "page" }}>
+        <div data-page="true" className="relative w-full h-[297mm] flex flex-col justify-between pb-0 overflow-hidden page-break-after-always" style={{ breakAfter: "page" }}>
           <div>
             {/* Top Header Row with Black Block on Right */}
             <div className="flex justify-between items-start w-full relative">
@@ -361,7 +361,7 @@ export function ModernAgreementTemplate({
 
       {/* PAGE 2 */}
       {showPage2 && (
-        <div className="relative w-full h-[297mm] flex flex-col justify-between pt-8 pb-0 overflow-hidden">
+        <div data-page="true" className="relative w-full h-[297mm] flex flex-col justify-between pt-8 pb-0 overflow-hidden">
           <div>
             {/* Minimal Top Header for Page 2 */}
             <div className="px-10 pb-4 border-b border-neutral-200 flex justify-between items-center">

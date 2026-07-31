@@ -211,9 +211,14 @@ export function useDocumentExport() {
       const a4WidthMm = 210;
       const a4HeightMm = 297;
 
-      // Find individual page containers (direct children of the wrapper that have visible height)
+      // Find explicit page containers (marked with data-page or full A4 height >= 850px)
       const pageContainers = Array.from(element.children).filter(
-        (child) => child instanceof HTMLElement && child.offsetHeight > 0
+        (child) =>
+          child instanceof HTMLElement &&
+          child.offsetHeight > 0 &&
+          (child.hasAttribute("data-page") ||
+           child.classList.contains("document-page") ||
+           child.offsetHeight >= 850)
       ) as HTMLElement[];
 
       const pdf = new jsPDF({
@@ -230,21 +235,21 @@ export function useDocumentExport() {
           const pageEl = pageContainers[i];
           const canvas = await captureElement(pageEl);
 
-          // Scale canvas to fit exactly within A4 dimensions
+          // Scale canvas to fit exactly within A4 dimensions preserving 1:1 ratio
+          const renderHeightMm = (canvas.height * a4WidthMm) / canvas.width;
           const imgData = canvas.toDataURL("image/png", 1.0);
-          pdf.addImage(imgData, "PNG", 0, 0, a4WidthMm, a4HeightMm, undefined, "FAST");
+          pdf.addImage(imgData, "PNG", 0, 0, a4WidthMm, Math.min(a4HeightMm, renderHeightMm), undefined, "FAST");
         }
       } else {
         // Single-page document: capture the whole element
         const canvas = await captureElement(element);
-
-        // Check if the canvas is taller than a single A4 page
+        const renderHeightMm = (canvas.height * a4WidthMm) / canvas.width;
         const canvasPageHeight = Math.floor((canvas.width * a4HeightMm) / a4WidthMm);
         
         if (canvas.height <= canvasPageHeight + 30) {
           // Single page - fits within A4
           const imgData = canvas.toDataURL("image/png", 1.0);
-          pdf.addImage(imgData, "PNG", 0, 0, a4WidthMm, a4HeightMm, undefined, "FAST");
+          pdf.addImage(imgData, "PNG", 0, 0, a4WidthMm, Math.min(a4HeightMm, renderHeightMm), undefined, "FAST");
         } else {
           // Needs slicing into multiple pages
           let totalPages = Math.floor(canvas.height / canvasPageHeight);
@@ -312,8 +317,14 @@ export function useDocumentExport() {
       const a4HeightMm = 297;
       const baseName = filename.replace(/\.(png|zip|jpg|jpeg)$/i, "");
 
+      // Find explicit page containers (marked with data-page or full A4 height >= 850px)
       const pageContainers = Array.from(element.children).filter(
-        (child) => child instanceof HTMLElement && child.offsetHeight > 0
+        (child) =>
+          child instanceof HTMLElement &&
+          child.offsetHeight > 0 &&
+          (child.hasAttribute("data-page") ||
+           child.classList.contains("document-page") ||
+           child.offsetHeight >= 850)
       ) as HTMLElement[];
 
       if (pageContainers.length > 1) {

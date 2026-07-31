@@ -140,7 +140,7 @@ export function ModernNDATemplate({
     >
       {/* PAGE 1 */}
       {showPage1 && (
-        <div className="relative w-full min-h-[297mm] flex flex-col justify-between pb-0 page-break-after-always" style={{ breakAfter: "page" }}>
+        <div data-page="true" className="relative w-full min-h-[297mm] flex flex-col justify-between pb-0 page-break-after-always" style={{ breakAfter: "page" }}>
           <div>
             {/* Top Header Row with Black Curved Block on Right */}
             <div className="flex justify-between items-start w-full relative">
@@ -347,7 +347,7 @@ export function ModernNDATemplate({
 
       {/* PAGE 2 */}
       {showPage2 && (
-        <div className="relative w-full min-h-[297mm] flex flex-col justify-between pt-10 pb-0">
+        <div data-page="true" className="relative w-full min-h-[297mm] flex flex-col justify-between pt-10 pb-0">
           <div className="px-10 space-y-4">
             {/* Section 11 & 12 */}
             <div className="grid grid-cols-2 gap-4">
