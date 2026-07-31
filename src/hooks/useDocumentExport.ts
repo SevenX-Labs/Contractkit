@@ -3,6 +3,7 @@
 import { useState } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import JSZip from "jszip";
 import { toast } from "sonner";
 
 export function useDocumentExport() {
@@ -296,7 +297,7 @@ export function useDocumentExport() {
     }
   };
 
-  // 2. Export as High-Res PNG Image
+  // 2. Export as High-Res PNG Image (or ZIP for multi-page)
   const exportToImage = async (elementId: string, filename: string = "Document.png") => {
     const element = document.getElementById(elementId);
     if (!element) {
@@ -307,13 +308,106 @@ export function useDocumentExport() {
     try {
       setIsExporting(true);
 
-      const canvas = await captureElement(element);
+      const a4WidthMm = 210;
+      const a4HeightMm = 297;
+      const baseName = filename.replace(/\.(png|zip|jpg|jpeg)$/i, "");
 
-      const link = document.createElement("a");
-      link.href = canvas.toDataURL("image/png", 1.0);
-      link.download = filename;
-      link.click();
-      toast.success(`Successfully exported Image: ${filename}`);
+      const pageContainers = Array.from(element.children).filter(
+        (child) => child instanceof HTMLElement && child.offsetHeight > 0
+      ) as HTMLElement[];
+
+      if (pageContainers.length > 1) {
+        // Multi-page: render each page individually and pack into ZIP archive
+        const zip = new JSZip();
+
+        for (let i = 0; i < pageContainers.length; i++) {
+          const pageEl = pageContainers[i];
+          const canvas = await captureElement(pageEl);
+          const dataUrl = canvas.toDataURL("image/png", 1.0);
+          const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
+          zip.file(`${baseName}_page_${i + 1}.png`, base64Data, { base64: true });
+        }
+
+        const zipBlob = await zip.generateAsync({ type: "blob" });
+        const zipUrl = URL.createObjectURL(zipBlob);
+        const link = document.createElement("a");
+        link.href = zipUrl;
+        link.download = `${baseName}.zip`;
+        link.click();
+        URL.revokeObjectURL(zipUrl);
+
+        toast.success(`Successfully exported ${pageContainers.length}-page Images ZIP: ${baseName}.zip`);
+      } else {
+        // Single container element: capture and slice if content spans multiple A4 pages
+        const canvas = await captureElement(element);
+        const canvasPageHeight = Math.floor((canvas.width * a4HeightMm) / a4WidthMm);
+
+        if (canvas.height <= canvasPageHeight + 30) {
+          // 1 page content: direct PNG download
+          const link = document.createElement("a");
+          link.href = canvas.toDataURL("image/png", 1.0);
+          link.download = filename.endsWith(".png") ? filename : `${filename}.png`;
+          link.click();
+          toast.success(`Successfully exported Image: ${link.download}`);
+        } else {
+          // Spans multiple pages: slice into individual page images and pack into ZIP
+          let totalPages = Math.floor(canvas.height / canvasPageHeight);
+          const remainder = canvas.height % canvasPageHeight;
+          if (remainder > 30) totalPages += 1;
+          totalPages = Math.max(1, totalPages);
+
+          if (totalPages > 1) {
+            const zip = new JSZip();
+
+            for (let page = 0; page < totalPages; page++) {
+              const pageCanvas = document.createElement("canvas");
+              pageCanvas.width = canvas.width;
+              pageCanvas.height = canvasPageHeight;
+              const ctx = pageCanvas.getContext("2d");
+
+              if (ctx) {
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+
+                const sourceY = page * canvasPageHeight;
+                const sourceHeight = Math.min(canvasPageHeight, canvas.height - sourceY);
+
+                ctx.drawImage(
+                  canvas,
+                  0,
+                  sourceY,
+                  canvas.width,
+                  sourceHeight,
+                  0,
+                  0,
+                  canvas.width,
+                  sourceHeight
+                );
+
+                const dataUrl = pageCanvas.toDataURL("image/png", 1.0);
+                const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
+                zip.file(`${baseName}_page_${page + 1}.png`, base64Data, { base64: true });
+              }
+            }
+
+            const zipBlob = await zip.generateAsync({ type: "blob" });
+            const zipUrl = URL.createObjectURL(zipBlob);
+            const link = document.createElement("a");
+            link.href = zipUrl;
+            link.download = `${baseName}.zip`;
+            link.click();
+            URL.revokeObjectURL(zipUrl);
+
+            toast.success(`Successfully exported ${totalPages}-page Images ZIP: ${baseName}.zip`);
+          } else {
+            const link = document.createElement("a");
+            link.href = canvas.toDataURL("image/png", 1.0);
+            link.download = filename.endsWith(".png") ? filename : `${filename}.png`;
+            link.click();
+            toast.success(`Successfully exported Image: ${link.download}`);
+          }
+        }
+      }
     } catch (err: any) {
       console.error("Image Export error:", err);
       toast.error("Error exporting Image.");

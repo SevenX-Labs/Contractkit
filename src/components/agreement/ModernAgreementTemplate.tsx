@@ -353,15 +353,8 @@ export function ModernAgreementTemplate({
           </div>
 
           {/* Page 1 Full-Width Black Footer Bar */}
-          <div>
-            <div className="px-10 pt-3 pb-2 flex justify-between items-center text-xs text-neutral-500 font-mono border-t border-neutral-100 bg-white">
-              <span>SevenX Labs • Ref #{formattedAgrNumber}</span>
-              <span>Page 1 of 2</span>
-            </div>
-
-            <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20" style={{ display: "flex", justifyContent: "center", alignItems: "center", fontSize: "12px", fontWeight: 600 }}>
-              <span>Made with SevenX Labs</span>
-            </div>
+          <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20" style={{ display: "flex", justifyContent: "center", alignItems: "center", fontSize: "12px", fontWeight: 600 }}>
+            <span>Made with SevenX Labs</span>
           </div>
         </div>
       )}
@@ -451,16 +444,8 @@ export function ModernAgreementTemplate({
           </div>
 
           {/* Page 2 Full-Width Black Footer Bar */}
-          <div>
-            <div className="px-10 pt-3 pb-2 flex justify-between items-center text-xs text-neutral-500 font-mono border-t border-neutral-100 bg-white">
-              <span>SevenX Labs • Ref #{formattedAgrNumber}</span>
-              <span>Page 2 of 2</span>
-            </div>
-
-            {/* Full-Width Black Footer Bar */}
-            <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20" style={{ display: "flex", justifyContent: "center", alignItems: "center", fontSize: "12px", fontWeight: 600 }}>
-              <span>Made with SevenX Labs</span>
-            </div>
+          <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20" style={{ display: "flex", justifyContent: "center", alignItems: "center", fontSize: "12px", fontWeight: 600 }}>
+            <span>Made with SevenX Labs</span>
           </div>
         </div>
       )}

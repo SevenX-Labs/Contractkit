@@ -339,15 +339,8 @@ export function ModernNDATemplate({
           </div>
 
           {/* Page 1 Footer Bar */}
-          <div>
-            <div className="px-10 py-1 flex justify-between items-center text-xs text-neutral-400 font-mono">
-              <span>SevenX Labs • Ref #{ndaNumber}</span>
-              <span>Page 1 of 2</span>
-            </div>
-
-            <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 flex justify-center items-center text-xs font-semibold z-20">
-              <span>Made with SevenX Labs</span>
-            </div>
+          <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 flex justify-center items-center text-xs font-semibold z-20">
+            <span>Made with SevenX Labs</span>
           </div>
         </div>
       )}
@@ -449,11 +442,6 @@ export function ModernNDATemplate({
                 <p className="text-xs text-neutral-600 font-medium">{receivingDesignation}</p>
                 <p className="text-xs text-neutral-400 mt-1">Date: {formatDate(effectiveDate)}</p>
               </div>
-            </div>
-
-            <div className="px-10 py-1 flex justify-between items-center text-xs text-neutral-400 font-mono">
-              <span>SevenX Labs • Ref #{ndaNumber}</span>
-              <span>Page 2 of 2</span>
             </div>
 
             <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 flex justify-center items-center text-xs font-semibold z-20">
