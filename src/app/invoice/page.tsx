@@ -115,7 +115,7 @@ export default function InvoicePage() {
         senderCompany: "SevenX Labs",
         senderAddress: profile.address || "Thane, Mumbai, Maharashtra",
         senderEmail: profile.email || "sevenxlabs07@gmail.com",
-        senderPhone: profile.phone || "8652601566",
+        senderPhone: profile.phone || "+91 8652601566",
         paymentMethod: "Bank Transfer",
         paymentDetails: `Holder Name: ${hName} | Bank Name: ${bName} | Account No: ${accNo} | IFSC Code: ${ifsc}`,
       }));

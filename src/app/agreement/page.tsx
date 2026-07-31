@@ -148,7 +148,7 @@ export default function AgreementPage() {
         freelancerCompany: "SevenX Labs",
         freelancerAddress: profile.address || "Thane, Mumbai, Maharashtra",
         freelancerEmail: profile.email || "sevenxlabs07@gmail.com",
-        freelancerPhone: profile.phone || "8652601566",
+        freelancerPhone: profile.phone || "+91 8652601566",
         bankName: profile.bankName || "HDFC Bank",
         bankAccount: profile.bankAccount || "50100234567890",
         bankIfsc: profile.bankIfsc || "HDFC0001234",
