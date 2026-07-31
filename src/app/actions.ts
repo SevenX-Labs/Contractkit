@@ -71,16 +71,16 @@ export async function getProfileDB(): Promise<FreelancerProfile> {
         },
       });
       return {
-        name: updated.name,
-        company: updated.company,
-        email: updated.email,
-        phone: updated.phone,
-        address: updated.address,
-        upiId: updated.upiId,
-        bankName: updated.bankName,
-        bankAccount: updated.bankAccount,
-        bankIfsc: updated.bankIfsc,
-        paypalEmail: updated.paypalEmail,
+        name: updated.name || "Sahil Hode",
+        company: updated.company || "SevenX Labs",
+        email: updated.email || "sevenxlabs07@gmail.com",
+        phone: updated.phone || "+91 8652601566",
+        address: updated.address || "Thane, Mumbai, Maharashtra, India",
+        upiId: updated.upiId || "sevenxlabs@upi",
+        bankName: updated.bankName || "HDFC Bank",
+        bankAccount: updated.bankAccount || "50100234567890",
+        bankIfsc: updated.bankIfsc || "HDFC0001234",
+        paypalEmail: updated.paypalEmail || "sevenxlabs07@gmail.com",
         invoicePrefix: updated.invoicePrefix || "SXL-INV-",
       };
     }

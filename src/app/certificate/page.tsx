@@ -15,6 +15,7 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
+import { toast } from "sonner";
 import { ModernCertificateTemplate } from "../../components/certificate/ModernCertificateTemplate";
 import { useDocumentExport } from "../../hooks/useDocumentExport";
 import { createCertificateDB, getNextCertificateNumberDB, getProfileDB } from "../actions";
@@ -39,7 +40,8 @@ export default function CertificateBuilderPage() {
     serviceProvider: "SevenX Labs",
     startDate: "2026-03-15",
     completionDate: new Date().toISOString().split("T")[0],
-    contractNumber: "AGR-2026-015",
+    receiptNumber: "SXL-RC-2026-000001",
+    contractNumber: "SXL-RC-2026-000001",
 
     scopeOfWork:
       "Design, development, testing, and deployment of a responsive e-commerce website with admin panel and integration of payment gateway.",
