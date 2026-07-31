@@ -86,39 +86,39 @@ export default function HistoryPage() {
   return (
     <div className="flex flex-col gap-6 pb-12">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-[#EBE7DC] border border-[#E2DDD0] p-6 rounded-3xl shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="p-3 rounded-2xl bg-purple-100 text-purple-700">
-            <History className="w-6 h-6" />
+      <div className="flex items-center justify-between gap-3 bg-[#EBE7DC] border border-[#E2DDD0] p-4 sm:p-4 rounded-2xl shadow-xs">
+        <div className="flex items-center gap-2.5">
+          <div className="p-2.5 rounded-xl bg-purple-100 text-purple-700 shrink-0">
+            <History className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-xl font-extrabold text-neutral-900 tracking-tight">Document Vault & History</h1>
-            <p className="text-xs text-neutral-600 font-medium">
-              View floating A4 screen previews, download PDFs, and manage studio contracts
+            <h1 className="text-base font-extrabold text-neutral-900 tracking-tight leading-none">Document Vault & History</h1>
+            <p className="text-[11px] text-neutral-500 font-medium mt-1">
+              View previews, download PDFs, and manage studio contracts
             </p>
           </div>
         </div>
 
         <button
           onClick={fetchDocs}
-          className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#DFD9C9] text-neutral-900 text-xs font-bold hover:bg-[#D5CEBC] transition"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#DFD9C9] text-neutral-900 text-xs font-bold hover:bg-[#D5CEBC] transition cursor-pointer shrink-0"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`} />
-          <span>Refresh Vault</span>
+          <span>Refresh</span>
         </button>
       </div>
 
-      {/* Filter Bar */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-[#EBE7DC] border border-[#E2DDD0] p-4 rounded-2xl">
-        {/* Type Tabs */}
-        <div className="flex items-center gap-1.5 flex-wrap overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+      {/* Ultra-Compact Single-Line Filter Bar */}
+      <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3 bg-[#EBE7DC] border border-[#E2DDD0] p-3 rounded-2xl">
+        {/* Single-Line Scrollable Type Tabs */}
+        <div className="flex items-center gap-1 flex-nowrap overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden min-w-0 flex-1">
           {(["all", "invoice", "quotation", "agreement", "nda", "certificate", "receipt"] as const).map((type) => (
             <button
               key={type}
               onClick={() => setActiveType(type)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition cursor-pointer ${
+              className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap transition cursor-pointer shrink-0 ${
                 activeType === type
-                  ? "bg-[#121212] text-white shadow-sm"
+                  ? "bg-[#121212] text-white shadow-xs"
                   : "bg-[#DFD9C9] text-neutral-800 hover:bg-[#D5CEBC]"
               }`}
             >
@@ -134,22 +134,22 @@ export default function HistoryPage() {
         </div>
 
         {/* Search & Status Filter */}
-        <div className="flex items-center gap-3">
-          <div className="relative flex-1 md:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-neutral-500" />
+        <div className="flex items-center gap-2 shrink-0 justify-end">
+          <div className="relative w-44 sm:w-56">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-neutral-500" />
             <input
               type="text"
-              placeholder="Search by client or #"
+              placeholder="Search client or #"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-full pl-9 pr-3 py-1.5 text-xs text-neutral-900 placeholder-neutral-500 focus:outline-none"
+              className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-full pl-8 pr-2.5 py-1 text-xs text-neutral-900 placeholder-neutral-500 focus:outline-none"
             />
           </div>
 
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as any)}
-            className="bg-[#F4F4F4] border border-[#E2DDD0] rounded-full px-3 py-1.5 text-xs font-bold text-neutral-900 focus:outline-none capitalize"
+            className="bg-[#F4F4F4] border border-[#E2DDD0] rounded-full px-2.5 py-1 text-xs font-bold text-neutral-900 focus:outline-none capitalize cursor-pointer"
           >
             <option value="all">All Statuses</option>
             <option value="draft">Draft</option>
