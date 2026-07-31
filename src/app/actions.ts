@@ -1286,14 +1286,15 @@ export async function updateDocumentStatusDB(id: string, status: string) {
 
 export async function deleteDocumentDB(id: string, type: string) {
   try {
-    await prisma.documentSuite.update({
+    await prisma.documentSuite.delete({
       where: { id },
-      data: { isDeleted: true },
     });
     revalidatePath("/");
     revalidatePath("/history");
+    revalidatePath("/dashboard");
     return { success: true };
   } catch (err) {
+    console.error("Error deleting document from DB:", err);
     return { success: false, error: String(err) };
   }
 }
