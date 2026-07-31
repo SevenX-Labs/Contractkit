@@ -6,12 +6,12 @@ import { getAllDocumentsDB, deleteDocumentDB, updateDocumentStatusDB } from "../
 import { SavedDocument, DocumentType, DocumentStatus } from "../../types";
 import { formatCurrency, formatDate } from "../../lib/utils";
 import { useDocumentExport } from "../../hooks/useDocumentExport";
-import ModernInvoiceTemplate from "../../components/invoice/ModernInvoiceTemplate";
-import ModernAgreementTemplate from "../../components/agreement/ModernAgreementTemplate";
-import ModernNDATemplate from "../../components/nda/ModernNDATemplate";
-import ModernQuotationTemplate from "../../components/quotation/ModernQuotationTemplate";
-import ModernReceiptTemplate from "../../components/receipt/ModernReceiptTemplate";
-import ModernCertificateTemplate from "../../components/certificate/ModernCertificateTemplate";
+import { ModernInvoiceTemplate } from "../../components/invoice/ModernInvoiceTemplate";
+import { ModernAgreementTemplate } from "../../components/agreement/ModernAgreementTemplate";
+import { ModernNDATemplate } from "../../components/nda/ModernNDATemplate";
+import { ModernQuotationTemplate } from "../../components/quotation/ModernQuotationTemplate";
+import { ModernReceiptTemplate } from "../../components/receipt/ModernReceiptTemplate";
+import { ModernCertificateTemplate } from "../../components/certificate/ModernCertificateTemplate";
 import {
   History,
   Search,
