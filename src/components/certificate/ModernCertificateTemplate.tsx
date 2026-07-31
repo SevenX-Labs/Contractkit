@@ -134,20 +134,18 @@ export function ModernCertificateTemplate({
         <div className="flex justify-between items-start w-full relative">
           {/* Top Left Branding */}
           <div className="pt-8 pl-10 pr-4 max-w-sm">
-            <div className="flex items-center gap-2 mb-3">
-              <Image
-                src="/logo.png"
-                alt="SevenX Labs"
-                width={180}
-                height={55}
-                className="h-10 w-auto object-contain"
-                priority
-              />
-              <div className="flex items-center gap-1 font-extrabold tracking-tight text-xl uppercase">
-                <span className="text-neutral-900 font-black">SevenX</span>
-                <span className={accentText + " font-black"}>Labs</span>
+            <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-1.5 font-black tracking-tight text-2xl uppercase">
+                <span className="text-neutral-900">SevenX</span>
+                <span className={accentText}>Labs</span>
               </div>
             </div>
+            <p className="text-[11px] font-extrabold text-neutral-500 tracking-wider uppercase">
+              Official Completion Certificate
+            </p>
+            <p className="text-xs font-semibold text-neutral-600 mt-0.5">
+              Issued by SevenX Labs Studio • {phone}
+            </p>
           </div>
 
           {/* Top Right Black Header Panel */}
