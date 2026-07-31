@@ -1170,13 +1170,14 @@ export async function getNextReceiptNumberDB(): Promise<string> {
 
 export async function createCertificateDB(data: any) {
   const clientName = data.clientName || "Client";
+  const amount = data.totalAmount || data.amountReceived || data.totalReceived || data.amount || data.projectValue || 0;
 
   return createDocumentSuiteDB({
     documentNumber: data.certificateNumber,
     title: `Completion Certificate - ${data.projectTitle || clientName}`,
     type: "CERTIFICATE",
     status: data.status,
-    totalAmount: 0,
+    totalAmount: amount,
     date: data.date,
     clientName: clientName,
     clientEmail: "certificate@client.com",
@@ -1200,6 +1201,72 @@ export async function createReceiptDB(data: any) {
   });
 }
 
+export async function getAllDocumentsDB(): Promise<SavedDocument[]> {
+  try {
+    const suites = await prisma.documentSuite.findMany({
+      where: { isDeleted: false },
+      orderBy: { createdAt: "desc" },
+    });
+
+    // Build document map by documentNumber and clientName for quick linked amount lookup
+    const docMap = new Map<string, number>();
+    const clientAmountMap = new Map<string, number>();
+
+    suites.forEach((s) => {
+      if (s.totalAmount && s.totalAmount > 0) {
+        if (s.documentNumber) docMap.set(s.documentNumber.trim().toLowerCase(), s.totalAmount);
+        if (s.clientName) clientAmountMap.set(s.clientName.trim().toLowerCase(), s.totalAmount);
+      }
+    });
+
+    return suites.map((doc) => {
+      let data: any = {};
+      try {
+        data = JSON.parse(doc.contentJson || "{}");
+      } catch (e) {}
+
+      let resolvedAmount = doc.totalAmount || 0;
+
+      // Extract amount from JSON if totalAmount is 0
+      if (!resolvedAmount) {
+        resolvedAmount =
+          data.totalAmount ||
+          data.amountReceived ||
+          data.totalReceived ||
+          data.amount ||
+          data.projectValue ||
+          0;
+      }
+
+      // If still 0, check for linked documentNumber (invoiceNumber, contractNumber, receiptNumber) or clientName
+      if (!resolvedAmount) {
+        const linkedRef = (data.invoiceNumber || data.contractNumber || data.receiptNumber || "").trim().toLowerCase();
+        if (linkedRef && docMap.has(linkedRef)) {
+          resolvedAmount = docMap.get(linkedRef) || 0;
+        } else if (doc.clientName && clientAmountMap.has(doc.clientName.trim().toLowerCase())) {
+          resolvedAmount = clientAmountMap.get(doc.clientName.trim().toLowerCase()) || 0;
+        }
+      }
+
+      return {
+        id: doc.id,
+        title: doc.title,
+        documentNumber: doc.documentNumber,
+        type: doc.type.toLowerCase() as any,
+        clientName: doc.clientName,
+        amount: resolvedAmount,
+        date: doc.date.toISOString().split("T")[0],
+        status: doc.status.toLowerCase() as any,
+        updatedAt: doc.updatedAt.toISOString(),
+        data: data,
+      };
+    });
+  } catch (err) {
+    console.error("Error fetching all documents:", err);
+    return [];
+  }
+}
+
 export async function updateDocumentStatusDB(id: string, status: string) {
   try {
     const validStatus = status.toUpperCase() as any;
@@ -1214,31 +1281,6 @@ export async function updateDocumentStatusDB(id: string, status: string) {
   } catch (err) {
     console.error("Error updating document status:", err);
     return { success: false, error: String(err) };
-  }
-}
-
-export async function getAllDocumentsDB(): Promise<SavedDocument[]> {
-  try {
-    const suites = await prisma.documentSuite.findMany({
-      where: { isDeleted: false },
-      orderBy: { createdAt: "desc" },
-    });
-
-    return suites.map((doc) => ({
-      id: doc.id,
-      title: doc.title,
-      documentNumber: doc.documentNumber,
-      type: doc.type.toLowerCase() as any,
-      clientName: doc.clientName,
-      amount: doc.totalAmount,
-      date: doc.date.toISOString().split("T")[0],
-      status: doc.status.toLowerCase() as any,
-      updatedAt: doc.updatedAt.toISOString(),
-      data: JSON.parse(doc.contentJson || "{}"),
-    }));
-  } catch (err) {
-    console.error("Error fetching all documents:", err);
-    return [];
   }
 }
 

@@ -241,8 +241,8 @@ export function ModernCertificateTemplate({
               <div className={`p-1.5 rounded-lg shrink-0 ${accentBadgeBg}`}>
                 <Award className="w-3.5 h-3.5" />
               </div>
-              <span className="w-48 font-black uppercase text-neutral-900 text-[11px]">AGREEMENT / CONTRACT NO.</span>
-              <span className="font-bold text-neutral-900">: {contractNumber}</span>
+              <span className="w-48 font-black uppercase text-neutral-900 text-[11px]">PAYMENT RECEIPT NO.</span>
+              <span className="font-mono font-bold text-neutral-900">: {receiptNumber || contractNumber || "Nil"}</span>
             </div>
           </div>
         </div>
