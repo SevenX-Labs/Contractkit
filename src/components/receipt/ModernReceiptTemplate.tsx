@@ -25,12 +25,10 @@ export interface ReceiptTemplateProps {
   // Paid By (Client) Details
   clientName?: string;
   clientAddress?: string;
-  clientGstin?: string;
 
   // Received By (Provider) Details
   providerName?: string;
   providerAddress?: string;
-  providerGstin?: string;
   providerEmail?: string;
   providerPhone?: string;
 
@@ -72,11 +70,9 @@ export function ModernReceiptTemplate({
 
   clientName = "ABC Pvt. Ltd.",
   clientAddress = "123, Business Park, Andheri East, Mumbai, Maharashtra - 400069",
-  clientGstin = "27ABCDE5678G1Z6",
 
   providerName = "SevenX Labs",
   providerAddress = "Diva, Thane, Maharashtra, India",
-  providerGstin = "27ABCDE1234F1Z5",
   providerEmail = "contact@sevenxlabs.com",
   providerPhone = "+91 98765 43210",
 
@@ -213,10 +209,7 @@ export function ModernReceiptTemplate({
               FROM (PAID BY)
             </span>
             <h3 className="text-base font-black text-neutral-900">{clientName}</h3>
-            <p className="text-neutral-600 font-medium">{clientAddress}</p>
-            {clientGstin && (
-              <p className="font-mono text-neutral-500 font-semibold text-[11px]">GSTIN: {clientGstin}</p>
-            )}
+            <p className="text-neutral-600 font-medium leading-relaxed">{clientAddress}</p>
           </div>
 
           {/* TO */}
@@ -225,10 +218,7 @@ export function ModernReceiptTemplate({
               TO (RECEIVED BY)
             </span>
             <h3 className="text-base font-black text-neutral-900">{providerName}</h3>
-            <p className="text-neutral-600 font-medium">{providerAddress}</p>
-            {providerGstin && (
-              <p className="font-mono text-neutral-500 font-semibold text-[11px]">GSTIN: {providerGstin}</p>
-            )}
+            <p className="text-neutral-600 font-medium leading-relaxed">{providerAddress}</p>
             <p className="text-neutral-600 font-medium">Email: {providerEmail}</p>
             <p className="text-neutral-600 font-medium">Phone: {providerPhone}</p>
           </div>
@@ -244,11 +234,11 @@ export function ModernReceiptTemplate({
               <span className="text-[11px] font-black uppercase text-neutral-800 tracking-wider block">
                 AMOUNT RECEIVED
               </span>
-              <h2 className={`text-3xl font-black font-mono tracking-tight ${accentText} mt-0.5`}>
+              <h2 className={`text-3xl font-black font-mono tracking-tight ${accentText} mt-1 leading-tight`}>
                 ₹ {amountReceived.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
               </h2>
               {amountInWords && (
-                <p className="text-xs font-bold text-neutral-600 mt-0.5">{amountInWords}</p>
+                <p className="text-xs font-bold text-neutral-600 mt-2 leading-snug">{amountInWords}</p>
               )}
             </div>
           </div>
@@ -295,13 +285,12 @@ export function ModernReceiptTemplate({
 
         {/* Itemized Table */}
         <div className="px-10 mt-6">
-          <div className="bg-[#0a0a0a] text-white rounded-t-xl py-2 px-5 flex justify-between items-center text-xs font-black uppercase tracking-wider shadow-md">
-            <span className="w-16 text-center">SR NO.</span>
-            <span className="flex-1 px-4">DESCRIPTION</span>
-            <span className="w-32 text-right">AMOUNT (₹)</span>
-          </div>
-
-          <div className="border-x border-b border-neutral-200 rounded-b-xl overflow-hidden">
+          <div className="rounded-2xl overflow-hidden border border-neutral-200 shadow-sm bg-white">
+            <div className="bg-[#0a0a0a] text-white py-3 px-6 flex justify-between items-center text-xs font-black uppercase tracking-wider">
+              <span className="w-16 text-center">SR NO.</span>
+              <span className="flex-1 px-4">DESCRIPTION</span>
+              <span className="w-32 text-right">AMOUNT (₹)</span>
+            </div>
             {items.map((item, index) => {
               const srNo = String(index + 1).padStart(2, "0");
               const isGreenRow = index % 2 === 0;
