@@ -362,11 +362,12 @@ export default function CertificateBuilderPage() {
                       />
                     </div>
                     <div>
-                      <label className="text-[10px] font-bold text-neutral-600 uppercase block mb-1">Agreement #</label>
+                      <label className="text-[10px] font-bold text-neutral-600 uppercase block mb-1">Payment Receipt #</label>
                       <input
                         type="text"
-                        value={formData.contractNumber}
-                        onChange={(e) => setFormData({ ...formData, contractNumber: e.target.value })}
+                        value={formData.receiptNumber || formData.contractNumber || ""}
+                        onChange={(e) => setFormData({ ...formData, receiptNumber: e.target.value, contractNumber: e.target.value })}
+                        placeholder="e.g. SXL-RC-2026-000001"
                         className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-mono text-neutral-900"
                       />
                     </div>

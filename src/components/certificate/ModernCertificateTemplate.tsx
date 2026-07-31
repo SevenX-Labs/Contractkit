@@ -30,6 +30,7 @@ export interface CertificateTemplateProps {
   serviceProvider?: string;
   startDate?: string;
   completionDate?: string;
+  receiptNumber?: string;
   contractNumber?: string;
 
   // Scope & Deliverables
@@ -69,6 +70,7 @@ export function ModernCertificateTemplate({
   serviceProvider = "SevenX Labs",
   startDate = "2026-03-15",
   completionDate = "2026-07-30",
+  receiptNumber,
   contractNumber = "AGR-2026-015",
 
   scopeOfWork = "Design, development, testing, and deployment of a responsive e-commerce website with admin panel and integration of payment gateway.",
