@@ -973,6 +973,8 @@ export async function createDocumentSuiteDB(data: {
     if (!dbModel) {
       const { PrismaClient } = require("@prisma/client");
       const freshPrisma = new PrismaClient();
+      dbModel = freshPrisma.documentSuite;
+    }
     const validStatus = data.status ? (data.status.toUpperCase() as any) : "SENT";
 
     const upserted = await dbModel.upsert({

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getAllDocumentsDB, deleteDocumentDB, updateDocumentStatusDB } from "../actions";
@@ -30,6 +32,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+export default function HistoryPage() {
   const router = useRouter();
   const [documents, setDocuments] = useState<SavedDocument[]>([]);
   const [activeType, setActiveType] = useState<"all" | DocumentType>("all");
