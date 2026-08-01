@@ -609,102 +609,7 @@ export default function AgreementPage() {
                         className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 resize-y font-medium leading-relaxed"
                       />
                     </div>
-                    <div className="grid grid-cols-2 gap-3 pt-1 border-t border-[#D5CEBC]">
-                      <div>
-                        <label className="text-[11px] font-bold text-neutral-700 block mb-1">Project Type</label>
-                        <input
-                          type="text"
-                          placeholder="e.g. Full-Stack Web & Cross-Platform Mobile App"
-                          value={formData.projectType}
-                          onChange={(e) => setFormData({ ...formData, projectType: e.target.value })}
-                          className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-[11px] font-bold text-neutral-700 block mb-1">Target Platforms</label>
-                        <textarea
-                          placeholder="e.g. Web Browser, iOS App Store, Google Play Store"
-                          rows={2}
-                          value={formData.platforms}
-                          onChange={(e) => setFormData({ ...formData, platforms: e.target.value })}
-                          className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 resize-y"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* SECTION 4: Scope of Work */}
-            {isSectionVisible(4) && (
-              <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-2xl overflow-hidden shadow-sm">
-                <button
-                  onClick={() => toggleSection(4)}
-                  className="w-full px-5 py-3.5 flex items-center justify-between font-extrabold text-xs text-neutral-900 hover:bg-[#DFD9C9] transition cursor-pointer"
-                >
-                  <span>SECTION 4: Scope of Work & Tech Stack</span>
-                  {openSections[4] ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                </button>
-                {openSections[4] && (
-                  <div className="p-5 border-t border-[#D5CEBC] flex flex-col gap-3">
-                    <div>
-                      <div className="flex items-center justify-between mb-1">
-                        <label className="text-[11px] font-bold text-neutral-700">What&apos;s INCLUDED Scope</label>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (!formData.includedScope) return;
-                            const items = formData.includedScope
-                              .split(/[\n,•\-]/)
-                              .map((s) => s.trim())
-                              .filter(Boolean);
-                            const formatted = items.map((i) => `• ${i}`).join("\n");
-                            setFormData({ ...formData, includedScope: formatted });
-                            toast.success("Converted items into clean bullet points!");
-                          }}
-                          className="text-[10px] font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 px-2 py-0.5 rounded-md border border-purple-200 transition cursor-pointer"
-                        >
-                          ✨ Format Comma / Lines to Bullets
-                        </button>
-                      </div>
-                      <textarea
-                        placeholder="Type comma-separated or line items (e.g. UI/UX design, REST API, Database design, Supabase Auth)"
-                        rows={6}
-                        value={formData.includedScope}
-                        onChange={(e) => setFormData({ ...formData, includedScope: e.target.value })}
-                        className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-mono resize-y leading-relaxed"
-                      />
-                    </div>
-                    <div>
-                      <div className="flex items-center justify-between mb-1">
-                        <label className="text-[11px] font-bold text-neutral-700">What&apos;s EXCLUDED Scope</label>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (!formData.excludedScope) return;
-                            const items = formData.excludedScope
-                              .split(/[\n,•\-]/)
-                              .map((s) => s.trim())
-                              .filter(Boolean);
-                            const formatted = items.map((i) => `• ${i}`).join("\n");
-                            setFormData({ ...formData, excludedScope: formatted });
-                            toast.success("Converted exclusions into clean bullet points!");
-                          }}
-                          className="text-[10px] font-bold text-red-700 bg-red-50 hover:bg-red-100 px-2 py-0.5 rounded-md border border-red-200 transition cursor-pointer"
-                        >
-                          ✨ Format Comma / Lines to Bullets
-                        </button>
-                      </div>
-                      <textarea
-                        placeholder="Type comma-separated exclusions (e.g. Third-party API fees, Apple Developer Account fees)"
-                        rows={3}
-                        value={formData.excludedScope}
-                        onChange={(e) => setFormData({ ...formData, excludedScope: e.target.value })}
-                        className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-mono resize-y leading-relaxed"
-                      />
-                    </div>
-                    <div>
+                    <div className="pt-2 border-t border-[#D5CEBC]">
                       <div className="flex items-center justify-between mb-1">
                         <label className="text-[11px] font-bold text-neutral-700">Technology Stack</label>
                         <span className="text-[10px] text-neutral-500 font-medium">Click quick preset to fill:</span>
@@ -769,6 +674,101 @@ export default function AgreementPage() {
                         value={formData.techStack}
                         onChange={(e) => setFormData({ ...formData, techStack: e.target.value })}
                         className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-mono font-bold text-neutral-900 resize-y leading-relaxed"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 pt-1 border-t border-[#D5CEBC]">
+                      <div>
+                        <label className="text-[11px] font-bold text-neutral-700 block mb-1">Project Type</label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Full-Stack Web & Cross-Platform Mobile App"
+                          value={formData.projectType}
+                          onChange={(e) => setFormData({ ...formData, projectType: e.target.value })}
+                          className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-bold text-neutral-700 block mb-1">Target Platforms</label>
+                        <textarea
+                          placeholder="e.g. Web Browser, iOS App Store, Google Play Store"
+                          rows={2}
+                          value={formData.platforms}
+                          onChange={(e) => setFormData({ ...formData, platforms: e.target.value })}
+                          className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 resize-y"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* SECTION 4: Scope of Work */}
+            {isSectionVisible(4) && (
+              <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-2xl overflow-hidden shadow-sm">
+                <button
+                  onClick={() => toggleSection(4)}
+                  className="w-full px-5 py-3.5 flex items-center justify-between font-extrabold text-xs text-neutral-900 hover:bg-[#DFD9C9] transition cursor-pointer"
+                >
+                  <span>SECTION 4: Scope of Work (Included & Excluded Scope)</span>
+                  {openSections[4] ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                </button>
+                {openSections[4] && (
+                  <div className="p-5 border-t border-[#D5CEBC] flex flex-col gap-3">
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-[11px] font-bold text-neutral-700">What&apos;s INCLUDED Scope</label>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (!formData.includedScope) return;
+                            const items = formData.includedScope
+                              .split(/[\n,•\-]/)
+                              .map((s) => s.trim())
+                              .filter(Boolean);
+                            const formatted = items.map((i) => `• ${i}`).join("\n");
+                            setFormData({ ...formData, includedScope: formatted });
+                            toast.success("Converted items into clean bullet points!");
+                          }}
+                          className="text-[10px] font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 px-2 py-0.5 rounded-md border border-purple-200 transition cursor-pointer"
+                        >
+                          ✨ Format Comma / Lines to Bullets
+                        </button>
+                      </div>
+                      <textarea
+                        placeholder="Type comma-separated or line items (e.g. UI/UX design, REST API, Database design, Supabase Auth)"
+                        rows={6}
+                        value={formData.includedScope}
+                        onChange={(e) => setFormData({ ...formData, includedScope: e.target.value })}
+                        className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-mono resize-y leading-relaxed"
+                      />
+                    </div>
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-[11px] font-bold text-neutral-700">What&apos;s EXCLUDED Scope</label>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (!formData.excludedScope) return;
+                            const items = formData.excludedScope
+                              .split(/[\n,•\-]/)
+                              .map((s) => s.trim())
+                              .filter(Boolean);
+                            const formatted = items.map((i) => `• ${i}`).join("\n");
+                            setFormData({ ...formData, excludedScope: formatted });
+                            toast.success("Converted exclusions into clean bullet points!");
+                          }}
+                          className="text-[10px] font-bold text-red-700 bg-red-50 hover:bg-red-100 px-2 py-0.5 rounded-md border border-red-200 transition cursor-pointer"
+                        >
+                          ✨ Format Comma / Lines to Bullets
+                        </button>
+                      </div>
+                      <textarea
+                        placeholder="Type comma-separated exclusions (e.g. Third-party API fees, Apple Developer Account fees)"
+                        rows={3}
+                        value={formData.excludedScope}
+                        onChange={(e) => setFormData({ ...formData, excludedScope: e.target.value })}
+                        className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-mono resize-y leading-relaxed"
                       />
                     </div>
                   </div>
