@@ -14,6 +14,7 @@ import {
   Code,
   Lock,
   ShieldCheck,
+  FileText,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -32,11 +33,19 @@ export interface PaymentItem {
   dueDate: string;
 }
 
+export interface CustomPageItem {
+  id: string;
+  title: string;
+  subtitle?: string;
+  content: string;
+}
+
 export interface AgreementTemplateProps {
   id?: string;
-  activePage?: number; // 1, 2, 3 (or undefined for all pages)
+  activePage?: number; // 1, 2, 3, ... N (or undefined for all pages)
   totalPages?: number;
-  pageLayout?: "2-page" | "3-page";
+  pageLayout?: "2-page" | "3-page" | "4-page" | "5-page" | "auto";
+  customPages?: CustomPageItem[];
   agreementNumber: string;
   effectiveDate: string;
   version?: string;
@@ -106,6 +115,7 @@ export function ModernAgreementTemplate({
   activePage,
   totalPages,
   pageLayout = "3-page",
+  customPages = [],
   agreementNumber = "SXL-AGR-2026-000001",
   effectiveDate = new Date().toISOString().split("T")[0],
   version = "1.0",
@@ -194,12 +204,12 @@ export function ModernAgreementTemplate({
     return agreementNumber;
   })();
 
-  const isThreePage = pageLayout === "3-page";
-  const numPages = totalPages || (isThreePage ? 3 : 2);
+  const basePages = pageLayout === "2-page" ? 2 : 3;
+  const numPages = totalPages || (basePages + customPages.length);
 
   const showPage1 = activePage === undefined || activePage === 1;
   const showPage2 = activePage === undefined || activePage === 2;
-  const showPage3 = isThreePage && (activePage === undefined || activePage === 3);
+  const showPage3 = basePages >= 3 && (activePage === undefined || activePage === 3);
 
   return (
     <div
@@ -367,7 +377,7 @@ export function ModernAgreementTemplate({
               </div>
 
               {/* In 2-page mode, Section 5 is also on Page 1 if space permits */}
-              {!isThreePage && (
+              {basePages === 2 && (
                 <div className="p-3 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
                   <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
                     <Calendar style={{ width: "16px", height: "16px", display: "block" }} />
@@ -398,7 +408,7 @@ export function ModernAgreementTemplate({
 
       {/* PAGE 2 */}
       {showPage2 && (
-        <div data-page="true" className="relative w-full h-[297mm] flex flex-col justify-between pt-7 pb-0 overflow-hidden page-break-after-always" style={{ breakAfter: isThreePage ? "page" : "auto" }}>
+        <div data-page="true" className="relative w-full h-[297mm] flex flex-col justify-between pt-7 pb-0 overflow-hidden page-break-after-always" style={{ breakAfter: basePages >= 3 ? "page" : "auto" }}>
           <div>
             {/* Running Header for Page 2 */}
             <div className="px-10 pb-3 border-b border-neutral-200 flex justify-between items-center">
@@ -413,7 +423,7 @@ export function ModernAgreementTemplate({
             {/* Sections on Page 2 */}
             <div className="px-10 mt-5 space-y-3.5">
               {/* Section 5: Timeline & Milestones (in 3-page mode) */}
-              {isThreePage && (
+              {basePages >= 3 && (
                 <div className="p-4 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
                   <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
                     <Calendar style={{ width: "16px", height: "16px", display: "block" }} />
@@ -513,8 +523,8 @@ export function ModernAgreementTemplate({
                 </div>
               </div>
 
-              {/* If 2-page mode, Sections 8, 9, 10 + Signatures are also on Page 2 */}
-              {!isThreePage && (
+              {/* If 2-page mode and NO custom pages, Sections 8, 9, 10 + Signatures are also on Page 2 */}
+              {basePages === 2 && (
                 <>
                   <div className="p-3.5 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
                     <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -582,9 +592,9 @@ export function ModernAgreementTemplate({
         </div>
       )}
 
-      {/* PAGE 3 (For 3-page Layout) */}
+      {/* PAGE 3 (Standard 3-page Layout) */}
       {showPage3 && (
-        <div data-page="true" className="relative w-full h-[297mm] flex flex-col justify-between pt-7 pb-0 overflow-hidden">
+        <div data-page="true" className="relative w-full h-[297mm] flex flex-col justify-between pt-7 pb-0 overflow-hidden page-break-after-always" style={{ breakAfter: customPages.length > 0 ? "page" : "auto" }}>
           <div>
             {/* Running Header for Page 3 */}
             <div className="px-10 pb-3 border-b border-neutral-200 flex justify-between items-center">
@@ -634,11 +644,11 @@ export function ModernAgreementTemplate({
               </div>
 
               {/* Signatures Section */}
-              <div className="mt-8" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
-                <div className="grid grid-cols-2 gap-6 bg-neutral-50 p-6 rounded-2xl border border-neutral-200">
+              <div className="mt-6" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+                <div className="grid grid-cols-2 gap-6 bg-neutral-50 p-5 rounded-2xl border border-neutral-200">
                   <div>
                     <p className="font-extrabold text-neutral-900 uppercase text-xs tracking-wider mb-2">AUTHORIZED SIGNATURE:</p>
-                    <div className="py-2 border-b border-neutral-300">
+                    <div className="py-1.5 border-b border-neutral-300">
                       <span
                         className="font-signature text-3xl text-neutral-900 tracking-wider select-none transform -rotate-3 border-b-2 border-neutral-900/80 pb-0.5 px-2"
                         style={{ fontFamily: "'Dancing Script', 'Caveat', cursive" }}
@@ -646,13 +656,13 @@ export function ModernAgreementTemplate({
                         shode
                       </span>
                     </div>
-                    <p className="text-xs text-neutral-500 font-medium mt-1.5">Date: {formatDate(effectiveDate)}</p>
+                    <p className="text-xs text-neutral-500 font-medium mt-1">Date: {formatDate(effectiveDate)}</p>
                     <p className="text-[11px] text-neutral-700 font-bold">{providerSignatory}</p>
                   </div>
                   <div>
                     <p className="font-extrabold text-neutral-900 uppercase text-xs tracking-wider mb-2">CLIENT SIGNATURE:</p>
                     <p className="font-mono text-neutral-900 border-b border-neutral-300 pb-2.5 font-bold text-xs">{clientSignatory}</p>
-                    <p className="text-xs text-neutral-500 font-medium mt-1.5">Date: {formatDate(effectiveDate)}</p>
+                    <p className="text-xs text-neutral-500 font-medium mt-1">Date: {formatDate(effectiveDate)}</p>
                     <p className="text-[11px] text-neutral-700 font-bold">{clientCompany || clientName}</p>
                   </div>
                 </div>
@@ -667,6 +677,57 @@ export function ModernAgreementTemplate({
           </div>
         </div>
       )}
+
+      {/* DYNAMIC CUSTOM ADDITIONAL PAGES (Page 4, 5, 6, ...) */}
+      {customPages && customPages.map((cp, idx) => {
+        const pageNum = basePages + 1 + idx;
+        const showThisCustomPage = activePage === undefined || activePage === pageNum;
+
+        if (!showThisCustomPage) return null;
+
+        return (
+          <div
+            key={cp.id || idx}
+            data-page="true"
+            className="relative w-full h-[297mm] flex flex-col justify-between pt-7 pb-0 overflow-hidden page-break-after-always"
+            style={{ breakAfter: idx === customPages.length - 1 ? "auto" : "page" }}
+          >
+            <div>
+              {/* Running Header */}
+              <div className="px-10 pb-3 border-b border-neutral-200 flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <span className="font-black text-neutral-900 text-xs uppercase tracking-wider">SevenX Labs</span>
+                  <span className="text-neutral-300">•</span>
+                  <span className="text-xs font-bold text-neutral-600 uppercase">{cp.title || "Additional Terms & Appendix"}</span>
+                </div>
+                <span className="font-mono text-xs text-neutral-500 font-bold">Ref #{formattedAgrNumber} | Page {pageNum} of {numPages}</span>
+              </div>
+
+              {/* Custom Page Body */}
+              <div className="px-10 mt-5 space-y-4">
+                <div className="p-5 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "14px" }}>
+                  <div className={`p-3 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <FileText style={{ width: "18px", height: "18px", display: "block" }} />
+                  </div>
+                  <div className="flex-1 space-y-2">
+                    <h4 className="text-sm font-black text-neutral-900 uppercase tracking-wider">{cp.title || `PAGE ${pageNum}: APPENDIX`}</h4>
+                    {cp.subtitle && <p className="text-xs text-neutral-500 font-bold">{cp.subtitle}</p>}
+                    <div className="text-xs text-neutral-800 leading-relaxed font-medium whitespace-pre-line pt-2 border-t border-neutral-100">
+                      {cp.content}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20 flex justify-between items-center text-xs font-semibold">
+              <span>Made with SevenX Labs</span>
+              <span className="font-mono text-[11px] text-neutral-400">Page {pageNum} of {numPages}</span>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

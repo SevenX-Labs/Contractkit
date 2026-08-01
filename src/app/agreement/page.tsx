@@ -5,7 +5,7 @@ import { useDocumentExport } from "../../hooks/useDocumentExport";
 import { getProfileDB, getNextDocumentNumberDB, createAgreementDB } from "../actions";
 import { formatCurrency, formatDate } from "../../lib/utils";
 import { ExportDropdown } from "../../components/common/ExportDropdown";
-import { ModernAgreementTemplate } from "../../components/agreement/ModernAgreementTemplate";
+import { ModernAgreementTemplate, CustomPageItem } from "../../components/agreement/ModernAgreementTemplate";
 import {
   FileCheck,
   Save,
@@ -28,6 +28,7 @@ import {
   Code,
   PenTool,
   Layers,
+  FileText,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -50,7 +51,7 @@ export default function AgreementPage() {
   const { exportToPDF, exportToDOCX, exportToImage, isExporting } = useDocumentExport();
   const [isSaving, setIsSaving] = useState(false);
   const [showFloatingPreview, setShowFloatingPreview] = useState(false);
-  const [openSections, setOpenSections] = useState<Record<number, boolean>>({ 1: true, 2: true, 3: true, 7: true, 10: true });
+  const [openSections, setOpenSections] = useState<Record<number, boolean>>({ 1: true, 2: true, 3: true, 7: true, 10: true, 11: true });
   const [showAllSections, setShowAllSections] = useState(false);
   const [pageLayoutMode, setPageLayoutMode] = useState<"2-page" | "3-page">("3-page");
   const [activePreviewPage, setActivePreviewPage] = useState<number>(1);
@@ -123,6 +124,9 @@ export default function AgreementPage() {
     freelancerSignDate: new Date().toISOString().split("T")[0],
     clientSignDate: new Date().toISOString().split("T")[0],
 
+    // Section 11+: Custom Additional Pages (Page 4, Page 5, etc.)
+    customPages: [] as CustomPageItem[],
+
     // Payment Info
     bankName: "HDFC Bank",
     bankAccount: "50100234567890",
@@ -168,7 +172,8 @@ export default function AgreementPage() {
     });
   }, []);
 
-  const totalPagesCount = pageLayoutMode === "3-page" ? 3 : 2;
+  const basePagesCount = pageLayoutMode === "2-page" ? 2 : 3;
+  const totalPagesCount = basePagesCount + formData.customPages.length;
 
   const handlePaymentStructureChange = (structure: string) => {
     const val = formData.totalAmount;
@@ -216,6 +221,28 @@ export default function AgreementPage() {
     setFormData({ ...formData, milestones: formData.milestones.filter((m) => m.id !== id) });
   };
 
+  const addCustomPage = () => {
+    const newPageNum = basePagesCount + formData.customPages.length + 1;
+    const newPage: CustomPageItem = {
+      id: `cp-${Date.now()}`,
+      title: `APPENDIX A: TECHNICAL SLA & COMPLIANCE (PAGE ${newPageNum})`,
+      subtitle: "Service level commitments & security policy",
+      content: "• 99.9% Production Server Uptime Commitment.\n• Daily automated off-site PostgreSQL database backups.\n• Technical support response SLA within 2 hours for critical incidents.",
+    };
+    setFormData((prev) => ({ ...prev, customPages: [...prev.customPages, newPage] }));
+    setActivePreviewPage(newPageNum);
+    toast.success(`Page ${newPageNum} added to document!`);
+  };
+
+  const removeCustomPage = (id: string) => {
+    const updated = formData.customPages.filter((p) => p.id !== id);
+    setFormData({ ...formData, customPages: updated });
+    const newTotal = basePagesCount + updated.length;
+    if (activePreviewPage > newTotal) {
+      setActivePreviewPage(Math.max(1, newTotal));
+    }
+  };
+
   const handleSave = async () => {
     if (!formData.clientName) {
       toast.error("Please enter Client Name before saving.");
@@ -257,6 +284,7 @@ export default function AgreementPage() {
       activePage={page}
       pageLayout={pageLayoutMode}
       totalPages={totalPagesCount}
+      customPages={formData.customPages}
       agreementNumber={formData.agreementNumber}
       effectiveDate={formData.date}
       version={formData.version}
@@ -306,9 +334,11 @@ export default function AgreementPage() {
       if (activePreviewPage === 1) return sectionNum >= 1 && sectionNum <= 4;
       if (activePreviewPage === 2) return sectionNum >= 5 && sectionNum <= 7;
       if (activePreviewPage === 3) return sectionNum >= 8 && sectionNum <= 10;
+      if (activePreviewPage >= 4) return sectionNum === 11;
     } else {
       if (activePreviewPage === 1) return sectionNum >= 1 && sectionNum <= 5;
       if (activePreviewPage === 2) return sectionNum >= 6 && sectionNum <= 10;
+      if (activePreviewPage >= 3) return sectionNum === 11;
     }
     return true;
   };
@@ -323,11 +353,19 @@ export default function AgreementPage() {
           </div>
           <div>
             <h1 className="text-xl font-extrabold text-neutral-900 tracking-tight">Create Agreement</h1>
-            <p className="text-xs text-neutral-600 font-medium">Generate a professional freelance contract with dynamic multi-page layout</p>
+            <p className="text-xs text-neutral-600 font-medium">Generate a professional freelance contract with dynamic multi-page management</p>
           </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={addCustomPage}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-emerald-700 text-white font-bold text-xs shadow hover:bg-emerald-800 transition cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add New Page ({totalPagesCount + 1})</span>
+          </button>
+
           <button
             onClick={() => setShowFloatingPreview(true)}
             className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-purple-600 text-white font-bold text-xs shadow hover:bg-purple-700 transition cursor-pointer"
@@ -363,13 +401,13 @@ export default function AgreementPage() {
             <div>
               <h3 className="text-xs font-black text-neutral-900 uppercase tracking-wider">
                 {showAllSections
-                  ? "All Form Sections (1 - 10)"
-                  : `Page ${activePreviewPage} Sections`}
+                  ? `All Form Sections (1 - 10 + ${formData.customPages.length} Custom Pages)`
+                  : `Page ${activePreviewPage} Form Fields`}
               </h3>
               <p className="text-[10px] text-neutral-500 font-medium">
                 {showAllSections
-                  ? "Showing all 10 form sections"
-                  : `Form fields matching active Page ${activePreviewPage} preview`}
+                  ? "Showing all form sections"
+                  : `Form fields matching active Page ${activePreviewPage} of ${totalPagesCount} preview`}
               </p>
             </div>
             <button
@@ -381,7 +419,7 @@ export default function AgreementPage() {
             </button>
           </div>
 
-          {/* PAGE SECTIONS (1 - 10) */}
+          {/* PAGE SECTIONS (1 - 11) */}
           <div className="flex flex-col gap-4">
             {/* SECTION 1: Agreement Info */}
             {isSectionVisible(1) && (
@@ -884,6 +922,100 @@ export default function AgreementPage() {
                 )}
               </div>
             )}
+
+            {/* SECTION 11+: Custom Pages Manager (Page 4, Page 5, etc.) */}
+            {isSectionVisible(11) && (
+              <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-2xl overflow-hidden shadow-sm">
+                <button
+                  onClick={() => toggleSection(11)}
+                  className="w-full px-5 py-3.5 flex items-center justify-between font-extrabold text-xs text-neutral-900 hover:bg-[#DFD9C9] transition cursor-pointer"
+                >
+                  <div className="flex items-center gap-2">
+                    <Layers className="w-4 h-4 text-emerald-700" />
+                    <span>SECTION 11+: Custom Additional Pages ({formData.customPages.length})</span>
+                  </div>
+                  {openSections[11] ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                </button>
+                {openSections[11] && (
+                  <div className="p-5 border-t border-[#D5CEBC] flex flex-col gap-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-neutral-700">Custom Document Pages</span>
+                      <button
+                        type="button"
+                        onClick={addCustomPage}
+                        className="flex items-center gap-1 text-xs font-bold text-emerald-700 hover:underline cursor-pointer"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Add Page {totalPagesCount + 1}</span>
+                      </button>
+                    </div>
+
+                    {formData.customPages.length === 0 ? (
+                      <div className="p-4 bg-[#F4F0E6] rounded-xl border border-[#E2DDD0] text-center text-xs text-neutral-600">
+                        No custom pages added yet. Click &quot;Add Page {totalPagesCount + 1}&quot; to insert SLA, technical specs, or appendix pages!
+                      </div>
+                    ) : (
+                      formData.customPages.map((cp, idx) => {
+                        const pageNum = basePagesCount + 1 + idx;
+                        return (
+                          <div key={cp.id} className="flex flex-col gap-2 bg-[#F4F0E6] p-4 rounded-xl border border-[#E2DDD0]">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-extrabold text-emerald-800 uppercase">
+                                Page {pageNum} Content Block
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => removeCustomPage(cp.id)}
+                                className="text-red-500 hover:text-red-700 text-xs font-bold flex items-center gap-1 cursor-pointer"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                <span>Delete Page</span>
+                              </button>
+                            </div>
+                            <input
+                              type="text"
+                              placeholder="Page Title / Heading"
+                              value={cp.title}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  customPages: formData.customPages.map((row) => (row.id === cp.id ? { ...row, title: e.target.value } : row)),
+                                })
+                              }
+                              className="bg-white border border-[#E2DDD0] rounded-lg px-3 py-1.5 text-xs font-bold text-neutral-900"
+                            />
+                            <input
+                              type="text"
+                              placeholder="Subtitle / Tagline (Optional)"
+                              value={cp.subtitle || ""}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  customPages: formData.customPages.map((row) => (row.id === cp.id ? { ...row, subtitle: e.target.value } : row)),
+                                })
+                              }
+                              className="bg-white border border-[#E2DDD0] rounded-lg px-3 py-1.5 text-xs text-neutral-800"
+                            />
+                            <textarea
+                              placeholder="Page Content (bullets, SLA terms, specs...)"
+                              rows={4}
+                              value={cp.content}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  customPages: formData.customPages.map((row) => (row.id === cp.id ? { ...row, content: e.target.value } : row)),
+                                })
+                              }
+                              className="bg-white border border-[#E2DDD0] rounded-lg px-3 py-2 text-xs text-neutral-900 resize-none font-mono"
+                            />
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -892,13 +1024,15 @@ export default function AgreementPage() {
           <div className="flex items-center justify-between px-2 flex-wrap gap-2">
             <span className="text-xs font-bold text-neutral-700 uppercase tracking-wider">Live Contract Preview</span>
             
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               {/* Page Layout Mode Selector Switch */}
               <div className="flex items-center bg-[#EBE7DC] p-0.5 rounded-full border border-[#E2DDD0]">
                 <button
                   onClick={() => {
                     setPageLayoutMode("2-page");
-                    if (activePreviewPage > 2) setActivePreviewPage(2);
+                    if (activePreviewPage > 2 + formData.customPages.length) {
+                      setActivePreviewPage(2 + formData.customPages.length);
+                    }
                   }}
                   className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition cursor-pointer ${
                     pageLayoutMode === "2-page"
@@ -906,7 +1040,7 @@ export default function AgreementPage() {
                       : "text-neutral-600 hover:text-neutral-900"
                   }`}
                 >
-                  2 Pages
+                  2 Base Pages
                 </button>
                 <button
                   onClick={() => setPageLayoutMode("3-page")}
@@ -916,7 +1050,7 @@ export default function AgreementPage() {
                       : "text-neutral-600 hover:text-neutral-900"
                   }`}
                 >
-                  3 Pages
+                  3 Base Pages
                 </button>
               </div>
 
