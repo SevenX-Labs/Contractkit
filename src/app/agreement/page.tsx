@@ -99,6 +99,7 @@ export default function AgreementPage() {
     // Section 6: Payment Terms (EMPTY FOR USER INPUT)
     totalAmount: 0,
     paymentStructure: "50/50",
+    customPaymentTerms: "",
     paymentRows: [] as PaymentRow[],
 
     // Section 7: IP Rights (EMPTY FOR USER INPUT)
@@ -174,27 +175,40 @@ export default function AgreementPage() {
   const handlePaymentStructureChange = (structure: string) => {
     const val = formData.totalAmount;
     let newRows: PaymentRow[] = [];
+    let customText = formData.customPaymentTerms;
 
-    if (val > 0) {
-      if (structure === "50/50") {
-        newRows = [
-          { id: "p1", label: "Advance Payment (50%)", percentage: 50, amount: val * 0.5, dueDate: "Before project kickoff" },
-          { id: "p2", label: "Final Delivery (50%)", percentage: 50, amount: val * 0.5, dueDate: "On final code handover" },
-        ];
-      } else if (structure === "3-Way Split") {
-        newRows = [
-          { id: "p1", label: "Advance Deposit (30%)", percentage: 30, amount: val * 0.3, dueDate: "Before project kickoff" },
-          { id: "p2", label: "Milestone 2: Beta Prototype (30%)", percentage: 30, amount: val * 0.3, dueDate: "Upon Phase 2 completion" },
-          { id: "p3", label: "Final Deployment (40%)", percentage: 40, amount: val * 0.4, dueDate: "On final project handover" },
-        ];
-      } else if (structure === "Full Payment After Work") {
-        newRows = [{ id: "p1", label: "Full Payment Upon Completion (100%)", percentage: 100, amount: val, dueDate: "Upon final project handover" }];
-      } else {
-        newRows = [{ id: "p1", label: "Full Upfront Deposit (100%)", percentage: 100, amount: val, dueDate: "Before project start" }];
-      }
+    if (structure === "50/50") {
+      newRows = [
+        { id: "p1", label: "Advance Payment (50%)", percentage: 50, amount: val * 0.5, dueDate: "Before project kickoff" },
+        { id: "p2", label: "Final Delivery (50%)", percentage: 50, amount: val * 0.5, dueDate: "On final code handover" },
+      ];
+      customText = `Total Fixed Project Fee: ₹${val ? val.toLocaleString("en-IN") : "0"} (50% Advance / 50% Final Handover).\n- 50% Advance deposit before project kickoff.\n- 50% Balance payment upon final deployment & code handover.`;
+    } else if (structure === "3-Way Split") {
+      newRows = [
+        { id: "p1", label: "Advance Deposit (30%)", percentage: 30, amount: val * 0.3, dueDate: "Before project kickoff" },
+        { id: "p2", label: "Milestone 2: Beta Prototype (30%)", percentage: 30, amount: val * 0.3, dueDate: "Upon Phase 2 completion" },
+        { id: "p3", label: "Final Deployment (40%)", percentage: 40, amount: val * 0.4, dueDate: "On final project handover" },
+      ];
+      customText = `Total Project Fee: ₹${val ? val.toLocaleString("en-IN") : "0"} (3-Way Milestone Split).\n- 30% Upfront deposit to start work.\n- 30% Second milestone upon beta prototype demo.\n- 40% Final balance upon production launch & handover.`;
+    } else if (structure === "Monthly Retainer") {
+      newRows = [
+        { id: "p1", label: "Monthly Retainer (Month 1)", percentage: 100, amount: val, dueDate: "Due 1st of each month" },
+      ];
+      customText = `Monthly Retainer Agreement: ₹${val ? val.toLocaleString("en-IN") : "0"} / month.\n- Invoiced monthly in advance on the 1st of every billing cycle.\n- Covers recurring maintenance, support, development & server upkeep.`;
+    } else if (structure === "Full Upfront") {
+      newRows = [{ id: "p1", label: "Full Upfront Deposit (100%)", percentage: 100, amount: val, dueDate: "Before project start" }];
+      customText = `Total Upfront Fee: ₹${val ? val.toLocaleString("en-IN") : "0"} (100% Paid Upfront).\n- Full payment required prior to commencement of work.`;
+    } else if (structure === "Full Payment After Work") {
+      newRows = [{ id: "p1", label: "Full Payment Upon Completion (100%)", percentage: 100, amount: val, dueDate: "Upon final project handover" }];
+      customText = `Total Project Fee: ₹${val ? val.toLocaleString("en-IN") : "0"} (100% Due Upon Handover).\n- Full payment due within 7 days of final system delivery and client sign-off.`;
     }
 
-    setFormData({ ...formData, paymentStructure: structure, paymentRows: newRows });
+    setFormData({
+      ...formData,
+      paymentStructure: structure,
+      customPaymentTerms: customText,
+      paymentRows: newRows,
+    });
   };
 
   const handleTotalAmountChange = (val: number) => {
@@ -306,6 +320,7 @@ export default function AgreementPage() {
       excludedScope={formData.excludedScope}
       milestones={formData.milestones}
       paymentRows={formData.paymentRows}
+      customPaymentTerms={formData.customPaymentTerms}
       deliverables={formData.deliverablesList}
       startDate={formData.startDate}
       deliveryDate={formData.deadline}
@@ -885,10 +900,10 @@ export default function AgreementPage() {
                   {openSections[6] ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                 </button>
                 {openSections[6] && (
-                  <div className="p-5 border-t border-[#D5CEBC] flex flex-col gap-3">
+                  <div className="p-5 border-t border-[#D5CEBC] flex flex-col gap-4">
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="text-[11px] font-bold text-neutral-700 block mb-1">Total Amount (₹)</label>
+                        <label className="text-[11px] font-bold text-neutral-700 block mb-1">Total Project Fee / Rate (₹)</label>
                         <input
                           type="number"
                           placeholder="e.g. 250000"
@@ -898,18 +913,132 @@ export default function AgreementPage() {
                         />
                       </div>
                       <div>
-                        <label className="text-[11px] font-bold text-neutral-700 block mb-1">Payment Structure</label>
+                        <label className="text-[11px] font-bold text-neutral-700 block mb-1">Payment Structure Type</label>
                         <select
                           value={formData.paymentStructure}
                           onChange={(e) => handlePaymentStructureChange(e.target.value)}
                           className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 cursor-pointer"
                         >
-                          <option value="50/50">50% Advance / 50% Handover</option>
-                          <option value="3-Way Split">30% / 30% / 40% Split</option>
-                          <option value="Full Upfront">100% Upfront Deposit</option>
-                          <option value="Full Payment After Work">100% Upon Handover</option>
+                          <option value="50/50">One-Time: 50% Advance / 50% Handover</option>
+                          <option value="3-Way Split">One-Time: 3-Way Split (30% / 30% / 40%)</option>
+                          <option value="Full Upfront">One-Time: 100% Full Upfront Deposit</option>
+                          <option value="Full Payment After Work">One-Time: 100% Upon Handover</option>
+                          <option value="Monthly Retainer">Recurring: Monthly Retainer Billing</option>
+                          <option value="Custom Freeform">Custom: Freeform Text Description</option>
                         </select>
                       </div>
+                    </div>
+
+                    {/* Freeform Message Type Box for Custom Payment Terms */}
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-[11px] font-extrabold text-neutral-900 italic">
+                          Custom Payment Terms & Notes <span className="font-normal text-neutral-500">(Type total amount, installments, retainer info here)</span>
+                        </label>
+                        <div className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setFormData({
+                                ...formData,
+                                customPaymentTerms: `Total Fixed Fee: ₹${formData.totalAmount ? formData.totalAmount.toLocaleString("en-IN") : "0"}\n- 50% Advance Deposit before project kickoff.\n- 50% Final Payment upon completion and production launch.`,
+                              })
+                            }
+                            className="text-[9.5px] font-bold text-purple-800 bg-purple-100 hover:bg-purple-200 px-2 py-0.5 rounded border border-purple-300 transition cursor-pointer"
+                          >
+                            + 50/50 Preset
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setFormData({
+                                ...formData,
+                                customPaymentTerms: `Monthly Retainer Rate: ₹${formData.totalAmount ? formData.totalAmount.toLocaleString("en-IN") : "50,000"} / month.\n- Invoiced on the 1st of every month.\n- Includes ongoing feature development, maintenance & server support.`,
+                              })
+                            }
+                            className="text-[9.5px] font-bold text-blue-800 bg-blue-100 hover:bg-blue-200 px-2 py-0.5 rounded border border-blue-300 transition cursor-pointer"
+                          >
+                            + Monthly Retainer Preset
+                          </button>
+                        </div>
+                      </div>
+                      <textarea
+                        placeholder="Type any custom payment terms or schedule here... e.g. Total amount ₹2,50,000 paid in 5 monthly installments of ₹50,000 each..."
+                        rows={4}
+                        value={formData.customPaymentTerms}
+                        onChange={(e) => setFormData({ ...formData, customPaymentTerms: e.target.value })}
+                        className="w-full bg-[#1a1a1a] border border-neutral-800 rounded-2xl px-4 py-3 text-xs text-neutral-100 font-mono resize-y leading-relaxed shadow-inner focus:outline-none focus:border-purple-500"
+                      />
+                    </div>
+
+                    {/* Breakdown Payment Rows Table */}
+                    <div className="flex flex-col gap-2 pt-1 border-t border-[#D5CEBC]">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-bold text-neutral-700">Installment Breakdown Rows (Optional Table)</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newRow: PaymentRow = {
+                              id: `p-${Date.now()}`,
+                              label: `Installment ${formData.paymentRows.length + 1}`,
+                              percentage: 0,
+                              amount: 0,
+                              dueDate: "Upon Milestone Completion",
+                            };
+                            setFormData({ ...formData, paymentRows: [...formData.paymentRows, newRow] });
+                          }}
+                          className="flex items-center gap-1 text-xs font-bold text-purple-700 hover:underline cursor-pointer"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>Add Installment Row</span>
+                        </button>
+                      </div>
+
+                      {formData.paymentRows.map((r, idx) => (
+                        <div key={r.id} className="grid grid-cols-12 gap-2 bg-[#F4F0E6] p-2.5 rounded-xl border border-[#E2DDD0] items-center text-xs">
+                          <input
+                            type="text"
+                            placeholder="Label (e.g. Advance 50%)"
+                            value={r.label}
+                            onChange={(e) => {
+                              const updated = formData.paymentRows.map((row) => (row.id === r.id ? { ...row, label: e.target.value } : row));
+                              setFormData({ ...formData, paymentRows: updated });
+                            }}
+                            className="col-span-4 bg-white border border-[#E2DDD0] rounded-lg px-2.5 py-1 text-xs font-bold text-neutral-900"
+                          />
+                          <input
+                            type="number"
+                            placeholder="Amount (₹)"
+                            value={r.amount || ""}
+                            onChange={(e) => {
+                              const amt = Number(e.target.value);
+                              const pct = formData.totalAmount > 0 ? Math.round((amt / formData.totalAmount) * 100) : r.percentage;
+                              const updated = formData.paymentRows.map((row) => (row.id === r.id ? { ...row, amount: amt, percentage: pct } : row));
+                              setFormData({ ...formData, paymentRows: updated });
+                            }}
+                            className="col-span-3 bg-white border border-[#E2DDD0] rounded-lg px-2.5 py-1 text-xs font-mono font-bold text-neutral-900"
+                          />
+                          <input
+                            type="text"
+                            placeholder="Due Date / Milestone"
+                            value={r.dueDate}
+                            onChange={(e) => {
+                              const updated = formData.paymentRows.map((row) => (row.id === r.id ? { ...row, dueDate: e.target.value } : row));
+                              setFormData({ ...formData, paymentRows: updated });
+                            }}
+                            className="col-span-4 bg-white border border-[#E2DDD0] rounded-lg px-2.5 py-1 text-xs text-neutral-700 font-sans"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setFormData({ ...formData, paymentRows: formData.paymentRows.filter((row) => row.id !== r.id) });
+                            }}
+                            className="col-span-1 text-red-500 hover:text-red-700 flex items-center justify-center cursor-pointer"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}

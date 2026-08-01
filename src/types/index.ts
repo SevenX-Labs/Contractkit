@@ -151,6 +151,7 @@ export interface AgreementData {
   
   warrantyPeriod?: string;
   warrantyScope?: string;
+  customPaymentTerms?: string;
   
   freelancerSignature: string;
   freelancerSignDate: string;

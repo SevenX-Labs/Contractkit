@@ -88,6 +88,7 @@ export interface AgreementTemplateProps {
   balanceAmount?: number;
   currencySymbol?: string;
   paymentSchedule?: string;
+  customPaymentTerms?: string;
   paymentRows?: PaymentItem[];
 
   bankName?: string;
@@ -249,6 +250,7 @@ export function ModernAgreementTemplate({
   balanceAmount = 0,
   currencySymbol = "₹",
   paymentSchedule = "",
+  customPaymentTerms = "",
   paymentRows = [],
   bankName = "",
   bankAccount = "",
@@ -679,9 +681,15 @@ export function ModernAgreementTemplate({
                 </div>
                 <div className="flex-1">
                   <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1.5">6. PAYMENT TERMS & SCHEDULE</h4>
-                  <p className="text-xs text-neutral-800 mb-2 font-medium">
-                    {paymentSchedule || <span className="text-neutral-400 italic font-normal">[ Payment terms schedule ]</span>}
-                  </p>
+                  {customPaymentTerms ? (
+                    <div className="bg-neutral-50 p-2.5 rounded-xl border border-neutral-200 text-xs font-medium text-neutral-800 leading-relaxed whitespace-pre-line mb-2.5">
+                      {customPaymentTerms}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-neutral-800 mb-2 font-medium">
+                      {paymentSchedule || <span className="text-neutral-400 italic font-normal">[ Payment terms schedule ]</span>}
+                    </p>
+                  )}
                   
                   {paymentRows && paymentRows.length > 0 ? (
                     <div className="border border-neutral-200 rounded-xl overflow-hidden text-xs mb-2 font-mono">
