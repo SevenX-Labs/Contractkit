@@ -930,49 +930,71 @@ export default function AgreementPage() {
                     </div>
 
                     {/* Freeform Message Type Box for Custom Payment Terms */}
-                    <div>
-                      <div className="flex items-center justify-between mb-1">
-                        <label className="text-[11px] font-extrabold text-neutral-900 italic">
-                          Custom Payment Terms & Notes <span className="font-normal text-neutral-500">(Type total amount, installments, retainer info here)</span>
-                        </label>
-                        <div className="flex items-center gap-1">
+                    <div className="flex flex-col gap-2 pt-1">
+                      <div className="flex flex-col gap-1.5">
+                        <div className="flex items-center justify-between flex-wrap gap-1">
+                          <label className="text-[11px] font-extrabold text-neutral-900">
+                            Custom Payment Terms & Notes <span className="font-normal text-neutral-500 text-[10px] font-mono">(Renders directly on contract)</span>
+                          </label>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <span className="text-[10px] font-semibold text-neutral-500">Quick Presets:</span>
                           <button
                             type="button"
                             onClick={() =>
                               setFormData({
                                 ...formData,
-                                customPaymentTerms: `Total Fixed Fee: ₹${formData.totalAmount ? formData.totalAmount.toLocaleString("en-IN") : "0"}\n- 50% Advance Deposit before project kickoff.\n- 50% Final Payment upon completion and production launch.`,
+                                customPaymentTerms: `Total Fixed Project Fee: ₹${formData.totalAmount ? formData.totalAmount.toLocaleString("en-IN") : "0"} (50% Advance / 50% Final Handover).\n• 50% Advance deposit required before project kickoff.\n• 50% Balance payment due upon final code handover and deployment.`,
                               })
                             }
-                            className="text-[9.5px] font-bold text-purple-800 bg-purple-100 hover:bg-purple-200 px-2 py-0.5 rounded border border-purple-300 transition cursor-pointer"
+                            className="text-[10px] font-bold text-purple-800 bg-purple-100/90 hover:bg-purple-200 px-2.5 py-1 rounded-full border border-purple-300 transition cursor-pointer whitespace-nowrap shadow-2xs"
                           >
-                            + 50/50 Preset
+                            ⚡ 50/50 Advance
                           </button>
                           <button
                             type="button"
                             onClick={() =>
                               setFormData({
                                 ...formData,
-                                customPaymentTerms: `Monthly Retainer Rate: ₹${formData.totalAmount ? formData.totalAmount.toLocaleString("en-IN") : "50,000"} / month.\n- Invoiced on the 1st of every month.\n- Includes ongoing feature development, maintenance & server support.`,
+                                customPaymentTerms: `Monthly Retainer Agreement: ₹${formData.totalAmount ? formData.totalAmount.toLocaleString("en-IN") : "50,000"} / month.\n• Invoiced monthly in advance on the 1st of every billing cycle.\n• Covers ongoing feature development, maintenance & server support.`,
                               })
                             }
-                            className="text-[9.5px] font-bold text-blue-800 bg-blue-100 hover:bg-blue-200 px-2 py-0.5 rounded border border-blue-300 transition cursor-pointer"
+                            className="text-[10px] font-bold text-blue-800 bg-blue-100/90 hover:bg-blue-200 px-2.5 py-1 rounded-full border border-blue-300 transition cursor-pointer whitespace-nowrap shadow-2xs"
                           >
-                            + Monthly Retainer Preset
+                            🔄 Monthly Retainer
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setFormData({
+                                ...formData,
+                                customPaymentTerms: `Total Project Fee: ₹${formData.totalAmount ? formData.totalAmount.toLocaleString("en-IN") : "0"} (3-Way Milestone Split).\n• 30% Upfront deposit to initiate project.\n• 30% Second milestone upon beta prototype demonstration.\n• 40% Final balance upon production launch & handover.`,
+                              })
+                            }
+                            className="text-[10px] font-bold text-emerald-800 bg-emerald-100/90 hover:bg-emerald-200 px-2.5 py-1 rounded-full border border-emerald-300 transition cursor-pointer whitespace-nowrap shadow-2xs"
+                          >
+                            📊 3-Way Split
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setFormData({ ...formData, customPaymentTerms: "" })}
+                            className="text-[10px] font-bold text-neutral-600 bg-neutral-200/80 hover:bg-neutral-300 px-2.5 py-1 rounded-full border border-neutral-300 transition cursor-pointer whitespace-nowrap shadow-2xs"
+                          >
+                            🧹 Clear
                           </button>
                         </div>
                       </div>
                       <textarea
-                        placeholder="Type any custom payment terms or schedule here... e.g. Total amount ₹2,50,000 paid in 5 monthly installments of ₹50,000 each..."
+                        placeholder="Type custom payment terms, monthly retainer info, or milestone schedule here..."
                         rows={4}
                         value={formData.customPaymentTerms}
                         onChange={(e) => setFormData({ ...formData, customPaymentTerms: e.target.value })}
-                        className="w-full bg-[#1a1a1a] border border-neutral-800 rounded-2xl px-4 py-3 text-xs text-neutral-100 font-mono resize-y leading-relaxed shadow-inner focus:outline-none focus:border-purple-500"
+                        className="w-full bg-[#18181b] border border-neutral-800 rounded-2xl px-4 py-3 text-xs text-neutral-100 font-mono resize-y leading-relaxed shadow-inner focus:outline-none focus:border-purple-500 transition"
                       />
                     </div>
 
                     {/* Breakdown Payment Rows Table */}
-                    <div className="flex flex-col gap-2 pt-1 border-t border-[#D5CEBC]">
+                    <div className="flex flex-col gap-2 pt-2 border-t border-[#D5CEBC]">
                       <div className="flex items-center justify-between">
                         <span className="text-[11px] font-bold text-neutral-700">Installment Breakdown Rows (Optional Table)</span>
                         <button
@@ -994,17 +1016,26 @@ export default function AgreementPage() {
                         </button>
                       </div>
 
-                      {formData.paymentRows.map((r, idx) => (
+                      {formData.paymentRows.length > 0 && (
+                        <div className="grid grid-cols-12 gap-2 px-1 text-[10px] font-extrabold text-neutral-500 uppercase tracking-wider">
+                          <span className="col-span-5">Installment Label</span>
+                          <span className="col-span-3">Amount (₹)</span>
+                          <span className="col-span-3">Due Date / Terms</span>
+                          <span className="col-span-1 text-center">Del</span>
+                        </div>
+                      )}
+
+                      {formData.paymentRows.map((r) => (
                         <div key={r.id} className="grid grid-cols-12 gap-2 bg-[#F4F0E6] p-2.5 rounded-xl border border-[#E2DDD0] items-center text-xs">
                           <input
                             type="text"
-                            placeholder="Label (e.g. Advance 50%)"
+                            placeholder="Installment Name"
                             value={r.label}
                             onChange={(e) => {
                               const updated = formData.paymentRows.map((row) => (row.id === r.id ? { ...row, label: e.target.value } : row));
                               setFormData({ ...formData, paymentRows: updated });
                             }}
-                            className="col-span-4 bg-white border border-[#E2DDD0] rounded-lg px-2.5 py-1 text-xs font-bold text-neutral-900"
+                            className="col-span-5 bg-white border border-[#E2DDD0] rounded-lg px-2.5 py-1.5 text-xs font-bold text-neutral-900 focus:outline-none focus:border-purple-500"
                           />
                           <input
                             type="number"
@@ -1016,26 +1047,27 @@ export default function AgreementPage() {
                               const updated = formData.paymentRows.map((row) => (row.id === r.id ? { ...row, amount: amt, percentage: pct } : row));
                               setFormData({ ...formData, paymentRows: updated });
                             }}
-                            className="col-span-3 bg-white border border-[#E2DDD0] rounded-lg px-2.5 py-1 text-xs font-mono font-bold text-neutral-900"
+                            className="col-span-3 bg-white border border-[#E2DDD0] rounded-lg px-2.5 py-1.5 text-xs font-mono font-bold text-neutral-900 focus:outline-none focus:border-purple-500"
                           />
                           <input
                             type="text"
-                            placeholder="Due Date / Milestone"
+                            placeholder="Due Date"
                             value={r.dueDate}
                             onChange={(e) => {
                               const updated = formData.paymentRows.map((row) => (row.id === r.id ? { ...row, dueDate: e.target.value } : row));
                               setFormData({ ...formData, paymentRows: updated });
                             }}
-                            className="col-span-4 bg-white border border-[#E2DDD0] rounded-lg px-2.5 py-1 text-xs text-neutral-700 font-sans"
+                            className="col-span-3 bg-white border border-[#E2DDD0] rounded-lg px-2.5 py-1.5 text-xs text-neutral-800 font-sans focus:outline-none focus:border-purple-500"
                           />
                           <button
                             type="button"
                             onClick={() => {
                               setFormData({ ...formData, paymentRows: formData.paymentRows.filter((row) => row.id !== r.id) });
                             }}
-                            className="col-span-1 text-red-500 hover:text-red-700 flex items-center justify-center cursor-pointer"
+                            className="col-span-1 text-red-500 hover:text-red-700 flex items-center justify-center cursor-pointer p-1"
+                            title="Delete Row"
                           >
-                            <Trash2 className="w-3.5 h-3.5" />
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                       ))}
@@ -1126,30 +1158,32 @@ export default function AgreementPage() {
                       />
                     </div>
                     <div>
-                      <div className="flex items-center justify-between mb-1">
-                        <label className="text-[11px] font-extrabold text-neutral-900 italic">(Optional) Warranty Scope <span className="font-normal text-neutral-500">(if you add another field later)</span></label>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setFormData((prev) => ({
-                              ...prev,
-                              warrantyScope: "The warranty period covers bug fixes, security patches, and issues directly related to the deliverables.",
-                            }));
-                          }}
-                          className="text-[10px] font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 px-2 py-0.5 rounded-md border border-purple-200 transition cursor-pointer"
-                        >
-                          + Insert Default Scope
-                        </button>
+                      <div className="flex flex-col gap-1.5 mb-1.5">
+                        <div className="flex items-center justify-between flex-wrap gap-1">
+                          <label className="text-[11px] font-extrabold text-neutral-900">
+                            (Optional) Warranty Scope <span className="font-normal text-neutral-500">(if you add another field later)</span>
+                          </label>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setFormData((prev) => ({
+                                ...prev,
+                                warrantyScope: "The warranty period covers bug fixes, security patches, performance optimization, and issues directly related to the deliverables.",
+                              }));
+                            }}
+                            className="text-[10px] font-bold text-purple-800 bg-purple-100/90 hover:bg-purple-200 px-2.5 py-1 rounded-full border border-purple-300 transition cursor-pointer whitespace-nowrap shadow-2xs"
+                          >
+                            ✨ Insert Default Scope
+                          </button>
+                        </div>
                       </div>
-                      <div className="relative">
-                        <textarea
-                          placeholder="The warranty period covers bug fixes, security patches, and issues directly related to the deliverables..."
-                          rows={3}
-                          value={formData.warrantyScope}
-                          onChange={(e) => setFormData({ ...formData, warrantyScope: e.target.value })}
-                          className="w-full bg-[#1a1a1a] border border-neutral-800 rounded-2xl px-4 py-3 text-xs text-neutral-100 font-mono resize-y leading-relaxed shadow-inner focus:outline-none focus:border-purple-500"
-                        />
-                      </div>
+                      <textarea
+                        placeholder="The warranty period covers bug fixes, security patches, and issues directly related to the deliverables..."
+                        rows={3}
+                        value={formData.warrantyScope}
+                        onChange={(e) => setFormData({ ...formData, warrantyScope: e.target.value })}
+                        className="w-full bg-[#18181b] border border-neutral-800 rounded-2xl px-4 py-3 text-xs text-neutral-100 font-mono resize-y leading-relaxed shadow-inner focus:outline-none focus:border-purple-500 transition"
+                      />
                     </div>
                   </div>
                 )}
