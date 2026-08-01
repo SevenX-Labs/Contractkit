@@ -148,8 +148,8 @@ export default function AgreementPage() {
     }
 
     Promise.all([getProfileDB(), getNextDocumentNumberDB("AGREEMENT")]).then(([profile, num]) => {
-      const rawSeq = num.split("-").pop() || "001";
-      const cleanSeq = rawSeq.replace(/[^0-9]/g, "") || "001";
+      const rawSeq = num.split("-").pop() || "000001";
+      const cleanSeq = rawSeq.replace(/[^0-9]/g, "").padStart(6, "0") || "000001";
       setAgrSeq(cleanSeq);
 
       const year = new Date().getFullYear();
@@ -277,19 +277,19 @@ export default function AgreementPage() {
 
   const handleExportPDF = async () => {
     const currentDocNum = formData.agreementNumber;
-    await exportToPDF("agreement-pdf-preview", `Agreement-${currentDocNum}.pdf`);
+    await exportToPDF("agreement-pdf-preview", `${currentDocNum}.pdf`);
     await handleSave();
   };
 
   const handleExportDOCX = async () => {
     const currentDocNum = formData.agreementNumber;
-    await exportToDOCX("agreement-pdf-preview", `Agreement-${currentDocNum}.docx`);
+    await exportToDOCX("agreement-pdf-preview", `${currentDocNum}.docx`);
     await handleSave();
   };
 
   const handleExportPNG = async () => {
     const currentDocNum = formData.agreementNumber;
-    await exportToImage("agreement-pdf-preview", `Agreement-${currentDocNum}.png`);
+    await exportToImage("agreement-pdf-preview", `${currentDocNum}.png`);
     await handleSave();
   };
 
@@ -471,12 +471,13 @@ export default function AgreementPage() {
                               const val = e.target.value.replace(/[^0-9]/g, "");
                               setAgrSeq(val);
                               const year = new Date().getFullYear();
+                              const seqFormatted = val ? val.padStart(6, "0") : "000001";
                               setFormData((prev) => ({
                                 ...prev,
-                                agreementNumber: `SXL-AGR-${year}-${val || "001"}`,
+                                agreementNumber: `SXL-AGR-${year}-${seqFormatted}`,
                               }));
                             }}
-                            placeholder="001"
+                            placeholder="000001"
                             className="flex-1 bg-transparent px-2 py-2 text-xs font-mono font-bold text-neutral-900 focus:outline-none"
                           />
                         </div>

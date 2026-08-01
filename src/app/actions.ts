@@ -942,11 +942,22 @@ export async function deleteClauseDB(id: string) {
 // ==================== DOCUMENT SUITE ACTIONS ====================
 export async function getNextDocumentNumberDB(type: string): Promise<string> {
   try {
-    const prefix = `SXL-${type.slice(0, 3).toUpperCase()}-`;
+    const year = new Date().getFullYear();
+    let typeCode = type.slice(0, 3).toUpperCase();
+    if (type === "PAYMENT_RECEIPT" || type === "RECEIPT") typeCode = "RC";
+    if (type === "CERTIFICATE") typeCode = "CC";
+    if (type === "AGREEMENT") typeCode = "AGR";
+    if (type === "INVOICE") typeCode = "INV";
+    if (type === "QUOTATION") typeCode = "QUO";
+    if (type === "NDA") typeCode = "NDA";
+
     const count = await prisma.documentSuite.count({ where: { type: type as any } });
-    return `${prefix}${(count + 1).toString().padStart(3, "0")}`;
+    const seq = (count + 1).toString().padStart(6, "0");
+    return `SXL-${typeCode}-${year}-${seq}`;
   } catch (err) {
-    return "SXL-DOC-001";
+    const year = new Date().getFullYear();
+    const typeCode = type.slice(0, 3).toUpperCase();
+    return `SXL-${typeCode}-${year}-000001`;
   }
 }
 

@@ -198,19 +198,19 @@ export default function InvoicePage() {
 
   const handleExportPDF = async () => {
     const currentDocNum = formData.invoiceNumber;
-    await exportToPDF("invoice-pdf-preview", `Invoice-${currentDocNum}.pdf`);
+    await exportToPDF("invoice-pdf-preview", `${currentDocNum}.pdf`);
     await handleSave();
   };
 
   const handleExportDOCX = async () => {
     const currentDocNum = formData.invoiceNumber;
-    await exportToDOCX("invoice-pdf-preview", `Invoice-${currentDocNum}.docx`);
+    await exportToDOCX("invoice-pdf-preview", `${currentDocNum}.docx`);
     await handleSave();
   };
 
   const handleExportImage = async () => {
     const currentDocNum = formData.invoiceNumber;
-    await exportToImage("invoice-pdf-preview", `Invoice-${currentDocNum}.png`);
+    await exportToImage("invoice-pdf-preview", `${currentDocNum}.png`);
     await handleSave();
   };
 

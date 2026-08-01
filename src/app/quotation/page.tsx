@@ -228,17 +228,17 @@ export default function QuotationPage() {
 
   const handleExportPDF = async () => {
     await handleSave();
-    await exportToPDF("quotation-pdf-preview", `Quotation-${formData.quotationNumber}.pdf`);
+    await exportToPDF("quotation-pdf-preview", `${formData.quotationNumber}.pdf`);
   };
 
   const handleExportDOCX = async () => {
     await handleSave();
-    await exportToDOCX("quotation-pdf-preview", `Quotation-${formData.quotationNumber}.docx`);
+    await exportToDOCX("quotation-pdf-preview", `${formData.quotationNumber}.docx`);
   };
 
   const handleExportImage = async () => {
     await handleSave();
-    await exportToImage("quotation-pdf-preview", `Quotation-${formData.quotationNumber}.png`);
+    await exportToImage("quotation-pdf-preview", `${formData.quotationNumber}.png`);
   };
 
   const quotationPreviewContent = (

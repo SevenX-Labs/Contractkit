@@ -198,7 +198,6 @@ export default function NDABuilderPage() {
             ))}
           </div>
 
-          {/* 1. Preview Button */}
           <button
             onClick={() => setIsModalPreviewOpen(true)}
             className="flex items-center gap-1.5 px-3.5 py-2 bg-[#DFD9C9] hover:bg-[#D5CEBC] text-neutral-900 rounded-xl font-bold text-xs transition cursor-pointer"
@@ -207,7 +206,6 @@ export default function NDABuilderPage() {
             <span>Full Preview</span>
           </button>
 
-          {/* 2. Save Button */}
           <button
             type="button"
             onClick={handleSaveToDB}
@@ -218,7 +216,6 @@ export default function NDABuilderPage() {
             <span>{isSaving ? "Saving..." : "Save"}</span>
           </button>
 
-          {/* 3. Export As Dropdown Button */}
           <div className="relative group">
             <button
               type="button"
@@ -229,12 +226,11 @@ export default function NDABuilderPage() {
               <ChevronDown className="w-3.5 h-3.5 ml-0.5" />
             </button>
 
-            {/* Dropdown Menu */}
             <div className="absolute right-0 mt-1 w-44 bg-[#0a0a0a] text-white rounded-2xl p-1.5 shadow-xl border border-neutral-800 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all duration-200 z-50">
               <button
                 onClick={async () => {
                   const currentDocNum = formData.ndaNumber;
-                  await exportToPDF("nda-export-container", `NDA-${currentDocNum}.pdf`);
+                  await exportToPDF("nda-export-container", `${currentDocNum}.pdf`);
                   await handleSaveToDB();
                 }}
                 disabled={isExporting}
@@ -247,7 +243,7 @@ export default function NDABuilderPage() {
               <button
                 onClick={async () => {
                   const currentDocNum = formData.ndaNumber;
-                  await exportToDOCX("nda-export-container", `NDA-${currentDocNum}.docx`);
+                  await exportToDOCX("nda-export-container", `${currentDocNum}.docx`);
                   await handleSaveToDB();
                 }}
                 disabled={isExporting}
@@ -260,7 +256,7 @@ export default function NDABuilderPage() {
               <button
                 onClick={async () => {
                   const currentDocNum = formData.ndaNumber;
-                  await exportToImage("nda-export-container", `NDA-${currentDocNum}.png`);
+                  await exportToImage("nda-export-container", `${currentDocNum}.png`);
                   await handleSaveToDB();
                 }}
                 disabled={isExporting}
@@ -274,10 +270,8 @@ export default function NDABuilderPage() {
         </div>
       </header>
 
-      {/* Main Workspace Layout */}
       <main className="max-w-7xl mx-auto px-6 pt-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Left Form Panel */}
           <div className="lg:col-span-6 flex flex-col gap-4">
             {/* Dynamic Page Filter Banner */}
             <div className="flex items-center justify-between bg-[#EBE7DC] border border-[#E2DDD0] p-4 rounded-2xl shadow-xs">
