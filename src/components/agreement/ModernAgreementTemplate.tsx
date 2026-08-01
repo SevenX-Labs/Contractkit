@@ -387,7 +387,7 @@ export function ModernAgreementTemplate({
             <div className="px-10 mt-2.5 text-xs text-neutral-800 font-medium leading-relaxed">
               <p>
                 This IT Development Agreement (&quot;Agreement&quot;) is made and entered into on{" "}
-                <strong className="text-neutral-900 font-bold">{formatDate(effectiveDate)}</strong> {" "}(&quot;Effective Date&quot;), by and between the parties mentioned below.
+                <strong className="text-neutral-900 font-bold">{formatDate(effectiveDate)}</strong>&nbsp;(&quot;Effective Date&quot;), by and between the parties mentioned below.
               </p>
             </div>
 

@@ -206,7 +206,7 @@ export function ModernNDATemplate({
             <div className="px-10 mt-2.5 text-[11.5px] text-neutral-800 font-medium leading-relaxed">
               <p>
                 This Non-Disclosure Agreement (&quot;Agreement&quot;) is entered into on{" "}
-                <strong className="text-neutral-900 font-bold">{formatDate(effectiveDate)}</strong>{" "}(&quot;Effective Date&quot;) by and between the Disclosing Party and Receiving Party listed below to safeguard proprietary project information and assets.
+                <strong className="text-neutral-900 font-bold">{formatDate(effectiveDate)}</strong>&nbsp;(&quot;Effective Date&quot;) by and between the Disclosing Party and Receiving Party listed below to safeguard proprietary project information and assets.
               </p>
             </div>
 
