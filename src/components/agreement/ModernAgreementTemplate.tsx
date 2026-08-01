@@ -257,12 +257,12 @@ export function ModernAgreementTemplate({
   bankIfsc = "",
   upiId = "",
 
-  ipClause = "",
-  deliverables = "",
-  confidentialityClause = "",
+  ipClause = "Upon receipt of full and final payment, the Client shall receive ownership of the custom-developed source code, project files, documentation, and related deliverables created specifically for this project. Ownership does not include third-party software, open-source libraries, frameworks, APIs, plugins, templates, or licensed assets, which remain subject to their respective licenses and terms.",
+  deliverables = "Complete source code, project files, production-ready application, database schema & migrations (if applicable), API documentation (if applicable), deployment configuration, technical documentation, environment configuration (.env.example), repository access, and all agreed project deliverables as defined in this agreement.",
+  confidentialityClause = "Both parties agree to keep all confidential information, source code, business data, technical documents, credentials, and project-related information strictly confidential and shall not disclose such information to any third party without prior written consent, except where required by law.",
 
-  warrantyPeriod = "",
-  warrantyScope = "",
+  warrantyPeriod = "60 Days Post-Delivery Warranty Support",
+  warrantyScope = "The warranty period covers bug fixes, security patches, performance optimizations, and issues directly related to the deliverables.",
   revisionPolicy = "",
   cancellationPolicy = "",
 
