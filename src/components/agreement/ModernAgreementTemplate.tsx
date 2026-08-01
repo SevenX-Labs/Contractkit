@@ -112,44 +112,57 @@ export interface AgreementTemplateProps {
 
 // Helper: Smart Tech Stack Renderer (Full Text Un-truncated)
 function renderFormattedTechStack(stackStr?: string) {
-  if (!stackStr) {
-    return <span className="text-neutral-400 italic font-normal text-xs">[ Technology Stack ]</span>;
-  }
+  const effectiveStr =
+    stackStr && stackStr.trim().length > 0
+      ? stackStr
+      : "Frontend: Next.js 16, React 19, Tailwind CSS v4\nBackend: Node.js, REST API Services\nDatabase: PostgreSQL (Supabase)\nCloud: Vercel & Cloud Infra";
 
-  // Check if text has colon category markers like "Frontend:", "Backend:", "Database:"
-  const categoryMatches = stackStr.match(/([A-Za-z0-9\s\/&]+):/g);
-  if (categoryMatches && categoryMatches.length >= 2) {
-    const segments = stackStr.split(/(?=[A-Za-z0-9\s\/&]+:)/g).map((s) => s.trim()).filter(Boolean);
+  // Split by newlines first if available
+  const lines = effectiveStr.split("\n").map((l) => l.trim()).filter(Boolean);
+
+  if (lines.length > 0 && lines.some((l) => l.includes(":"))) {
     return (
-      <div className="space-y-1 mt-1">
-        {segments.map((seg, idx) => {
-          const colonPos = seg.indexOf(":");
+      <div className="space-y-1.5 mt-1">
+        {lines.map((line, idx) => {
+          const colonPos = line.indexOf(":");
           if (colonPos !== -1) {
-            const label = seg.substring(0, colonPos).trim();
-            const val = seg.substring(colonPos + 1).replace(/^\.\s*/, "").replace(/\.$/, "").trim();
+            const category = line.substring(0, colonPos).trim();
+            const itemsStr = line.substring(colonPos + 1).trim();
+            const items = itemsStr.split(",").map((i) => i.trim()).filter(Boolean);
+
             return (
-              <div key={idx} className="flex flex-wrap items-baseline gap-1 text-[10.5px]">
-                <span className="font-sans font-extrabold text-[9px] uppercase tracking-wider text-[#5e9618] bg-[#f0f9df] px-1.5 py-0.5 rounded border border-[#d3ec9c] shrink-0">
-                  {label}
+              <div key={idx} className="flex flex-wrap items-center gap-1.5 text-[10.5px]">
+                <span className="font-sans font-black text-[9px] uppercase tracking-wider text-[#5e9618] bg-[#f0f9df] px-1.5 py-0.5 rounded border border-[#d3ec9c] shrink-0">
+                  {category}
                 </span>
-                <span className="font-mono font-medium text-neutral-800 leading-snug">{val}</span>
+                <div className="flex flex-wrap items-center gap-1">
+                  {items.map((item, iIdx) => (
+                    <span key={iIdx} className="font-mono font-bold text-neutral-900 bg-white px-1.5 py-0.5 rounded border border-neutral-200 shadow-2xs">
+                      {item}
+                    </span>
+                  ))}
+                </div>
               </div>
             );
           }
-          return <p key={idx} className="font-mono text-[10.5px] text-neutral-800 leading-snug">{seg}</p>;
+          return (
+            <div key={idx} className="font-mono text-[10.5px] font-bold text-neutral-800">
+              {line}
+            </div>
+          );
         })}
       </div>
     );
   }
 
-  // Comma-separated fallback
-  if (stackStr.includes(",")) {
-    const items = stackStr.split(",").map((s) => s.trim()).filter(Boolean);
-    if (items.length >= 3) {
+  // Comma-separated fallback without colons
+  if (effectiveStr.includes(",")) {
+    const items = effectiveStr.split(",").map((s) => s.trim()).filter(Boolean);
+    if (items.length >= 1) {
       return (
         <div className="flex flex-wrap gap-1 mt-1">
           {items.map((item, idx) => (
-            <span key={idx} className="bg-white text-neutral-800 font-mono text-[9.5px] font-bold px-2 py-0.5 rounded-md border border-neutral-200 shadow-2xs">
+            <span key={idx} className="bg-white text-neutral-900 font-mono text-[9.5px] font-bold px-2 py-0.5 rounded-md border border-neutral-200 shadow-2xs">
               {item}
             </span>
           ))}
@@ -158,7 +171,7 @@ function renderFormattedTechStack(stackStr?: string) {
     }
   }
 
-  return <p className="font-mono text-[10.5px] leading-relaxed text-neutral-800 whitespace-pre-line">{stackStr}</p>;
+  return <p className="font-mono text-[10.5px] leading-relaxed text-neutral-800 whitespace-pre-line">{effectiveStr}</p>;
 }
 
 // Helper: Smart Scope of Work Renderer (Full Text Un-truncated)

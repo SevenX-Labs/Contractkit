@@ -642,9 +642,27 @@ export default function AgreementPage() {
                 {openSections[4] && (
                   <div className="p-5 border-t border-[#D5CEBC] flex flex-col gap-3">
                     <div>
-                      <label className="text-[11px] font-bold text-neutral-700 block mb-1">What&apos;s INCLUDED Scope</label>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-[11px] font-bold text-neutral-700">What&apos;s INCLUDED Scope</label>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (!formData.includedScope) return;
+                            const items = formData.includedScope
+                              .split(/[\n,•\-]/)
+                              .map((s) => s.trim())
+                              .filter(Boolean);
+                            const formatted = items.map((i) => `• ${i}`).join("\n");
+                            setFormData({ ...formData, includedScope: formatted });
+                            toast.success("Converted items into clean bullet points!");
+                          }}
+                          className="text-[10px] font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 px-2 py-0.5 rounded-md border border-purple-200 transition cursor-pointer"
+                        >
+                          ✨ Format Comma / Lines to Bullets
+                        </button>
+                      </div>
                       <textarea
-                        placeholder="• Custom UI/UX design & responsive layout&#10;• REST API development & authentication&#10;• Database integration & cloud deployment"
+                        placeholder="Type comma-separated or line items (e.g. UI/UX design, REST API, Database design, Supabase Auth)"
                         rows={6}
                         value={formData.includedScope}
                         onChange={(e) => setFormData({ ...formData, includedScope: e.target.value })}
@@ -652,9 +670,27 @@ export default function AgreementPage() {
                       />
                     </div>
                     <div>
-                      <label className="text-[11px] font-bold text-neutral-700 block mb-1">What&apos;s EXCLUDED Scope</label>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-[11px] font-bold text-neutral-700">What&apos;s EXCLUDED Scope</label>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (!formData.excludedScope) return;
+                            const items = formData.excludedScope
+                              .split(/[\n,•\-]/)
+                              .map((s) => s.trim())
+                              .filter(Boolean);
+                            const formatted = items.map((i) => `• ${i}`).join("\n");
+                            setFormData({ ...formData, excludedScope: formatted });
+                            toast.success("Converted exclusions into clean bullet points!");
+                          }}
+                          className="text-[10px] font-bold text-red-700 bg-red-50 hover:bg-red-100 px-2 py-0.5 rounded-md border border-red-200 transition cursor-pointer"
+                        >
+                          ✨ Format Comma / Lines to Bullets
+                        </button>
+                      </div>
                       <textarea
-                        placeholder="• Third-party paid API subscription fees&#10;• Apple / Google store developer account registration fees"
+                        placeholder="Type comma-separated exclusions (e.g. Third-party API fees, Apple Developer Account fees)"
                         rows={3}
                         value={formData.excludedScope}
                         onChange={(e) => setFormData({ ...formData, excludedScope: e.target.value })}
@@ -662,7 +698,64 @@ export default function AgreementPage() {
                       />
                     </div>
                     <div>
-                      <label className="text-[11px] font-bold text-neutral-700 block mb-1">Technology Stack</label>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-[11px] font-bold text-neutral-700">Technology Stack</label>
+                        <span className="text-[10px] text-neutral-500 font-medium">Click quick preset to fill:</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5 mb-2">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setFormData({
+                              ...formData,
+                              techStack:
+                                "Frontend: Next.js 16, React 19, Tailwind CSS v4\nBackend: Node.js, Next.js Server Actions\nDatabase: PostgreSQL (Supabase)\nHosting: Vercel & Cloud Infra",
+                            })
+                          }
+                          className="text-[10px] font-bold text-green-800 bg-green-100 hover:bg-green-200 px-2 py-0.5 rounded-md border border-green-300 transition cursor-pointer"
+                        >
+                          + Next.js 16 Stack
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setFormData({
+                              ...formData,
+                              techStack:
+                                "Frontend: React 19, Redux Toolkit, Tailwind CSS\nBackend: Node.js, Express.js\nDatabase: MongoDB Atlas\nHosting: AWS / Render",
+                            })
+                          }
+                          className="text-[10px] font-bold text-blue-800 bg-blue-100 hover:bg-blue-200 px-2 py-0.5 rounded-md border border-blue-300 transition cursor-pointer"
+                        >
+                          + MERN Stack
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setFormData({
+                              ...formData,
+                              techStack:
+                                "Mobile: React Native, Expo SDK 52, TypeScript\nBackend: Firebase Auth, Cloud Firestore, Cloud Functions\nAPIs: REST, WebSockets",
+                            })
+                          }
+                          className="text-[10px] font-bold text-purple-800 bg-purple-100 hover:bg-purple-200 px-2 py-0.5 rounded-md border border-purple-300 transition cursor-pointer"
+                        >
+                          + Mobile App Stack
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setFormData({
+                              ...formData,
+                              techStack:
+                                "Frontend: Next.js 16, React 19\nBackend: Python 3.12, FastAPI, Celery\nDatabase: PostgreSQL, Redis\nAI / ML: OpenAI GPT-4o API, LangChain",
+                            })
+                          }
+                          className="text-[10px] font-bold text-amber-800 bg-amber-100 hover:bg-amber-200 px-2 py-0.5 rounded-md border border-amber-300 transition cursor-pointer"
+                        >
+                          + Python & AI Stack
+                        </button>
+                      </div>
                       <textarea
                         placeholder="Frontend: Next.js 16, React 19, Tailwind CSS v4&#10;Backend: Node.js, NestJS&#10;Database: PostgreSQL"
                         rows={4}
