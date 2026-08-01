@@ -140,7 +140,7 @@ export function ModernNDATemplate({
     >
       {/* PAGE 1 */}
       {showPage1 && (
-        <div data-page="true" className="relative w-full h-[297mm] flex flex-col justify-between pb-0 overflow-hidden page-break-after-always" style={{ breakAfter: "page" }}>
+        <div data-page="true" className="relative w-full min-h-[297mm] flex flex-col justify-between pb-0 page-break-after-always" style={{ breakAfter: "page" }}>
           <div>
             {/* Top Header Row with Black Block on Right */}
             <div className="flex justify-between items-start w-full relative">
@@ -256,7 +256,7 @@ export function ModernNDATemplate({
                   </div>
                   <div className="min-w-0 flex-1">
                     <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">3. PURPOSE OF DISCLOSURE</h4>
-                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium max-h-[80px] overflow-y-auto pr-1">
+                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
                       {purpose || <span className="text-neutral-400 italic font-normal">[ Purpose of disclosure... ]</span>}
                     </p>
                   </div>
@@ -268,7 +268,7 @@ export function ModernNDATemplate({
                   </div>
                   <div className="min-w-0 flex-1">
                     <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">4. DEFINITION OF CONFIDENTIAL INFO</h4>
-                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium max-h-[80px] overflow-y-auto pr-1">
+                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
                       {confidentialItems || <span className="text-neutral-400 italic font-normal">[ Definition of confidential info... ]</span>}
                     </p>
                   </div>
@@ -283,7 +283,7 @@ export function ModernNDATemplate({
                   </div>
                   <div className="min-w-0 flex-1">
                     <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">5. OBLIGATIONS OF RECEIVING PARTY</h4>
-                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium max-h-[80px] overflow-y-auto pr-1">
+                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
                       {obligations || <span className="text-neutral-400 italic font-normal">[ Obligations of receiving party... ]</span>}
                     </p>
                   </div>
@@ -295,7 +295,7 @@ export function ModernNDATemplate({
                   </div>
                   <div className="min-w-0 flex-1">
                     <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">6. EXCLUSIONS FROM CONFIDENTIALITY</h4>
-                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium max-h-[80px] overflow-y-auto pr-1">
+                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
                       {exclusions || <span className="text-neutral-400 italic font-normal">[ Exclusions clause... ]</span>}
                     </p>
                   </div>
@@ -310,7 +310,7 @@ export function ModernNDATemplate({
                   </div>
                   <div className="min-w-0 flex-1">
                     <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">7. PERMITTED DISCLOSURES</h4>
-                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium max-h-[80px] overflow-y-auto pr-1">
+                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
                       {permittedDisclosure || <span className="text-neutral-400 italic font-normal">[ Permitted disclosures... ]</span>}
                     </p>
                   </div>
@@ -322,7 +322,7 @@ export function ModernNDATemplate({
                   </div>
                   <div className="min-w-0 flex-1">
                     <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">8. TERM & SURVIVAL DURATION</h4>
-                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium max-h-[80px] overflow-y-auto pr-1">
+                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
                       {termDuration || <span className="text-neutral-400 italic font-normal">[ Term & survival duration... ]</span>}
                     </p>
                   </div>
@@ -337,7 +337,7 @@ export function ModernNDATemplate({
                   </div>
                   <div className="min-w-0 flex-1">
                     <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">9. RETURN OF MATERIALS</h4>
-                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium max-h-[80px] overflow-y-auto pr-1">
+                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
                       {returnTerm || <span className="text-neutral-400 italic font-normal">[ Return of materials clause... ]</span>}
                     </p>
                   </div>
@@ -349,7 +349,7 @@ export function ModernNDATemplate({
                   </div>
                   <div className="min-w-0 flex-1">
                     <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">10. INTELLECTUAL PROPERTY</h4>
-                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium max-h-[80px] overflow-y-auto pr-1">
+                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
                       {ipClause || <span className="text-neutral-400 italic font-normal">[ Intellectual property ownership... ]</span>}
                     </p>
                   </div>
@@ -359,7 +359,7 @@ export function ModernNDATemplate({
           </div>
 
           {/* Page 1 Footer Bar */}
-          <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20 flex justify-between items-center text-xs font-semibold">
+          <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20 flex justify-between items-center text-xs font-semibold mt-6">
             <span>Made with SevenX Labs</span>
             <span className="font-mono text-[11px] text-neutral-400">Page 1 of 2</span>
           </div>
@@ -368,7 +368,7 @@ export function ModernNDATemplate({
 
       {/* PAGE 2 */}
       {showPage2 && (
-        <div data-page="true" className="relative w-full h-[297mm] flex flex-col justify-between pt-7 pb-0 overflow-hidden">
+        <div data-page="true" className="relative w-full min-h-[297mm] flex flex-col justify-between pt-7 pb-0">
           <div>
             {/* Minimal Top Header */}
             <div className="px-10 pb-3 border-b border-neutral-200 flex justify-between items-center">
@@ -390,7 +390,7 @@ export function ModernNDATemplate({
                   </div>
                   <div className="min-w-0 flex-1">
                     <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">11. DATA PROTECTION & SECURITY</h4>
-                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium max-h-[85px] overflow-y-auto pr-1">
+                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
                       {dataProtection || <span className="text-neutral-400 italic font-normal">[ Data protection terms... ]</span>}
                     </p>
                   </div>
@@ -402,7 +402,7 @@ export function ModernNDATemplate({
                   </div>
                   <div className="min-w-0 flex-1">
                     <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">12. LIMITATION OF LIABILITY</h4>
-                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium max-h-[85px] overflow-y-auto pr-1">
+                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
                       {limitationOfLiability || <span className="text-neutral-400 italic font-normal">[ Limitation of liability... ]</span>}
                     </p>
                   </div>
@@ -417,7 +417,7 @@ export function ModernNDATemplate({
                   </div>
                   <div className="min-w-0 flex-1">
                     <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">13. INJUNCTIVE RELIEF & REMEDIES</h4>
-                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium max-h-[85px] overflow-y-auto pr-1">
+                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
                       {breachRemedies || <span className="text-neutral-400 italic font-normal">[ Injunctive relief terms... ]</span>}
                     </p>
                   </div>
@@ -429,7 +429,7 @@ export function ModernNDATemplate({
                   </div>
                   <div className="min-w-0 flex-1">
                     <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">14. TERMINATION OF AGREEMENT</h4>
-                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium max-h-[85px] overflow-y-auto pr-1">
+                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
                       {terminationClause || <span className="text-neutral-400 italic font-normal">[ Termination clause... ]</span>}
                     </p>
                   </div>
@@ -444,7 +444,7 @@ export function ModernNDATemplate({
                   </div>
                   <div className="min-w-0 flex-1">
                     <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">15. ENTIRE AGREEMENT & CLAUSES</h4>
-                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium max-h-[85px] overflow-y-auto pr-1">
+                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
                       {entireAgreement || <span className="text-neutral-400 italic font-normal">[ Entire agreement clause... ]</span>}
                     </p>
                   </div>
@@ -456,7 +456,7 @@ export function ModernNDATemplate({
                   </div>
                   <div className="min-w-0 flex-1">
                     <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">16. ADDITIONAL CONDITIONS</h4>
-                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium max-h-[85px] overflow-y-auto pr-1">
+                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
                       {additionalTerms || <span className="text-neutral-400 italic font-normal">[ Additional conditions... ]</span>}
                     </p>
                   </div>
@@ -497,7 +497,7 @@ export function ModernNDATemplate({
           </div>
 
           {/* Page 2 Footer Bar */}
-          <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20 flex justify-between items-center text-xs font-semibold">
+          <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20 flex justify-between items-center text-xs font-semibold mt-6">
             <span>Made with SevenX Labs</span>
             <span className="font-mono text-[11px] text-neutral-400">Page 2 of 2</span>
           </div>

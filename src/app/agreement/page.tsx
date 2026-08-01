@@ -586,20 +586,20 @@ export default function AgreementPage() {
                       <label className="text-[11px] font-bold text-neutral-700 block mb-1">Project Description</label>
                       <textarea
                         placeholder="e.g. Design, development, testing, deployment, and launch of enterprise web application..."
-                        rows={3}
+                        rows={5}
                         value={formData.projectDescription}
                         onChange={(e) => setFormData({ ...formData, projectDescription: e.target.value })}
-                        className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 resize-none font-medium"
+                        className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 resize-y font-medium leading-relaxed"
                       />
                     </div>
                     <div>
                       <label className="text-[11px] font-bold text-neutral-700 block mb-1">Business Goal</label>
-                      <input
-                        type="text"
+                      <textarea
                         placeholder="e.g. Build a modern, secure, scalable e-commerce store..."
+                        rows={3}
                         value={formData.businessGoal}
                         onChange={(e) => setFormData({ ...formData, businessGoal: e.target.value })}
-                        className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium"
+                        className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 resize-y font-medium leading-relaxed"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-3 pt-1 border-t border-[#D5CEBC]">
@@ -615,12 +615,12 @@ export default function AgreementPage() {
                       </div>
                       <div>
                         <label className="text-[11px] font-bold text-neutral-700 block mb-1">Target Platforms</label>
-                        <input
-                          type="text"
+                        <textarea
                           placeholder="e.g. Web Browser, iOS App Store, Google Play Store"
+                          rows={2}
                           value={formData.platforms}
                           onChange={(e) => setFormData({ ...formData, platforms: e.target.value })}
-                          className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900"
+                          className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 resize-y"
                         />
                       </div>
                     </div>
@@ -645,30 +645,30 @@ export default function AgreementPage() {
                       <label className="text-[11px] font-bold text-neutral-700 block mb-1">What&apos;s INCLUDED Scope</label>
                       <textarea
                         placeholder="• Custom UI/UX design & responsive layout&#10;• REST API development & authentication&#10;• Database integration & cloud deployment"
-                        rows={3}
+                        rows={6}
                         value={formData.includedScope}
                         onChange={(e) => setFormData({ ...formData, includedScope: e.target.value })}
-                        className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-mono resize-none"
+                        className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-mono resize-y leading-relaxed"
                       />
                     </div>
                     <div>
                       <label className="text-[11px] font-bold text-neutral-700 block mb-1">What&apos;s EXCLUDED Scope</label>
                       <textarea
                         placeholder="• Third-party paid API subscription fees&#10;• Apple / Google store developer account registration fees"
-                        rows={2}
+                        rows={3}
                         value={formData.excludedScope}
                         onChange={(e) => setFormData({ ...formData, excludedScope: e.target.value })}
-                        className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-mono resize-none"
+                        className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-mono resize-y leading-relaxed"
                       />
                     </div>
                     <div>
                       <label className="text-[11px] font-bold text-neutral-700 block mb-1">Technology Stack</label>
-                      <input
-                        type="text"
-                        placeholder="e.g. Next.js, React, Tailwind CSS, PostgreSQL"
+                      <textarea
+                        placeholder="Frontend: Next.js 16, React 19, Tailwind CSS v4&#10;Backend: Node.js, NestJS&#10;Database: PostgreSQL"
+                        rows={4}
                         value={formData.techStack}
                         onChange={(e) => setFormData({ ...formData, techStack: e.target.value })}
-                        className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-bold"
+                        className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-mono font-bold text-neutral-900 resize-y leading-relaxed"
                       />
                     </div>
                   </div>

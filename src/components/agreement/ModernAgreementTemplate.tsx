@@ -110,7 +110,7 @@ export interface AgreementTemplateProps {
   accentColor?: "lime" | "purple" | "pink" | "emerald";
 }
 
-// Helper: Smart Tech Stack Renderer
+// Helper: Smart Tech Stack Renderer (Full Text Un-truncated)
 function renderFormattedTechStack(stackStr?: string) {
   if (!stackStr) {
     return <span className="text-neutral-400 italic font-normal text-xs">[ Technology Stack ]</span>;
@@ -121,14 +121,14 @@ function renderFormattedTechStack(stackStr?: string) {
   if (categoryMatches && categoryMatches.length >= 2) {
     const segments = stackStr.split(/(?=[A-Za-z0-9\s\/&]+:)/g).map((s) => s.trim()).filter(Boolean);
     return (
-      <div className="space-y-1 mt-1 max-h-[130px] overflow-y-auto pr-1">
+      <div className="space-y-1 mt-1">
         {segments.map((seg, idx) => {
           const colonPos = seg.indexOf(":");
           if (colonPos !== -1) {
             const label = seg.substring(0, colonPos).trim();
             const val = seg.substring(colonPos + 1).replace(/^\.\s*/, "").replace(/\.$/, "").trim();
             return (
-              <div key={idx} className="flex flex-wrap items-baseline gap-1 text-[10px]">
+              <div key={idx} className="flex flex-wrap items-baseline gap-1 text-[10.5px]">
                 <span className="font-sans font-extrabold text-[9px] uppercase tracking-wider text-[#5e9618] bg-[#f0f9df] px-1.5 py-0.5 rounded border border-[#d3ec9c] shrink-0">
                   {label}
                 </span>
@@ -136,7 +136,7 @@ function renderFormattedTechStack(stackStr?: string) {
               </div>
             );
           }
-          return <p key={idx} className="font-mono text-[10px] text-neutral-800">{seg}</p>;
+          return <p key={idx} className="font-mono text-[10.5px] text-neutral-800 leading-snug">{seg}</p>;
         })}
       </div>
     );
@@ -147,7 +147,7 @@ function renderFormattedTechStack(stackStr?: string) {
     const items = stackStr.split(",").map((s) => s.trim()).filter(Boolean);
     if (items.length >= 3) {
       return (
-        <div className="flex flex-wrap gap-1 mt-1 max-h-[120px] overflow-y-auto pr-1">
+        <div className="flex flex-wrap gap-1 mt-1">
           {items.map((item, idx) => (
             <span key={idx} className="bg-white text-neutral-800 font-mono text-[9.5px] font-bold px-2 py-0.5 rounded-md border border-neutral-200 shadow-2xs">
               {item}
@@ -158,10 +158,10 @@ function renderFormattedTechStack(stackStr?: string) {
     }
   }
 
-  return <p className="font-mono text-[10.5px] leading-relaxed text-neutral-800 max-h-[120px] overflow-y-auto">{stackStr}</p>;
+  return <p className="font-mono text-[10.5px] leading-relaxed text-neutral-800 whitespace-pre-line">{stackStr}</p>;
 }
 
-// Helper: Smart Scope of Work Renderer
+// Helper: Smart Scope of Work Renderer (Full Text Un-truncated)
 function renderFormattedIncludedScope(scopeStr?: string) {
   if (!scopeStr) {
     return <span className="text-neutral-400 italic font-normal text-xs">[ Enter included scope of work... ]</span>;
@@ -176,18 +176,18 @@ function renderFormattedIncludedScope(scopeStr?: string) {
 
   if (items.length >= 3) {
     return (
-      <div className="grid grid-cols-2 gap-x-3 gap-y-1 mt-1 text-[10.5px] max-h-[135px] overflow-y-auto pr-1">
+      <div className="grid grid-cols-2 gap-x-3 gap-y-1 mt-1 text-[10.5px]">
         {items.map((item, i) => (
           <div key={i} className="flex items-start gap-1.5 font-sans text-neutral-800 font-medium leading-tight">
             <span className="text-[#8cc63f] font-black text-xs leading-none select-none shrink-0">•</span>
-            <span className="line-clamp-2">{item}</span>
+            <span>{item}</span>
           </div>
         ))}
       </div>
     );
   }
 
-  return <p className="whitespace-pre-line leading-relaxed text-[10.5px] font-mono text-neutral-800 max-h-[135px] overflow-y-auto">{scopeStr}</p>;
+  return <p className="whitespace-pre-line leading-relaxed text-[10.5px] font-mono text-neutral-800">{scopeStr}</p>;
 }
 
 export function ModernAgreementTemplate({
@@ -299,7 +299,7 @@ export function ModernAgreementTemplate({
     >
       {/* PAGE 1 */}
       {showPage1 && (
-        <div data-page="true" className="relative w-full h-[297mm] flex flex-col justify-between pb-0 overflow-hidden page-break-after-always" style={{ breakAfter: "page" }}>
+        <div data-page="true" className="relative w-full min-h-[297mm] flex flex-col justify-between pb-0 page-break-after-always" style={{ breakAfter: "page" }}>
           <div>
             {/* Top Header Row with Black Block on Right */}
             <div className="flex justify-between items-start w-full relative">
@@ -418,31 +418,31 @@ export function ModernAgreementTemplate({
                   <Briefcase style={{ width: "15px", height: "15px", display: "block" }} />
                 </div>
                 <div className="flex-1 grid grid-cols-12 gap-3">
-                  <div className="col-span-5 space-y-1">
+                  <div className="col-span-5 space-y-1.5">
                     <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">3. PROJECT OVERVIEW</h4>
-                    <p className="text-[11px] text-neutral-800 leading-relaxed font-medium line-clamp-4">
+                    <p className="text-[11px] text-neutral-800 leading-relaxed font-medium whitespace-pre-line">
                       {projectDescription || <span className="text-neutral-400 italic font-normal">[ Enter project overview description... ]</span>}
                     </p>
                     {businessGoal && (
-                      <p className="text-[10.5px] text-neutral-600 leading-snug font-medium pt-1 border-t border-neutral-100 line-clamp-2">
+                      <p className="text-[10.5px] text-neutral-600 leading-snug font-medium pt-1.5 border-t border-neutral-100">
                         <strong className="text-neutral-800 font-bold">Goal:</strong> {businessGoal}
                       </p>
                     )}
                   </div>
 
-                  <div className="col-span-7 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs space-y-1 text-neutral-800">
+                  <div className="col-span-7 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs space-y-1.5 text-neutral-800">
                     <div className="flex items-baseline gap-1 font-mono text-[10.5px]">
                       <strong className="text-neutral-600 font-bold font-sans text-[10px] uppercase shrink-0">Type:</strong>
                       <span className="font-semibold text-neutral-900">{projectType || <span className="text-neutral-400 italic font-normal">[ Project Type ]</span>}</span>
                     </div>
 
                     <div>
-                      <strong className="text-neutral-600 font-bold font-sans text-[10px] uppercase block">Tech Stack:</strong>
+                      <strong className="text-neutral-600 font-bold font-sans text-[10px] uppercase block mb-0.5">Tech Stack:</strong>
                       {renderFormattedTechStack(techStack)}
                     </div>
 
                     {platforms && (
-                      <div className="flex items-baseline gap-1 font-mono text-[10.5px] pt-1 border-t border-neutral-200/60">
+                      <div className="flex items-baseline gap-1 font-mono text-[10.5px] pt-1.5 border-t border-neutral-200/60">
                         <strong className="text-neutral-600 font-bold font-sans text-[10px] uppercase shrink-0">Platforms:</strong>
                         <span className="font-medium text-neutral-800">{platforms}</span>
                       </div>
@@ -462,16 +462,16 @@ export function ModernAgreementTemplate({
                     <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium">Full lifecycle engineering & code delivery as specified.</p>
                   </div>
 
-                  <div className="col-span-8 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs space-y-1 text-neutral-800">
+                  <div className="col-span-8 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs space-y-1.5 text-neutral-800">
                     <div>
-                      <span className="text-[10px] font-extrabold text-neutral-500 uppercase block font-sans tracking-wider">Included Scope</span>
+                      <span className="text-[10px] font-extrabold text-neutral-500 uppercase block font-sans tracking-wider mb-0.5">Included Scope</span>
                       {renderFormattedIncludedScope(includedScope)}
                     </div>
 
                     {excludedScope && (
-                      <div className="pt-1 border-t border-neutral-200">
-                        <span className="text-[9.5px] font-bold text-red-600 uppercase block font-sans">Excluded Scope</span>
-                        <p className="whitespace-pre-line leading-relaxed text-[10px] text-neutral-600 font-mono line-clamp-2">{excludedScope}</p>
+                      <div className="pt-1.5 border-t border-neutral-200">
+                        <span className="text-[9.5px] font-bold text-red-600 uppercase block font-sans mb-0.5">Excluded Scope</span>
+                        <p className="whitespace-pre-line leading-relaxed text-[10px] text-neutral-600 font-mono">{excludedScope}</p>
                       </div>
                     )}
                   </div>
@@ -501,7 +501,7 @@ export function ModernAgreementTemplate({
           </div>
 
           {/* Page 1 Footer Bar */}
-          <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20 flex justify-between items-center text-xs font-semibold">
+          <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20 flex justify-between items-center text-xs font-semibold mt-6">
             <span>Made with SevenX Labs</span>
             <span className="font-mono text-[11px] text-neutral-400">Page 1 of {numPages}</span>
           </div>
@@ -510,7 +510,7 @@ export function ModernAgreementTemplate({
 
       {/* PAGE 2 */}
       {showPage2 && (
-        <div data-page="true" className="relative w-full h-[297mm] flex flex-col justify-between pt-7 pb-0 overflow-hidden page-break-after-always" style={{ breakAfter: basePages >= 3 ? "page" : "auto" }}>
+        <div data-page="true" className="relative w-full min-h-[297mm] flex flex-col justify-between pt-7 pb-0 page-break-after-always" style={{ breakAfter: basePages >= 3 ? "page" : "auto" }}>
           <div>
             {/* Running Header for Page 2 */}
             <div className="px-10 pb-3 border-b border-neutral-200 flex justify-between items-center">
@@ -625,7 +625,7 @@ export function ModernAgreementTemplate({
                 </div>
                 <div className="flex-1">
                   <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1">7. INTELLECTUAL PROPERTY & OWNERSHIP</h4>
-                  <p className="text-xs text-neutral-800 leading-relaxed font-medium">
+                  <p className="text-xs text-neutral-800 leading-relaxed font-medium whitespace-pre-line">
                     {ipClause || <span className="text-neutral-400 italic font-normal">[ Enter IP transfer & ownership clause... ]</span>}
                   </p>
                 </div>
@@ -652,7 +652,7 @@ export function ModernAgreementTemplate({
                     </div>
                     <div className="flex-1">
                       <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1">9. CONFIDENTIALITY & DATA SECURITY</h4>
-                      <p className="text-xs text-neutral-800 leading-relaxed font-medium">
+                      <p className="text-xs text-neutral-800 leading-relaxed font-medium whitespace-pre-line">
                         {confidentialityClause || <span className="text-neutral-400 italic font-normal">[ Enter confidentiality clause... ]</span>}
                       </p>
                     </div>
@@ -698,7 +698,7 @@ export function ModernAgreementTemplate({
           </div>
 
           {/* Page 2 Footer Bar */}
-          <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20 flex justify-between items-center text-xs font-semibold">
+          <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20 flex justify-between items-center text-xs font-semibold mt-6">
             <span>Made with SevenX Labs</span>
             <span className="font-mono text-[11px] text-neutral-400">Page 2 of {numPages}</span>
           </div>
@@ -707,7 +707,7 @@ export function ModernAgreementTemplate({
 
       {/* PAGE 3 (Standard 3-page Layout) */}
       {showPage3 && (
-        <div data-page="true" className="relative w-full h-[297mm] flex flex-col justify-between pt-7 pb-0 overflow-hidden page-break-after-always" style={{ breakAfter: customPages.length > 0 ? "page" : "auto" }}>
+        <div data-page="true" className="relative w-full min-h-[297mm] flex flex-col justify-between pt-7 pb-0 page-break-after-always" style={{ breakAfter: customPages.length > 0 ? "page" : "auto" }}>
           <div>
             {/* Running Header for Page 3 */}
             <div className="px-10 pb-3 border-b border-neutral-200 flex justify-between items-center">
@@ -741,7 +741,7 @@ export function ModernAgreementTemplate({
                 </div>
                 <div className="flex-1">
                   <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1.5">9. CONFIDENTIALITY & DATA SECURITY</h4>
-                  <p className="text-xs text-neutral-800 leading-relaxed font-medium">
+                  <p className="text-xs text-neutral-800 leading-relaxed font-medium whitespace-pre-line">
                     {confidentialityClause || <span className="text-neutral-400 italic font-normal">[ Enter confidentiality clause... ]</span>}
                   </p>
                 </div>
@@ -790,7 +790,7 @@ export function ModernAgreementTemplate({
           </div>
 
           {/* Page 3 Footer Bar */}
-          <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20 flex justify-between items-center text-xs font-semibold">
+          <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20 flex justify-between items-center text-xs font-semibold mt-6">
             <span>Made with SevenX Labs</span>
             <span className="font-mono text-[11px] text-neutral-400">Page 3 of {numPages}</span>
           </div>
@@ -808,7 +808,7 @@ export function ModernAgreementTemplate({
           <div
             key={cp.id || idx}
             data-page="true"
-            className="relative w-full h-[297mm] flex flex-col justify-between pt-7 pb-0 overflow-hidden page-break-after-always"
+            className="relative w-full min-h-[297mm] flex flex-col justify-between pt-7 pb-0 page-break-after-always"
             style={{ breakAfter: idx === customPages.length - 1 ? "auto" : "page" }}
           >
             <div>
@@ -840,7 +840,7 @@ export function ModernAgreementTemplate({
             </div>
 
             {/* Footer */}
-            <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20 flex justify-between items-center text-xs font-semibold">
+            <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20 flex justify-between items-center text-xs font-semibold mt-6">
               <span>Made with SevenX Labs</span>
               <span className="font-mono text-[11px] text-neutral-400">Page {pageNum} of {numPages}</span>
             </div>
