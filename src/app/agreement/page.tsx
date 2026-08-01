@@ -53,7 +53,7 @@ export default function AgreementPage() {
   const [showFloatingPreview, setShowFloatingPreview] = useState(false);
   const [openSections, setOpenSections] = useState<Record<number, boolean>>({ 1: true, 2: true, 3: true, 7: true, 10: true, 11: true });
   const [showAllSections, setShowAllSections] = useState(false);
-  const [pageLayoutMode, setPageLayoutMode] = useState<"2-page" | "3-page">("3-page");
+  const [pageLayoutMode, setPageLayoutMode] = useState<"2-page" | "3-page" | "4-page">("3-page");
   const [activePreviewPage, setActivePreviewPage] = useState<number>(1);
 
   const toggleSection = (sectionIndex: number) => {
@@ -327,15 +327,22 @@ export default function AgreementPage() {
 
   const isSectionVisible = (sectionNum: number) => {
     if (showAllSections) return true;
-    if (pageLayoutMode === "3-page") {
+    if (pageLayoutMode === "2-page") {
       if (activePreviewPage === 1) return sectionNum >= 1 && sectionNum <= 4;
-      if (activePreviewPage === 2) return sectionNum >= 5 && sectionNum <= 7;
-      if (activePreviewPage === 3) return sectionNum >= 8 && sectionNum <= 10;
-      if (activePreviewPage >= 4) return sectionNum === 11;
-    } else {
-      if (activePreviewPage === 1) return sectionNum >= 1 && sectionNum <= 5;
-      if (activePreviewPage === 2) return sectionNum >= 6 && sectionNum <= 10;
+      if (activePreviewPage === 2) return sectionNum >= 5 && sectionNum <= 10;
       if (activePreviewPage >= 3) return sectionNum === 11;
+    } else if (pageLayoutMode === "4-page") {
+      if (activePreviewPage === 1) return sectionNum >= 1 && sectionNum <= 3;
+      if (activePreviewPage === 2) return sectionNum >= 4 && sectionNum <= 5;
+      if (activePreviewPage === 3) return sectionNum >= 6 && sectionNum <= 8;
+      if (activePreviewPage === 4) return sectionNum >= 9 && sectionNum <= 10;
+      if (activePreviewPage >= 5) return sectionNum === 11;
+    } else {
+      // Standard 3-page layout (Section 4 on Page 2)
+      if (activePreviewPage === 1) return sectionNum >= 1 && sectionNum <= 3;
+      if (activePreviewPage === 2) return sectionNum >= 4 && sectionNum <= 5;
+      if (activePreviewPage === 3) return sectionNum >= 6 && sectionNum <= 10;
+      if (activePreviewPage >= 4) return sectionNum === 11;
     }
     return true;
   };
