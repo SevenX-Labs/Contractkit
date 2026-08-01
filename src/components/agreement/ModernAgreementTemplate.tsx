@@ -426,40 +426,51 @@ export function ModernAgreementTemplate({
 
             {/* Section 3: Project Overview & Tech Stack (Full Page 1 Focus) */}
             <div className="px-10 mt-3 space-y-3">
-              <div className="p-3.5 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "10px", breakInside: "avoid", pageBreakInside: "avoid" }}>
-                <div className={`p-2 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <Briefcase style={{ width: "15px", height: "15px", display: "block" }} />
+              <div className="p-4 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
+                <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Briefcase style={{ width: "16px", height: "16px", display: "block" }} />
                 </div>
-                <div className="flex-1 grid grid-cols-12 gap-3.5">
-                  <div className="col-span-5 space-y-1.5">
-                    <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">3. PROJECT OVERVIEW</h4>
-                    <p className="text-[11px] text-neutral-800 leading-relaxed font-medium whitespace-pre-line">
+                <div className="flex-1 space-y-3">
+                  {/* Title & Full-Width Stretched Description */}
+                  <div>
+                    <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1">3. PROJECT OVERVIEW</h4>
+                    <div className="bg-neutral-50/90 p-3 rounded-xl border border-neutral-100 text-[11px] text-neutral-800 leading-relaxed font-medium whitespace-pre-line w-full">
                       {projectDescription || <span className="text-neutral-400 italic font-normal">[ Enter project overview description... ]</span>}
-                    </p>
-                    {businessGoal && (
-                      <p className="text-[10.5px] text-neutral-600 leading-snug font-medium pt-1.5 border-t border-neutral-100">
-                        <strong className="text-neutral-800 font-bold">Goal:</strong> {businessGoal}
-                      </p>
-                    )}
+                    </div>
                   </div>
 
-                  <div className="col-span-7 bg-neutral-50 p-3 rounded-xl border border-neutral-100 text-xs space-y-2 text-neutral-800">
-                    <div className="flex items-baseline gap-1 font-mono text-[10.5px]">
-                      <strong className="text-neutral-600 font-bold font-sans text-[10px] uppercase shrink-0">Type:</strong>
-                      <span className="font-semibold text-neutral-900">{projectType || <span className="text-neutral-400 italic font-normal">[ Project Type ]</span>}</span>
-                    </div>
-
-                    <div>
-                      <strong className="text-neutral-600 font-bold font-sans text-[10px] uppercase block mb-0.5">Tech Stack:</strong>
+                  {/* 2-Column Split: Tech Stack (Left 7 Cols) | Goals, Type & Platforms (Right 5 Cols) */}
+                  <div className="grid grid-cols-12 gap-3.5 pt-1">
+                    {/* Left: Tech Stack */}
+                    <div className="col-span-7 bg-neutral-50 p-3 rounded-xl border border-neutral-100 text-xs text-neutral-800">
+                      <strong className="text-neutral-600 font-bold font-sans text-[10px] uppercase block mb-1 tracking-wider">Technology Stack:</strong>
                       {renderFormattedTechStack(techStack)}
                     </div>
 
-                    {platforms && (
-                      <div className="flex items-baseline gap-1 font-mono text-[10.5px] pt-1.5 border-t border-neutral-200/60">
-                        <strong className="text-neutral-600 font-bold font-sans text-[10px] uppercase shrink-0">Platforms:</strong>
-                        <span className="font-medium text-neutral-800">{platforms}</span>
+                    {/* Right: Goals, Project Type & Target Platforms */}
+                    <div className="col-span-5 space-y-2">
+                      {/* Business Goal */}
+                      {businessGoal && (
+                        <div className="bg-[#f0f9df] p-2.5 rounded-xl border border-[#d3ec9c] text-xs">
+                          <span className="text-[9.5px] font-extrabold text-[#5e9618] uppercase tracking-wider block font-sans mb-0.5">Primary Business Goal</span>
+                          <p className="text-[10.5px] text-neutral-900 leading-snug font-semibold">{businessGoal}</p>
+                        </div>
+                      )}
+
+                      {/* Project Type */}
+                      <div className="bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs">
+                        <span className="text-[9.5px] font-extrabold text-neutral-500 uppercase tracking-wider block font-sans mb-0.5">Project Type</span>
+                        <p className="text-[10.5px] text-neutral-900 font-bold">{projectType || <span className="text-neutral-400 italic font-normal">[ Project Type ]</span>}</p>
                       </div>
-                    )}
+
+                      {/* Target Platforms */}
+                      {platforms && (
+                        <div className="bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs">
+                          <span className="text-[9.5px] font-extrabold text-neutral-500 uppercase tracking-wider block font-sans mb-0.5">Target Platforms</span>
+                          <p className="text-[10.5px] text-neutral-800 font-medium leading-tight">{platforms}</p>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
