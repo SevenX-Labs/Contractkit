@@ -149,6 +149,9 @@ export interface AgreementData {
   cancellationPolicy: string;
   additionalTerms: string;
   
+  warrantyPeriod?: string;
+  warrantyScope?: string;
+  
   freelancerSignature: string;
   freelancerSignDate: string;
   clientSignature: string;

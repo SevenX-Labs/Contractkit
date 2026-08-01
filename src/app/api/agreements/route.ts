@@ -49,6 +49,9 @@ export async function POST(req: Request) {
         cancellationPolicy: data.cancellationPolicy || "7 days written notice.",
         additionalTerms: JSON.stringify(data),
         
+        warrantyPeriod: data.warrantyPeriod || data.freeSupportPeriod || "",
+        warrantyScope: data.warrantyScope || "",
+        
         freelancerSignature: data.freelancerSignature || "",
         clientSignature: data.clientSignature || "",
         

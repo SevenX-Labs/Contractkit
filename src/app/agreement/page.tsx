@@ -109,7 +109,8 @@ export default function AgreementPage() {
 
     // Section 9: Confidentiality & Support (EMPTY FOR USER INPUT)
     confidentialityClause: "",
-    freeSupportPeriod: "",
+    freeSupportPeriod: "30 Days Free Warranty",
+    warrantyScope: "The warranty period covers bug fixes, security patches, and issues directly related to the deliverables.",
     revisionLimit: 2,
 
     // Section 10: Digital Signatures (My Signature AUTO-FILLED, Client Empty)
@@ -319,6 +320,7 @@ export default function AgreementPage() {
       ipClause={formData.ipTransferCondition}
       confidentialityClause={formData.confidentialityClause}
       warrantyPeriod={formData.freeSupportPeriod}
+      warrantyScope={formData.warrantyScope}
       providerSignatory={formData.freelancerSignatureName}
       clientSignatory={formData.clientSignatureName}
       currencySymbol="₹"
@@ -974,20 +976,52 @@ export default function AgreementPage() {
                 </button>
                 {openSections[9] && (
                   <div className="p-5 border-t border-[#D5CEBC] flex flex-col gap-3">
-                    <textarea
-                      placeholder="e.g. Both parties agree to protect proprietary source code and commercial data under strict confidentiality..."
-                      rows={2}
-                      value={formData.confidentialityClause}
-                      onChange={(e) => setFormData({ ...formData, confidentialityClause: e.target.value })}
-                      className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 resize-none font-medium"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Warranty Period (e.g. 30 days post-launch warranty support)"
-                      value={formData.freeSupportPeriod}
-                      onChange={(e) => setFormData({ ...formData, freeSupportPeriod: e.target.value })}
-                      className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900"
-                    />
+                    <div>
+                      <label className="text-[11px] font-bold text-neutral-700 block mb-1">Confidentiality Clause</label>
+                      <textarea
+                        placeholder="e.g. Both parties agree to protect proprietary source code and commercial data under strict confidentiality..."
+                        rows={2}
+                        value={formData.confidentialityClause}
+                        onChange={(e) => setFormData({ ...formData, confidentialityClause: e.target.value })}
+                        className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 resize-none font-medium leading-relaxed"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-bold text-neutral-700 block mb-1">Warranty Period</label>
+                      <input
+                        type="text"
+                        placeholder="Warranty Period (e.g. 30 Days post-launch warranty support)"
+                        value={formData.freeSupportPeriod}
+                        onChange={(e) => setFormData({ ...formData, freeSupportPeriod: e.target.value })}
+                        className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900"
+                      />
+                    </div>
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-[11px] font-extrabold text-neutral-900 italic">(Optional) Warranty Scope <span className="font-normal text-neutral-500">(if you add another field later)</span></label>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFormData((prev) => ({
+                              ...prev,
+                              warrantyScope: "The warranty period covers bug fixes, security patches, and issues directly related to the deliverables.",
+                            }));
+                          }}
+                          className="text-[10px] font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 px-2 py-0.5 rounded-md border border-purple-200 transition cursor-pointer"
+                        >
+                          + Insert Default Scope
+                        </button>
+                      </div>
+                      <div className="relative">
+                        <textarea
+                          placeholder="The warranty period covers bug fixes, security patches, and issues directly related to the deliverables..."
+                          rows={3}
+                          value={formData.warrantyScope}
+                          onChange={(e) => setFormData({ ...formData, warrantyScope: e.target.value })}
+                          className="w-full bg-[#1a1a1a] border border-neutral-800 rounded-2xl px-4 py-3 text-xs text-neutral-100 font-mono resize-y leading-relaxed shadow-inner focus:outline-none focus:border-purple-500"
+                        />
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>

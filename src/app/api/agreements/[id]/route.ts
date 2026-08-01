@@ -42,6 +42,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         ownershipClause: data.ownershipClause,
         cancellationPolicy: data.cancellationPolicy,
         additionalTerms: JSON.stringify(data),
+        warrantyPeriod: data.warrantyPeriod || data.freeSupportPeriod,
+        warrantyScope: data.warrantyScope,
         status: data.status ? (data.status.toUpperCase() as any) : "DRAFT",
       },
     });

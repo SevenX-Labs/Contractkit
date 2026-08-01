@@ -100,6 +100,7 @@ export interface AgreementTemplateProps {
   confidentialityClause?: string;
 
   warrantyPeriod?: string;
+  warrantyScope?: string;
   revisionPolicy?: string;
   cancellationPolicy?: string;
 
@@ -259,6 +260,7 @@ export function ModernAgreementTemplate({
   confidentialityClause = "",
 
   warrantyPeriod = "",
+  warrantyScope = "",
   revisionPolicy = "",
   cancellationPolicy = "",
 
@@ -763,6 +765,9 @@ export function ModernAgreementTemplate({
                     <div className="flex-1 space-y-1 text-xs">
                       <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1">10. WARRANTY, SUPPORT & REVISION POLICY</h4>
                       <p><strong className="text-neutral-900 font-bold">• Warranty Support:</strong> {warrantyPeriod || <span className="text-neutral-400 italic font-normal">[ Warranty period ]</span>}</p>
+                      {warrantyScope && (
+                        <p className="mt-1"><strong className="text-neutral-900 font-bold">• Warranty Scope:</strong> {warrantyScope}</p>
+                      )}
                     </div>
                   </div>
 
@@ -842,6 +847,9 @@ export function ModernAgreementTemplate({
                 <div className="flex-1 space-y-1.5 text-xs">
                   <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1.5">10. WARRANTY, SUPPORT & REVISION POLICY</h4>
                   <p><strong className="text-neutral-900 font-bold">• Warranty Support:</strong> {warrantyPeriod || <span className="text-neutral-400 italic font-normal">[ Warranty period ]</span>}</p>
+                  {warrantyScope && (
+                    <p className="mt-1"><strong className="text-neutral-900 font-bold">• Warranty Scope:</strong> {warrantyScope}</p>
+                  )}
                 </div>
               </div>
 

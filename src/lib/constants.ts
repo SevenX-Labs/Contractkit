@@ -91,6 +91,9 @@ export const DEFAULT_AGREEMENT_DATA: AgreementData = {
   cancellationPolicy: "Either party may terminate this agreement with 7 days written notice. Payment shall be due for all work completed up to the date of cancellation.",
   additionalTerms: "All work is provided with a 30-day bug fix guarantee following final deployment.",
   
+  warrantyPeriod: "30 Days Free Warranty",
+  warrantyScope: "The warranty period covers bug fixes, security patches, and issues directly related to the deliverables.",
+  
   freelancerSignature: DEFAULT_PROFILE.name,
   freelancerSignDate: new Date().toISOString().split("T")[0],
   clientSignature: "Rajesh Kumar, CTO",
