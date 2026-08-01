@@ -246,89 +246,72 @@ export function ModernNDATemplate({
               </div>
             </div>
 
-            {/* Page 1 Clauses: Sections 3 - 10 */}
-            <div className="px-10 mt-2.5 space-y-2">
-              {/* Section 3 & 4 */}
-              <div className="grid grid-cols-2 gap-2.5">
-                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <FileText className="w-3.5 h-3.5" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">3. PURPOSE OF DISCLOSURE</h4>
-                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
-                      {purpose || <span className="text-neutral-400 italic font-normal">[ Purpose of disclosure... ]</span>}
-                    </p>
-                  </div>
+            {/* Page 1 Clauses: Sections 3 - 7 (Full-Width List Layout) */}
+            <div className="px-10 mt-2.5 flex flex-col gap-2">
+              {/* Section 3 */}
+              <div className="flex items-start gap-3 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
+                  <FileText className="w-3.5 h-3.5" />
                 </div>
-
-                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <Lock className="w-3.5 h-3.5" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">4. DEFINITION OF CONFIDENTIAL INFO</h4>
-                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
-                      {confidentialItems || <span className="text-neutral-400 italic font-normal">[ Definition of confidential info... ]</span>}
-                    </p>
-                  </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">3. PURPOSE OF DISCLOSURE</h4>
+                  <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
+                    {purpose || <span className="text-neutral-400 italic font-normal">[ Purpose of disclosure... ]</span>}
+                  </p>
                 </div>
               </div>
 
-              {/* Section 5 & 6 */}
-              <div className="grid grid-cols-2 gap-2.5">
-                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <ShieldCheck className="w-3.5 h-3.5" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">5. OBLIGATIONS OF RECEIVING PARTY</h4>
-                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
-                      {obligations || <span className="text-neutral-400 italic font-normal">[ Obligations of receiving party... ]</span>}
-                    </p>
-                  </div>
+              {/* Section 4 */}
+              <div className="flex items-start gap-3 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
+                  <Lock className="w-3.5 h-3.5" />
                 </div>
-
-                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <XCircle className="w-3.5 h-3.5" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">6. EXCLUSIONS FROM CONFIDENTIALITY</h4>
-                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
-                      {exclusions || <span className="text-neutral-400 italic font-normal">[ Exclusions clause... ]</span>}
-                    </p>
-                  </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">4. DEFINITION OF CONFIDENTIAL INFO</h4>
+                  <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
+                    {confidentialItems || <span className="text-neutral-400 italic font-normal">[ Definition of confidential info... ]</span>}
+                  </p>
                 </div>
               </div>
 
-              {/* Section 7 & 8 */}
-              <div className="grid grid-cols-2 gap-2.5">
-                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <CheckCircle className="w-3.5 h-3.5" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">7. PERMITTED DISCLOSURES</h4>
-                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
-                      {permittedDisclosure || <span className="text-neutral-400 italic font-normal">[ Permitted disclosures... ]</span>}
-                    </p>
-                  </div>
+              {/* Section 5 */}
+              <div className="flex items-start gap-3 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
+                  <ShieldCheck className="w-3.5 h-3.5" />
                 </div>
-
-                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <Clock className="w-3.5 h-3.5" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">8. TERM & SURVIVAL DURATION</h4>
-                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
-                      {termDuration || <span className="text-neutral-400 italic font-normal">[ Term & survival duration... ]</span>}
-                    </p>
-                  </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">5. OBLIGATIONS OF RECEIVING PARTY</h4>
+                  <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
+                    {obligations || <span className="text-neutral-400 italic font-normal">[ Obligations of receiving party... ]</span>}
+                  </p>
                 </div>
               </div>
 
+              {/* Section 6 */}
+              <div className="flex items-start gap-3 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
+                  <XCircle className="w-3.5 h-3.5" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">6. EXCLUSIONS FROM CONFIDENTIALITY</h4>
+                  <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
+                    {exclusions || <span className="text-neutral-400 italic font-normal">[ Exclusions clause... ]</span>}
+                  </p>
+                </div>
+              </div>
+
+              {/* Section 7 */}
+              <div className="flex items-start gap-3 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
+                  <CheckCircle className="w-3.5 h-3.5" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">7. PERMITTED DISCLOSURES</h4>
+                  <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
+                    {permittedDisclosure || <span className="text-neutral-400 italic font-normal">[ Permitted disclosures... ]</span>}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -348,112 +331,122 @@ export function ModernNDATemplate({
               <span className="font-mono text-xs text-neutral-500 font-bold">Ref #{ndaNumber} | Page 2 of 2</span>
             </div>
 
-            {/* Page 2 Clauses: Sections 9 - 16 */}
-            <div className="px-10 mt-3 space-y-2.5">
-              {/* Section 9 & 10 */}
-              <div className="grid grid-cols-2 gap-2.5">
-                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <FileCheck className="w-3.5 h-3.5" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">9. RETURN OF MATERIALS</h4>
-                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
-                      {returnTerm || <span className="text-neutral-400 italic font-normal">[ Return of materials clause... ]</span>}
-                    </p>
-                  </div>
+            {/* Page 2 Clauses: Sections 8 - 16 (Full-Width List Layout) */}
+            <div className="px-10 mt-2.5 flex flex-col gap-2">
+              {/* Section 8 */}
+              <div className="flex items-start gap-3 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
+                  <Clock className="w-3.5 h-3.5" />
                 </div>
-
-                <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
-                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <Key className="w-3.5 h-3.5" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">10. INTELLECTUAL PROPERTY</h4>
-                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
-                      {ipClause || <span className="text-neutral-400 italic font-normal">[ Intellectual property ownership... ]</span>}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              {/* Section 11 & 12 */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-white border border-neutral-200">
-                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <Shield className="w-3.5 h-3.5" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">11. DATA PROTECTION & SECURITY</h4>
-                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
-                      {dataProtection || <span className="text-neutral-400 italic font-normal">[ Data protection terms... ]</span>}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-white border border-neutral-200">
-                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <AlertTriangle className="w-3.5 h-3.5" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">12. LIMITATION OF LIABILITY</h4>
-                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
-                      {limitationOfLiability || <span className="text-neutral-400 italic font-normal">[ Limitation of liability... ]</span>}
-                    </p>
-                  </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">8. TERM & SURVIVAL DURATION</h4>
+                  <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
+                    {termDuration || <span className="text-neutral-400 italic font-normal">[ Term & survival duration... ]</span>}
+                  </p>
                 </div>
               </div>
 
-              {/* Section 13 & 14 */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-white border border-neutral-200">
-                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <Gavel className="w-3.5 h-3.5" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">13. INJUNCTIVE RELIEF & REMEDIES</h4>
-                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
-                      {breachRemedies || <span className="text-neutral-400 italic font-normal">[ Injunctive relief terms... ]</span>}
-                    </p>
-                  </div>
+              {/* Section 9 */}
+              <div className="flex items-start gap-3 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
+                  <FileCheck className="w-3.5 h-3.5" />
                 </div>
-
-                <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-white border border-neutral-200">
-                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <Handshake className="w-3.5 h-3.5" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">14. TERMINATION OF AGREEMENT</h4>
-                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
-                      {terminationClause || <span className="text-neutral-400 italic font-normal">[ Termination clause... ]</span>}
-                    </p>
-                  </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">9. RETURN OF MATERIALS</h4>
+                  <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
+                    {returnTerm || <span className="text-neutral-400 italic font-normal">[ Return of materials clause... ]</span>}
+                  </p>
                 </div>
               </div>
 
-              {/* Section 15 & 16 */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-white border border-neutral-200">
-                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <FileCheck className="w-3.5 h-3.5" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">15. ENTIRE AGREEMENT & CLAUSES</h4>
-                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
-                      {entireAgreement || <span className="text-neutral-400 italic font-normal">[ Entire agreement clause... ]</span>}
-                    </p>
-                  </div>
+              {/* Section 10 */}
+              <div className="flex items-start gap-3 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
+                  <Key className="w-3.5 h-3.5" />
                 </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">10. INTELLECTUAL PROPERTY</h4>
+                  <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
+                    {ipClause || <span className="text-neutral-400 italic font-normal">[ Intellectual property ownership... ]</span>}
+                  </p>
+                </div>
+              </div>
 
-                <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-white border border-neutral-200">
-                  <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
-                    <FileText className="w-3.5 h-3.5" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">16. ADDITIONAL CONDITIONS</h4>
-                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
-                      {additionalTerms || <span className="text-neutral-400 italic font-normal">[ Additional conditions... ]</span>}
-                    </p>
-                  </div>
+              {/* Section 11 */}
+              <div className="flex items-start gap-3 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
+                  <Shield className="w-3.5 h-3.5" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">11. DATA PROTECTION & SECURITY</h4>
+                  <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
+                    {dataProtection || <span className="text-neutral-400 italic font-normal">[ Data protection terms... ]</span>}
+                  </p>
+                </div>
+              </div>
+
+              {/* Section 12 */}
+              <div className="flex items-start gap-3 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
+                  <AlertTriangle className="w-3.5 h-3.5" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">12. LIMITATION OF LIABILITY</h4>
+                  <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
+                    {limitationOfLiability || <span className="text-neutral-400 italic font-normal">[ Limitation of liability... ]</span>}
+                  </p>
+                </div>
+              </div>
+
+              {/* Section 13 */}
+              <div className="flex items-start gap-3 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
+                  <Gavel className="w-3.5 h-3.5" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">13. INJUNCTIVE RELIEF & REMEDIES</h4>
+                  <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
+                    {breachRemedies || <span className="text-neutral-400 italic font-normal">[ Injunctive relief terms... ]</span>}
+                  </p>
+                </div>
+              </div>
+
+              {/* Section 14 */}
+              <div className="flex items-start gap-3 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
+                  <Handshake className="w-3.5 h-3.5" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">14. TERMINATION OF AGREEMENT</h4>
+                  <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
+                    {terminationClause || <span className="text-neutral-400 italic font-normal">[ Termination clause... ]</span>}
+                  </p>
+                </div>
+              </div>
+
+              {/* Section 15 */}
+              <div className="flex items-start gap-3 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
+                  <FileCheck className="w-3.5 h-3.5" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">15. ENTIRE AGREEMENT & CLAUSES</h4>
+                  <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
+                    {entireAgreement || <span className="text-neutral-400 italic font-normal">[ Entire agreement clause... ]</span>}
+                  </p>
+                </div>
+              </div>
+
+              {/* Section 16 */}
+              <div className="flex items-start gap-3 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
+                <div className={`p-2 rounded-full shrink-0 ${accentBadgeBg}`}>
+                  <FileText className="w-3.5 h-3.5" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-[11px] font-black text-neutral-900 uppercase tracking-wider">16. ADDITIONAL CONDITIONS</h4>
+                  <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium whitespace-pre-line">
+                    {additionalTerms || <span className="text-neutral-400 italic font-normal">[ Additional conditions... ]</span>}
+                  </p>
                 </div>
               </div>
             </div>
