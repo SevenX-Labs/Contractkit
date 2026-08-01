@@ -70,7 +70,7 @@ export function ModernQuotationTemplate({
   validityDays = 30,
   validUntilDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
 
-  projectName = "E-Commerce Website Development",
+  projectName = "",
   preparedBy = "SevenX Labs",
   currency = "INR (Indian Rupees)",
   paymentTerms = "50% Advance, 50% on Completion",
@@ -79,104 +79,42 @@ export function ModernQuotationTemplate({
   senderName = "Sahil Hode",
   senderCompany = "SevenX Labs",
   senderAddress = "Thane, Mumbai, Maharashtra",
-  senderEmail = "contact@sevenxlabs.com",
-  senderPhone = "+91 98765 43210",
+  senderEmail = "sevenxlabs07@gmail.com",
+  senderPhone = "+91 8652601566",
   senderWebsite = "www.sevenxlabs.com",
 
-  clientName = "ABC Pvt. Ltd.",
-  clientCompany = "ABC Pvt. Ltd.",
-  clientAddress = "123, Business Park, Andheri East, Mumbai, Maharashtra - 400069",
-  clientEmail = "contact@abcpvtltd.com",
-  clientPhone = "+91 98765 43210",
-  clientWebsite = "www.abcpvtltd.com",
-  clientGstin = "27ABCDE5678G1Z6",
+  clientName = "",
+  clientCompany = "",
+  clientAddress = "",
+  clientEmail = "",
+  clientPhone = "",
+  clientWebsite = "",
+  clientGstin = "",
 
-  items = [
-    {
-      id: "q1",
-      description: "Website Design & Development",
-      miniDescription: "Responsive design and development of complete website.",
-      quantity: 1,
-      rate: 25000,
-      amount: 25000,
-    },
-    {
-      id: "q2",
-      description: "Custom Graphic Design",
-      miniDescription: "Custom banners, icons and visual assets.",
-      quantity: 1,
-      rate: 8000,
-      amount: 8000,
-    },
-    {
-      id: "q3",
-      description: "Content Management System (CMS) Integration",
-      miniDescription: "WordPress CMS integration with easy content management.",
-      quantity: 1,
-      rate: 7000,
-      amount: 7000,
-    },
-    {
-      id: "q4",
-      description: "SEO Friendly Development",
-      miniDescription: "Basic on-page SEO setup and optimization.",
-      quantity: 1,
-      rate: 5000,
-      amount: 5000,
-    },
-    {
-      id: "q5",
-      description: "E-commerce Integration",
-      miniDescription: "Product, cart, checkout and payment gateway integration.",
-      quantity: 1,
-      rate: 15000,
-      amount: 15000,
-    },
-    {
-      id: "q6",
-      description: "Site Maintenance (3 Months)",
-      miniDescription: "Bug fixes, updates and technical support.",
-      quantity: 1,
-      rate: 5000,
-      amount: 5000,
-    },
-  ],
-
-  subtotal = 65000,
-  gstPercent = 18,
-  gstAmount = 11700,
-  totalAmount = 76700,
+  items = [],
+  subtotal = 0,
+  gstPercent = 0,
+  gstAmount = 0,
+  totalAmount = 0,
 
   termsAndConditions = [
     "This quotation is valid for 30 days from the date of issue.",
     "50% advance payment is required to start the project.",
     "The balance 50% payment will be charged on project completion.",
-    "Any additional work or changes in scope will be charged extra.",
-    "Delivery timeline may vary based on client feedback and content.",
-    "All payments are non-refundable.",
   ],
-
   signatoryName = "Sahil Hode",
-  designation = "Founder & Lead Developer",
+  designation = "Founder & Manager",
   signatureUrl,
+
   bankName = "HDFC Bank",
   bankAccount = "50100234567890",
   bankIfsc = "HDFC0001234",
   upiId = "sevenxlabs@upi",
+
   currencySymbol = "₹",
   accentColor = "lime",
 }: QuotationTemplateProps) {
-  // Theme color tokens
-  const accentBanner =
-    accentColor === "lime"
-      ? "bg-[#8cc63f] text-neutral-950 font-black"
-      : accentColor === "purple"
-      ? "bg-purple-600 text-white font-black"
-      : accentColor === "pink"
-      ? "bg-pink-600 text-white font-black"
-      : "bg-emerald-600 text-white font-black";
-
-  const accentBadge =
+  const accentBadgeBg =
     accentColor === "lime"
       ? "bg-[#8cc63f] text-neutral-950"
       : accentColor === "purple"
@@ -212,7 +150,11 @@ export function ModernQuotationTemplate({
       ? "#ec4899"
       : "#10b981";
 
-  const computedSubtotal = subtotal || items.reduce((acc, item) => acc + item.amount, 0);
+  const displayItems = items.length > 0 ? items : [
+    { id: "q-placeholder", description: "[ Enter Quotation Item Description ]", miniDescription: "", quantity: 1, rate: 0, amount: 0 }
+  ];
+
+  const computedSubtotal = subtotal || displayItems.reduce((acc, item) => acc + item.amount, 0);
   const computedGstAmount = gstAmount !== undefined ? gstAmount : (computedSubtotal * (gstPercent || 0)) / 100;
   const computedTotalAmount = totalAmount || computedSubtotal + computedGstAmount;
 
@@ -244,14 +186,16 @@ export function ModernQuotationTemplate({
                 QUOTATION TO.
               </span>
               <h2 className="text-2xl font-black text-neutral-900 tracking-tight mb-2">
-                {clientName || "ABC Pvt. Ltd."}
+                {clientName || <span className="text-neutral-400 italic font-normal">[ Client Name ]</span>}
               </h2>
               <div className="space-y-1 text-[11px] text-neutral-700 font-medium leading-relaxed">
-                {clientAddress && (
+                {clientAddress ? (
                   <div style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}>
                     <MapPin style={{ width: "14px", height: "14px", color: "#8cc63f", flexShrink: 0, display: "block", marginTop: "2px" }} />
                     <span style={{ lineHeight: "1.4" }}>{clientAddress}</span>
                   </div>
+                ) : (
+                  <p className="text-neutral-400 italic font-normal">[ Client Address ]</p>
                 )}
                 {clientEmail && (
                   <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
@@ -265,12 +209,6 @@ export function ModernQuotationTemplate({
                     <span style={{ lineHeight: "1.4" }}>{clientPhone}</span>
                   </div>
                 )}
-                {clientWebsite && (
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <Globe style={{ width: "14px", height: "14px", color: "#8cc63f", flexShrink: 0, display: "block" }} />
-                    <span style={{ lineHeight: "1.4" }}>{clientWebsite}</span>
-                  </div>
-                )}
                 {clientGstin && (
                   <p className="font-bold text-neutral-900 text-[11px] mt-1.5">
                     GSTIN: <span className="font-mono">{clientGstin}</span>
@@ -280,229 +218,182 @@ export function ModernQuotationTemplate({
             </div>
           </div>
 
-          {/* Top Right Black Header Box (Flush to Top and Right Edge) */}
-          <div className="absolute top-0 right-0 w-[45%] bg-[#0a0a0a] text-white pt-8 pb-6 px-8 rounded-bl-[50px] shadow-2xl flex flex-col justify-between min-h-[150px]">
-            <div className="relative z-10">
-              <h1 className="text-4xl font-black tracking-wider uppercase text-white mb-3">
+          {/* Top Right Curved Black Panel */}
+          <div
+            className="absolute top-0 right-0 w-[46%] bg-[#0a0a0a] text-white pt-8 pb-7 px-8 rounded-bl-[60px] shadow-2xl flex flex-col justify-between"
+            style={{ minHeight: "185px" }}
+          >
+            <div>
+              <h1 className="text-4xl font-black tracking-wider uppercase text-white mb-4">
                 QUOTATION
               </h1>
 
-              {/* Divider & Metadata 2-Column Grid */}
-              <div className="grid grid-cols-2 gap-4 text-left border-t border-neutral-800 pt-3">
+              {/* 2-Column Meta Data Grid */}
+              <div className="grid grid-cols-2 gap-3 text-left text-xs font-medium border-t border-neutral-800 pt-3">
                 <div>
-                  <span className="text-[10px] text-neutral-400 block font-sans uppercase tracking-wider">Quotation No.</span>
-                  <span className="font-mono font-bold text-white text-xs block mt-0.5 whitespace-nowrap">
-                    {quotationNumber}
-                  </span>
+                  <span className="text-[10px] text-neutral-400 block font-sans">Quotation No.</span>
+                  <span className="font-mono font-bold text-white text-xs block mt-0.5 whitespace-nowrap">{quotationNumber}</span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-neutral-400 block font-sans uppercase tracking-wider">Date</span>
-                  <span className="font-mono font-bold text-white text-xs block mt-0.5 whitespace-nowrap">
-                    {formatDate(quotationDate)}
-                  </span>
+                  <span className="text-[10px] text-neutral-400 block font-sans">Date</span>
+                  <span className="font-mono font-bold text-white text-xs block mt-0.5 whitespace-nowrap">{formatDate(quotationDate)}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-neutral-400 block font-sans">Valid Until</span>
+                  <span className="font-mono font-bold text-white text-xs block mt-0.5 whitespace-nowrap">{formatDate(validUntilDate)}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-neutral-400 block font-sans">Prepared By</span>
+                  <span className="font-bold text-white text-xs block mt-0.5 whitespace-nowrap">{preparedBy}</span>
                 </div>
               </div>
             </div>
 
-            {/* Geometric Top-Right Corner Green Triangle Accent */}
-            <div className="absolute top-0 right-0 pointer-events-none z-20 overflow-hidden">
-              <svg width="70" height="70" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <polygon points="30,0 100,0 100,70" fill={accentShape} opacity="0.95" />
+            {/* Geometric Accent Triangles */}
+            <div className="absolute -bottom-6 -right-6 pointer-events-none z-0 opacity-80">
+              <svg width="90" height="90" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="20,10 90,50 30,90" fill={accentShape} opacity="0.75" />
+                <polygon points="50,20 100,50 60,80" fill={accentShape} opacity="0.45" />
               </svg>
             </div>
           </div>
         </div>
 
-        {/* 2-Column Overview Section: Left Project Meta & Right VALIDITY Box */}
-        <div className="px-10 mt-6 grid grid-cols-12 gap-6 items-start">
-          {/* Left Column: Project Parameters List */}
-          <div className="col-span-7 space-y-2 text-xs text-neutral-800">
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <Briefcase style={{ width: "14px", height: "14px", color: "#8cc63f", flexShrink: 0, display: "block" }} />
-              <span className="font-bold text-neutral-500" style={{ width: "112px", flexShrink: 0 }}>Project Name</span>
-              <span className="font-bold text-neutral-900">: {projectName}</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <User style={{ width: "14px", height: "14px", color: "#8cc63f", flexShrink: 0, display: "block" }} />
-              <span className="font-bold text-neutral-500" style={{ width: "112px", flexShrink: 0 }}>Prepared By</span>
-              <span className="font-bold text-neutral-900">: {preparedBy}</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <CreditCard style={{ width: "14px", height: "14px", color: "#8cc63f", flexShrink: 0, display: "block" }} />
-              <span className="font-bold text-neutral-500" style={{ width: "112px", flexShrink: 0 }}>Currency</span>
-              <span className="font-bold text-neutral-900">: {currency}</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <CheckCircle2 style={{ width: "14px", height: "14px", color: "#8cc63f", flexShrink: 0, display: "block" }} />
-              <span className="font-bold text-neutral-500" style={{ width: "112px", flexShrink: 0 }}>Payment Terms</span>
-              <span className="font-bold text-neutral-900">: {paymentTerms}</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <Clock style={{ width: "14px", height: "14px", color: "#8cc63f", flexShrink: 0, display: "block" }} />
-              <span className="font-bold text-neutral-500" style={{ width: "112px", flexShrink: 0 }}>Delivery Time</span>
-              <span className="font-bold text-neutral-900">: {deliveryTime}</span>
-            </div>
-          </div>
-
-          {/* Right Column: Green Validity Box */}
-          <div className="col-span-5 flex justify-end">
-            <div className="bg-[#fafaf8] border border-neutral-200 rounded-2xl p-4 shadow-xs" style={{ display: "flex", alignItems: "center", gap: "14px", width: "100%", maxWidth: "240px" }}>
-              <div className={`p-3 rounded-full shrink-0 shadow-xs ${accentBadge}`} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <Calendar style={{ width: "20px", height: "20px", display: "block" }} />
-              </div>
+        {/* Project & Scope Overview Pill Box */}
+        <div className="px-10 mt-6">
+          <div className="bg-neutral-50 border border-neutral-200 p-4 rounded-2xl flex flex-col gap-2">
+            <div className="flex justify-between items-center flex-wrap gap-2">
               <div>
-                <span className="text-[10px] font-black uppercase tracking-wider text-neutral-400 block">
-                  VALIDITY
-                </span>
-                <p className="text-sm font-black text-neutral-900 mt-0.5">
-                  {validityDays} Days
-                </p>
-                <p className="text-[10px] font-bold text-neutral-400 mt-0.5 whitespace-nowrap">
-                  (Valid Till: {formatDate(validUntilDate)})
-                </p>
+                <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest block font-mono">PROJECT NAME</span>
+                <h3 className="text-base font-black text-neutral-900 tracking-tight">
+                  {projectName || <span className="text-neutral-400 italic font-normal">[ Enter Project Name ]</span>}
+                </h3>
+              </div>
+              <div className="flex gap-4 text-xs font-mono">
+                <div>
+                  <span className="text-[10px] font-extrabold text-neutral-400 uppercase block font-sans">ESTIMATED TIMELINE</span>
+                  <span className="font-bold text-neutral-900">{deliveryTime}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] font-extrabold text-neutral-400 uppercase block font-sans">PAYMENT TERMS</span>
+                  <span className="font-bold text-neutral-900">{paymentTerms}</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Itemized Line Items Table */}
+        {/* Quotation Table Container */}
         <div className="px-10 mt-6">
-          {/* Black Full-Width Rounded Header Bar */}
-          <div className="bg-[#0a0a0a] text-white rounded-xl py-3 px-6 mb-2 shadow-md" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.05em" }}>
-            <span style={{ width: "64px", textAlign: "center" }}>SR NO.</span>
-            <span style={{ flex: 1, paddingLeft: "16px", paddingRight: "16px" }}>ITEM DESCRIPTION</span>
-            <span style={{ width: "64px", textAlign: "center" }}>QTY.</span>
-            <span style={{ width: "112px", textAlign: "right" }}>RATE ({currencySymbol})</span>
-            <span style={{ width: "112px", textAlign: "right" }}>AMOUNT ({currencySymbol})</span>
+          {/* Black Full-Width Header Row */}
+          <div className="bg-[#0a0a0a] text-white rounded-full py-3 px-6 flex justify-between items-center text-xs font-black uppercase tracking-wider mb-2 shadow-md">
+            <span className="w-12 text-center">SR NO.</span>
+            <span className="flex-1 px-4">ITEM DESCRIPTION</span>
+            <span className="w-20 text-center">QTY</span>
+            <span className="w-24 text-right">RATE</span>
+            <span className="w-28 text-right">AMOUNT</span>
           </div>
 
           {/* Table Body Rows */}
-          <div className="flex flex-col gap-1.5">
-            {items.map((item, index) => {
-              const srNo = item.srNo || String(index + 1).padStart(2, "0");
-              const isEven = index % 2 === 1;
+          <div className="flex flex-col gap-2">
+            {displayItems.map((item, index) => {
+              const isHighlighted = index % 2 === 1;
+              const srNo = String(index + 1).padStart(2, "0");
 
               return (
                 <div
                   key={item.id || index}
-                  className={`py-3 px-6 text-xs transition rounded-xl ${
-                    isEven ? accentLightRow : "bg-white"
+                  className={`flex justify-between items-center py-3.5 px-6 text-xs transition font-medium ${
+                    isHighlighted
+                      ? `${accentLightRow} text-neutral-900 rounded-full border border-[#e2f0ca]`
+                      : "bg-white text-neutral-800 rounded-full border border-neutral-100"
                   }`}
-                  style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
                 >
-                  {/* SR NO Badge */}
-                  <div style={{ width: "64px", display: "flex", justifyContent: "center" }}>
-                    <span className={`font-mono font-bold text-xs px-2.5 py-1 rounded-md ${accentBadgeSr}`}>
-                      {srNo}
-                    </span>
-                  </div>
-
-                  {/* Description Title & Subtitle */}
-                  <div style={{ flex: 1, paddingLeft: "16px", paddingRight: "16px" }}>
-                    <p className="font-bold text-neutral-900 text-xs">{item.description}</p>
+                  <span className={`w-12 text-center font-mono font-bold py-1 px-2 rounded-full text-[11px] ${accentBadgeSr}`}>
+                    {srNo}
+                  </span>
+                  <div className="flex-1 px-4">
+                    <p className="font-black text-neutral-900 leading-tight">{item.description}</p>
                     {item.miniDescription && (
-                      <p className="text-[11px] text-neutral-500 font-medium mt-0.5 leading-snug">
-                        {item.miniDescription}
-                      </p>
+                      <p className="text-[11px] text-neutral-500 font-medium leading-snug mt-0.5">{item.miniDescription}</p>
                     )}
                   </div>
-
-                  {/* Quantity */}
-                  <span className="font-mono font-bold text-neutral-900" style={{ width: "64px", textAlign: "center" }}>{item.quantity}</span>
-
-                  {/* Rate */}
-                  <span className="font-mono text-neutral-700 font-semibold" style={{ width: "112px", textAlign: "right" }}>
-                    {formatCurrency(item.rate, "")}
-                  </span>
-
-                  {/* Amount */}
-                  <span className="font-mono font-bold text-neutral-900" style={{ width: "112px", textAlign: "right" }}>
-                    {formatCurrency(item.amount, "")}
-                  </span>
+                  <span className="w-20 text-center font-mono font-bold text-neutral-700">{item.quantity}</span>
+                  <span className="w-24 text-right font-mono text-neutral-800">{formatCurrency(item.rate, currencySymbol)}</span>
+                  <span className="w-28 text-right font-mono font-black text-neutral-900">{formatCurrency(item.amount, currencySymbol)}</span>
                 </div>
               );
             })}
           </div>
-
-          {/* Subtotal, GST, and Total Amount Banner */}
-          <div className="mt-4 flex flex-col items-end space-y-2">
-            <div className="w-64 space-y-1 text-xs">
-              <div className="flex justify-between items-center text-neutral-600 font-bold px-2">
-                <span className="uppercase text-[11px]">SUBTOTAL</span>
-                <span className="font-mono text-neutral-900">{formatCurrency(computedSubtotal, "")}</span>
-              </div>
-
-              {gstPercent > 0 && (
-                <div className="flex justify-between items-center text-neutral-600 font-bold px-2">
-                  <span className="uppercase text-[11px]">GST ({gstPercent}%)</span>
-                  <span className="font-mono text-neutral-900">{formatCurrency(computedGstAmount, "")}</span>
-                </div>
-              )}
-            </div>
-
-            {/* Lime Green Banner for TOTAL AMOUNT */}
-            <div className={`w-full py-3.5 px-6 rounded-xl flex justify-between items-center shadow-md ${accentBanner}`}>
-              <span className="text-xs font-black uppercase tracking-wider">TOTAL AMOUNT</span>
-              <span className="text-lg font-black font-mono tracking-tight">
-                {currencySymbol} {formatCurrency(computedTotalAmount, "")}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom 2-Column Section: TERMS & CONDITIONS (Left) + AUTHORIZED SIGNATURE (Right) */}
-        <div className="px-10 mt-6 grid grid-cols-12 gap-8 items-start">
-          {/* Left Column: Terms & Conditions */}
-          <div className="col-span-7">
-            <div className="bg-[#0a0a0a] text-white px-3.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider inline-block mb-2 shadow-xs">
-              TERMS & CONDITIONS
-            </div>
-
-            <div className="bg-[#fafaf8] border border-neutral-200 rounded-2xl p-4 text-[11px] font-medium text-neutral-700 space-y-1.5 shadow-xs">
-              {termsAndConditions.map((term, index) => (
-                <div key={index} className="flex items-start gap-2">
-                  <span className="text-[#8cc63f] font-bold text-xs shrink-0">•</span>
-                  <span className="leading-snug">{term}</span>
-                </div>
-              ))}
-              {bankName && (
-                <div className="mt-2 pt-2 border-t border-neutral-200 font-mono text-[10px] text-neutral-800">
-                  <p><strong>Bank:</strong> {bankName} {bankAccount ? `| A/C: ${bankAccount}` : ""} {bankIfsc ? `| IFSC: ${bankIfsc}` : ""} {upiId ? `| UPI: ${upiId}` : ""}</p>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Right Column: Signature Block */}
-          <div className="col-span-5 flex flex-col items-end text-right space-y-1 pt-1">
-            <p className="text-xs font-extrabold text-neutral-900 uppercase">Authorized Signature</p>
-
-            {/* Signature Area */}
-            <div className="h-14 flex items-center justify-end my-1">
-              {signatureUrl ? (
-                <img src={signatureUrl} alt="Signature" className="h-12 object-contain" />
-              ) : (
-                <span
-                  className="font-signature text-3xl text-neutral-900 tracking-wider select-none transform -rotate-3 border-b-2 border-neutral-900/80 pb-0.5 px-2"
-                  style={{ fontFamily: "'Dancing Script', 'Caveat', cursive" }}
-                >
-                  shode
-                </span>
-              )}
-            </div>
-
-            <div className="text-xs space-y-0.5">
-              <p className="font-bold text-neutral-900">Name: {signatoryName}</p>
-              <p className="text-neutral-500 font-semibold text-[11px]">Designation: {designation}</p>
-              <p className="text-neutral-500 font-medium text-[11px]">Date: {formatDate(quotationDate)}</p>
-            </div>
-          </div>
         </div>
       </div>
 
-      {/* Full-Width Black Contact Footer Bar */}
-      <div className="mt-6 mb-6 mx-10 bg-[#0a0a0a] text-white px-8 py-3.5 rounded-full shadow-xl" style={{ display: "flex", justifyContent: "center", alignItems: "center", fontSize: "12px", fontWeight: 600 }}>
-        <span>Made with SevenX Labs</span>
+      {/* Bottom Pinned Section */}
+      <div className="mt-auto px-10 pb-8 pt-6 relative z-10">
+        <div className="grid grid-cols-12 gap-8 items-end border-t border-neutral-200 pt-6">
+          {/* Left Column: Bank Info & Terms */}
+          <div className="col-span-7 space-y-4">
+            <div className="bg-neutral-50 p-4 rounded-2xl border border-neutral-200 text-xs">
+              <span className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-widest block mb-2 font-mono">
+                TERMS & CONDITIONS
+              </span>
+              <ul className="space-y-1 text-neutral-700 font-medium text-[11px] list-disc pl-4">
+                {termsAndConditions.map((t, i) => (
+                  <li key={i}>{t}</li>
+                ))}
+              </ul>
+            </div>
+
+            {bankName && (
+              <div className="bg-neutral-900 text-white p-3 rounded-xl text-[11px] font-mono flex flex-wrap justify-between items-center">
+                <div>
+                  <span><strong>Bank:</strong> {bankName}</span>
+                  {bankAccount && <span className="ml-2">| <strong>A/C:</strong> {bankAccount}</span>}
+                  {bankIfsc && <span className="ml-2">| <strong>IFSC:</strong> {bankIfsc}</span>}
+                </div>
+                {upiId && <div><strong>UPI:</strong> {upiId}</div>}
+              </div>
+            )}
+          </div>
+
+          {/* Right Column: Totals & Signature */}
+          <div className="col-span-5 flex flex-col items-end gap-6">
+            <div className="w-full bg-neutral-900 text-white p-5 rounded-2xl shadow-xl flex flex-col gap-2 font-mono text-xs">
+              <div className="flex justify-between items-center text-neutral-300">
+                <span>Subtotal:</span>
+                <span>{formatCurrency(computedSubtotal, currencySymbol)}</span>
+              </div>
+              {gstPercent > 0 && (
+                <div className="flex justify-between items-center text-neutral-300">
+                  <span>GST ({gstPercent}%):</span>
+                  <span>{formatCurrency(computedGstAmount, currencySymbol)}</span>
+                </div>
+              )}
+              <div className="flex justify-between items-center text-sm font-black text-white pt-2 border-t border-neutral-800">
+                <span className="uppercase font-sans tracking-wider">Total Quote:</span>
+                <span className="text-[#8cc63f] text-base">{formatCurrency(computedTotalAmount, currencySymbol)}</span>
+              </div>
+            </div>
+
+            {/* Signature Block */}
+            <div className="text-right">
+              <span
+                className="font-signature text-3xl text-neutral-900 tracking-wider inline-block select-none transform -rotate-3 border-b-2 border-neutral-900/80 pb-0.5 px-2"
+                style={{ fontFamily: "'Dancing Script', 'Caveat', cursive" }}
+              >
+                shode
+              </span>
+              <p className="text-xs font-black text-neutral-900 uppercase mt-1">{signatoryName || preparedBy}</p>
+              <p className="text-[10px] text-neutral-500 font-bold uppercase">{designation || "Authorized Signatory"}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer Bar */}
+        <div className="mt-6 pt-3 border-t border-neutral-100 flex justify-between items-center text-[11px] font-semibold text-neutral-400">
+          <span>SevenX Labs • Quotation #{quotationNumber}</span>
+          <span>Made with SevenX Labs</span>
+        </div>
       </div>
     </div>
   );

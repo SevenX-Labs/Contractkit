@@ -42,7 +42,7 @@ export interface CustomPageItem {
 
 export interface AgreementTemplateProps {
   id?: string;
-  activePage?: number; // 1, 2, 3, ... N (or undefined for all pages)
+  activePage?: number;
   totalPages?: number;
   pageLayout?: "2-page" | "3-page" | "4-page" | "5-page" | "auto";
   customPages?: CustomPageItem[];
@@ -61,7 +61,7 @@ export interface AgreementTemplateProps {
   providerPan?: string;
 
   // Client Details
-  clientName: string;
+  clientName?: string;
   clientCompany?: string;
   clientAddress?: string;
   clientEmail?: string;
@@ -119,58 +119,58 @@ export function ModernAgreementTemplate({
   agreementNumber = "SXL-AGR-2026-000001",
   effectiveDate = new Date().toISOString().split("T")[0],
   version = "1.0",
-  projectTitle = "Custom Software & Mobile App Development",
+  projectTitle = "",
 
   providerName = "Sahil Hode",
   providerCompany = "SevenX Labs",
   providerAddress = "Thane, Mumbai, Maharashtra",
   providerEmail = "sevenxlabs07@gmail.com",
   providerPhone = "8652601566",
-  providerGst = "27AAAAA0000A1Z5",
-  providerPan = "ABCDE1234F",
+  providerGst = "",
+  providerPan = "",
 
-  clientName = "Sophia Smith",
-  clientCompany = "Smith Innovations Private Limited",
-  clientAddress = "742 Evergreen Terrace, Springfield, IL 62704, USA",
-  clientEmail = "sophia@smithinnovations.com",
-  clientPhone = "+1 234 567 8900",
-  clientGst = "27BBBBB1111B2Z6",
-  clientPan = "FGHIJ5678K",
+  clientName = "",
+  clientCompany = "",
+  clientAddress = "",
+  clientEmail = "",
+  clientPhone = "",
+  clientGst = "",
+  clientPan = "",
 
-  projectDescription = "Design, development, testing, and deployment of enterprise web application and mobile app solution.",
-  businessGoal,
-  projectType = "Full-Stack Web & Cross-Platform Mobile App",
-  techStack = "Next.js, TypeScript, Tailwind CSS, Node.js, PostgreSQL, React Native",
-  platforms = "Web Browser, iOS App Store, Google Play Store",
-  includedScope = "• UI/UX Prototype Design & User Flow Architecture\n• Frontend & Backend API Development\n• Database Architecture & Cloud Infrastructure Setup\n• Quality Assurance Testing & Bug Fixes\n• Final Deployment & Code Handover",
-  excludedScope,
+  projectDescription = "",
+  businessGoal = "",
+  projectType = "",
+  techStack = "",
+  platforms = "",
+  includedScope = "",
+  excludedScope = "",
 
   startDate = new Date().toISOString().split("T")[0],
   deliveryDate = new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
   durationDays = 45,
-  milestones,
+  milestones = [],
 
-  totalAmount = 250000,
-  advanceAmount = 125000,
-  balanceAmount = 125000,
+  totalAmount = 0,
+  advanceAmount = 0,
+  balanceAmount = 0,
   currencySymbol = "₹",
-  paymentSchedule = "50% Advance upon agreement signing, 50% upon final source code handover and deployment.",
-  paymentRows,
-  bankName = "HDFC Bank",
-  bankAccount = "50100234567890",
-  bankIfsc = "HDFC0001234",
-  upiId = "sevenxlabs@upi",
+  paymentSchedule = "",
+  paymentRows = [],
+  bankName = "",
+  bankAccount = "",
+  bankIfsc = "",
+  upiId = "",
 
-  ipClause = "Upon full and final payment, SevenX Labs assigns all intellectual property rights, source code ownership, and patent rights for custom software created under this agreement to the Client.",
-  deliverables = "• Complete Clean Source Code (GitHub Repository access)\n• Production Build Deployment Files & Environment Configs\n• Admin Dashboard & API Documentation\n• User Manual & System Walkthrough Video",
-  confidentialityClause = "Both parties agree to protect and keep strictly confidential all proprietary business logic, trade secrets, database schemas, customer data, and source code disclosed during the engagement.",
+  ipClause = "",
+  deliverables = "",
+  confidentialityClause = "",
 
-  warrantyPeriod = "30 Days free bug fix support and warranty from deployment date.",
-  revisionPolicy = "2 Rounds of major UI/UX revisions included during design phase.",
-  cancellationPolicy = "Termination by written notice; work completed up to termination date shall be billed accordingly.",
+  warrantyPeriod = "",
+  revisionPolicy = "",
+  cancellationPolicy = "",
 
-  providerSignatory = "Sahil Hode (SevenX Labs)",
-  clientSignatory = "Sophia Smith (Smith Innovations)",
+  providerSignatory = "",
+  clientSignatory = "",
 
   accentColor = "lime",
 }: AgreementTemplateProps) {
@@ -246,7 +246,7 @@ export function ModernAgreementTemplate({
                     AGREEMENT FOR
                   </span>
                   <h2 className="text-lg font-black text-neutral-900 tracking-tight leading-snug">
-                    {projectTitle}
+                    {projectTitle || <span className="text-neutral-400 italic font-normal">[ Project Title ]</span>}
                   </h2>
                 </div>
               </div>
@@ -299,11 +299,11 @@ export function ModernAgreementTemplate({
               <div className="grid grid-cols-2 gap-4 bg-neutral-50 p-3.5 rounded-2xl border border-neutral-200 text-xs">
                 {/* Service Provider */}
                 <div className="space-y-1 pr-3 border-r border-neutral-200">
-                  <h3 className="text-xs font-black text-neutral-900">{providerCompany || providerName}</h3>
-                  <p className="text-neutral-700 font-medium text-xs">{providerAddress}</p>
+                  <h3 className="text-xs font-black text-neutral-900">{providerCompany || providerName || "SevenX Labs"}</h3>
+                  <p className="text-neutral-700 font-medium text-xs">{providerAddress || "Thane, Mumbai, Maharashtra"}</p>
                   <div className="pt-0.5 space-y-0.5 text-xs">
-                    <p><strong className="text-neutral-600 font-bold">Phone:</strong> {providerPhone}</p>
-                    <p><strong className="text-neutral-600 font-bold">Email:</strong> {providerEmail}</p>
+                    <p><strong className="text-neutral-600 font-bold">Phone:</strong> {providerPhone || "-"}</p>
+                    <p><strong className="text-neutral-600 font-bold">Email:</strong> {providerEmail || "-"}</p>
                     {(providerGst || providerPan) && (
                       <p><strong className="text-neutral-600 font-bold">GST / PAN:</strong> {providerGst || "-"} / {providerPan || "-"}</p>
                     )}
@@ -312,12 +312,16 @@ export function ModernAgreementTemplate({
 
                 {/* Client */}
                 <div className="space-y-1 pl-3">
-                  <h3 className="text-xs font-black text-neutral-900">{clientName}</h3>
+                  <h3 className="text-xs font-black text-neutral-900">
+                    {clientName || <span className="text-neutral-400 italic font-normal">[ Client Name ]</span>}
+                  </h3>
                   {clientCompany && <p className="text-neutral-800 font-bold text-xs">{clientCompany}</p>}
-                  <p className="text-neutral-700 font-medium text-xs">{clientAddress}</p>
+                  <p className="text-neutral-700 font-medium text-xs">
+                    {clientAddress || <span className="text-neutral-400 italic font-normal">[ Client Address ]</span>}
+                  </p>
                   <div className="pt-0.5 space-y-0.5 text-xs">
-                    <p><strong className="text-neutral-600 font-bold">Phone:</strong> {clientPhone}</p>
-                    <p><strong className="text-neutral-600 font-bold">Email:</strong> {clientEmail}</p>
+                    <p><strong className="text-neutral-600 font-bold">Phone:</strong> {clientPhone || "-"}</p>
+                    <p><strong className="text-neutral-600 font-bold">Email:</strong> {clientEmail || "-"}</p>
                     {(clientGst || clientPan) && (
                       <p><strong className="text-neutral-600 font-bold">GST / PAN:</strong> {clientGst || "-"} / {clientPan || "-"}</p>
                     )}
@@ -336,7 +340,9 @@ export function ModernAgreementTemplate({
                 <div className="flex-1 grid grid-cols-12 gap-3">
                   <div className="col-span-6 space-y-1">
                     <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">3. PROJECT OVERVIEW</h4>
-                    <p className="text-xs text-neutral-800 leading-relaxed font-medium">{projectDescription}</p>
+                    <p className="text-xs text-neutral-800 leading-relaxed font-medium">
+                      {projectDescription || <span className="text-neutral-400 italic font-normal">[ Enter project overview description... ]</span>}
+                    </p>
                     {businessGoal && (
                       <p className="text-[11px] text-neutral-600 leading-snug font-medium pt-1 border-t border-neutral-100">
                         <strong className="text-neutral-800 font-bold">Goal:</strong> {businessGoal}
@@ -344,9 +350,9 @@ export function ModernAgreementTemplate({
                     )}
                   </div>
                   <div className="col-span-6 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs space-y-1 font-mono text-neutral-800">
-                    <p><strong className="text-neutral-600 font-bold font-sans">Type:</strong> {projectType || "Full-Stack Web & Cross-Platform Mobile App"}</p>
-                    <p><strong className="text-neutral-600 font-bold font-sans">Tech Stack:</strong> {techStack || "Next.js, TypeScript, PostgreSQL"}</p>
-                    <p><strong className="text-neutral-600 font-bold font-sans">Platforms:</strong> {platforms || "Web Browser, iOS, Android"}</p>
+                    <p><strong className="text-neutral-600 font-bold font-sans">Type:</strong> {projectType || <span className="text-neutral-400 italic font-normal">[ Project Type ]</span>}</p>
+                    <p><strong className="text-neutral-600 font-bold font-sans">Tech Stack:</strong> {techStack || <span className="text-neutral-400 italic font-normal">[ Technology Stack ]</span>}</p>
+                    <p><strong className="text-neutral-600 font-bold font-sans">Platforms:</strong> {platforms || <span className="text-neutral-400 italic font-normal">[ Target Platforms ]</span>}</p>
                   </div>
                 </div>
               </div>
@@ -364,7 +370,11 @@ export function ModernAgreementTemplate({
                   <div className="col-span-7 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs space-y-1 font-mono text-neutral-800">
                     <div>
                       <span className="text-[10px] font-bold text-neutral-500 uppercase block font-sans">Included Scope</span>
-                      <p className="whitespace-pre-line leading-relaxed">{includedScope}</p>
+                      {includedScope ? (
+                        <p className="whitespace-pre-line leading-relaxed">{includedScope}</p>
+                      ) : (
+                        <span className="text-neutral-400 italic font-normal">[ Enter included scope of work... ]</span>
+                      )}
                     </div>
                     {excludedScope && (
                       <div className="pt-1.5 border-t border-neutral-200">
@@ -376,7 +386,7 @@ export function ModernAgreementTemplate({
                 </div>
               </div>
 
-              {/* In 2-page mode, Section 5 is also on Page 1 if space permits */}
+              {/* In 2-page mode, Section 5 is also on Page 1 */}
               {basePages === 2 && (
                 <div className="p-3 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
                   <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -445,7 +455,7 @@ export function ModernAgreementTemplate({
                       </div>
                     </div>
 
-                    {milestones && milestones.length > 0 && (
+                    {milestones && milestones.length > 0 ? (
                       <div className="space-y-1.5">
                         <span className="text-[10px] font-black text-neutral-500 uppercase tracking-wider block">Milestone Schedule</span>
                         <div className="border border-neutral-200 rounded-xl overflow-hidden text-xs">
@@ -462,6 +472,10 @@ export function ModernAgreementTemplate({
                           ))}
                         </div>
                       </div>
+                    ) : (
+                      <div className="p-2.5 bg-neutral-50 border border-neutral-100 rounded-xl text-xs text-neutral-400 italic">
+                        [ Add milestones in editor sidebar ]
+                      </div>
                     )}
                   </div>
                 </div>
@@ -474,7 +488,9 @@ export function ModernAgreementTemplate({
                 </div>
                 <div className="flex-1">
                   <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1.5">6. PAYMENT TERMS & SCHEDULE</h4>
-                  <p className="text-xs text-neutral-800 mb-2 font-medium">{paymentSchedule}</p>
+                  <p className="text-xs text-neutral-800 mb-2 font-medium">
+                    {paymentSchedule || <span className="text-neutral-400 italic font-normal">[ Payment terms schedule ]</span>}
+                  </p>
                   
                   {paymentRows && paymentRows.length > 0 ? (
                     <div className="border border-neutral-200 rounded-xl overflow-hidden text-xs mb-2 font-mono">
@@ -494,8 +510,6 @@ export function ModernAgreementTemplate({
                   ) : (
                     <div className="bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs font-mono space-y-1 mb-2">
                       <p><strong className="text-neutral-600 font-bold font-sans">Total Fee:</strong> <span className="font-black text-neutral-900">{formatCurrency(totalAmount, currencySymbol)}</span></p>
-                      <p><strong className="text-neutral-600 font-bold font-sans">Advance (50%):</strong> {formatCurrency(advanceAmount, currencySymbol)}</p>
-                      <p><strong className="text-neutral-600 font-bold font-sans">Balance (50%):</strong> {formatCurrency(balanceAmount, currencySymbol)}</p>
                     </div>
                   )}
 
@@ -519,11 +533,13 @@ export function ModernAgreementTemplate({
                 </div>
                 <div className="flex-1">
                   <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1">7. INTELLECTUAL PROPERTY & OWNERSHIP</h4>
-                  <p className="text-xs text-neutral-800 leading-relaxed font-medium">{ipClause}</p>
+                  <p className="text-xs text-neutral-800 leading-relaxed font-medium">
+                    {ipClause || <span className="text-neutral-400 italic font-normal">[ Enter IP transfer & ownership clause... ]</span>}
+                  </p>
                 </div>
               </div>
 
-              {/* If 2-page mode and NO custom pages, Sections 8, 9, 10 + Signatures are also on Page 2 */}
+              {/* If 2-page mode */}
               {basePages === 2 && (
                 <>
                   <div className="p-3.5 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
@@ -532,7 +548,9 @@ export function ModernAgreementTemplate({
                     </div>
                     <div className="flex-1">
                       <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1">8. DELIVERABLES & CODE HANDOVER</h4>
-                      <p className="text-xs text-neutral-800 leading-relaxed font-medium whitespace-pre-line">{deliverables}</p>
+                      <p className="text-xs text-neutral-800 leading-relaxed font-medium whitespace-pre-line">
+                        {deliverables || <span className="text-neutral-400 italic font-normal">[ Enter deliverables list... ]</span>}
+                      </p>
                     </div>
                   </div>
 
@@ -542,7 +560,9 @@ export function ModernAgreementTemplate({
                     </div>
                     <div className="flex-1">
                       <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1">9. CONFIDENTIALITY & DATA SECURITY</h4>
-                      <p className="text-xs text-neutral-800 leading-relaxed font-medium">{confidentialityClause}</p>
+                      <p className="text-xs text-neutral-800 leading-relaxed font-medium">
+                        {confidentialityClause || <span className="text-neutral-400 italic font-normal">[ Enter confidentiality clause... ]</span>}
+                      </p>
                     </div>
                   </div>
 
@@ -552,12 +572,11 @@ export function ModernAgreementTemplate({
                     </div>
                     <div className="flex-1 space-y-1 text-xs">
                       <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1">10. WARRANTY & REVISION POLICY</h4>
-                      <p><strong className="text-neutral-900 font-bold">• Warranty:</strong> {warrantyPeriod}</p>
-                      <p><strong className="text-neutral-900 font-bold">• Revisions:</strong> {revisionPolicy}</p>
+                      <p><strong className="text-neutral-900 font-bold">• Warranty:</strong> {warrantyPeriod || <span className="text-neutral-400 italic font-normal">[ Warranty period ]</span>}</p>
                     </div>
                   </div>
 
-                  {/* Signatures for 2-page mode */}
+                  {/* Signatures */}
                   <div className="mt-4" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
                     <div className="grid grid-cols-2 gap-6 bg-neutral-50 p-4 rounded-2xl border border-neutral-200">
                       <div>
@@ -574,7 +593,9 @@ export function ModernAgreementTemplate({
                       </div>
                       <div>
                         <p className="font-extrabold text-neutral-900 uppercase text-[11px] tracking-wider mb-2">CLIENT SIGNATURE:</p>
-                        <p className="font-mono text-neutral-900 border-b border-neutral-300 pb-1 font-bold text-xs">{clientSignatory}</p>
+                        <p className="font-mono text-neutral-900 border-b border-neutral-300 pb-1 font-bold text-xs">
+                          {clientSignatory || <span className="text-neutral-400 italic font-normal">[ Client Signatory ]</span>}
+                        </p>
                         <p className="text-[11px] text-neutral-500 font-medium mt-1">Date: {formatDate(effectiveDate)}</p>
                       </div>
                     </div>
@@ -615,7 +636,9 @@ export function ModernAgreementTemplate({
                 </div>
                 <div className="flex-1">
                   <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1.5">8. DELIVERABLES & CODE HANDOVER</h4>
-                  <p className="text-xs text-neutral-800 leading-relaxed font-medium whitespace-pre-line">{deliverables}</p>
+                  <p className="text-xs text-neutral-800 leading-relaxed font-medium whitespace-pre-line">
+                    {deliverables || <span className="text-neutral-400 italic font-normal">[ Enter deliverables list... ]</span>}
+                  </p>
                 </div>
               </div>
 
@@ -626,7 +649,9 @@ export function ModernAgreementTemplate({
                 </div>
                 <div className="flex-1">
                   <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1.5">9. CONFIDENTIALITY & DATA SECURITY</h4>
-                  <p className="text-xs text-neutral-800 leading-relaxed font-medium">{confidentialityClause}</p>
+                  <p className="text-xs text-neutral-800 leading-relaxed font-medium">
+                    {confidentialityClause || <span className="text-neutral-400 italic font-normal">[ Enter confidentiality clause... ]</span>}
+                  </p>
                 </div>
               </div>
 
@@ -637,9 +662,7 @@ export function ModernAgreementTemplate({
                 </div>
                 <div className="flex-1 space-y-1.5 text-xs">
                   <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1.5">10. WARRANTY, SUPPORT & REVISION POLICY</h4>
-                  <p><strong className="text-neutral-900 font-bold">• Warranty Support:</strong> {warrantyPeriod}</p>
-                  <p><strong className="text-neutral-900 font-bold">• Revision Policy:</strong> {revisionPolicy}</p>
-                  <p><strong className="text-neutral-900 font-bold">• Termination & Refunds:</strong> {cancellationPolicy}</p>
+                  <p><strong className="text-neutral-900 font-bold">• Warranty Support:</strong> {warrantyPeriod || <span className="text-neutral-400 italic font-normal">[ Warranty period ]</span>}</p>
                 </div>
               </div>
 
@@ -657,13 +680,17 @@ export function ModernAgreementTemplate({
                       </span>
                     </div>
                     <p className="text-xs text-neutral-500 font-medium mt-1">Date: {formatDate(effectiveDate)}</p>
-                    <p className="text-[11px] text-neutral-700 font-bold">{providerSignatory}</p>
+                    <p className="text-[11px] text-neutral-700 font-bold">{providerSignatory || providerCompany || providerName || "SevenX Labs"}</p>
                   </div>
                   <div>
                     <p className="font-extrabold text-neutral-900 uppercase text-xs tracking-wider mb-2">CLIENT SIGNATURE:</p>
-                    <p className="font-mono text-neutral-900 border-b border-neutral-300 pb-2.5 font-bold text-xs">{clientSignatory}</p>
+                    <p className="font-mono text-neutral-900 border-b border-neutral-300 pb-2.5 font-bold text-xs">
+                      {clientSignatory || <span className="text-neutral-400 italic font-normal">[ Client Signatory ]</span>}
+                    </p>
                     <p className="text-xs text-neutral-500 font-medium mt-1">Date: {formatDate(effectiveDate)}</p>
-                    <p className="text-[11px] text-neutral-700 font-bold">{clientCompany || clientName}</p>
+                    <p className="text-[11px] text-neutral-700 font-bold">
+                      {clientCompany || clientName || <span className="text-neutral-400 italic font-normal">[ Client Company ]</span>}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -678,7 +705,7 @@ export function ModernAgreementTemplate({
         </div>
       )}
 
-      {/* DYNAMIC CUSTOM ADDITIONAL PAGES (Page 4, 5, 6, ...) */}
+      {/* DYNAMIC CUSTOM ADDITIONAL PAGES */}
       {customPages && customPages.map((cp, idx) => {
         const pageNum = basePages + 1 + idx;
         const showThisCustomPage = activePage === undefined || activePage === pageNum;
@@ -713,7 +740,7 @@ export function ModernAgreementTemplate({
                     <h4 className="text-sm font-black text-neutral-900 uppercase tracking-wider">{cp.title || `PAGE ${pageNum}: APPENDIX`}</h4>
                     {cp.subtitle && <p className="text-xs text-neutral-500 font-bold">{cp.subtitle}</p>}
                     <div className="text-xs text-neutral-800 leading-relaxed font-medium whitespace-pre-line pt-2 border-t border-neutral-100">
-                      {cp.content}
+                      {cp.content || <span className="text-neutral-400 italic font-normal">[ Enter custom page content... ]</span>}
                     </div>
                   </div>
                 </div>

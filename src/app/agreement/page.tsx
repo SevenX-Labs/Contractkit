@@ -61,77 +61,71 @@ export default function AgreementPage() {
   };
 
   const [formData, setFormData] = useState({
-    // Section 1: Agreement Info
+    // Section 1: Agreement Info (AUTO-FILLED Number & Date)
     agreementNumber: "SXL-AGR-001",
     date: new Date().toISOString().split("T")[0],
     version: "1.0",
 
-    // Section 2: Parties
-    freelancerName: "Sahil Hode",
+    // Section 2: Parties (Freelancer/My Details AUTO-FILLED from DB, Client Empty)
+    freelancerName: "",
     freelancerCompany: "SevenX Labs",
-    freelancerAddress: "Thane, Mumbai, Maharashtra",
-    freelancerEmail: "sevenxlabs07@gmail.com",
-    freelancerPhone: "8652601566",
+    freelancerAddress: "",
+    freelancerEmail: "",
+    freelancerPhone: "",
 
-    clientName: "Sophia Smith",
-    clientCompany: "Smith Innovations Private Limited",
-    clientAddress: "742 Evergreen Terrace, Springfield, IL 62704, USA",
-    clientEmail: "sophia@smithinnovations.com",
-    clientPhone: "+1 234 567 8900",
+    clientName: "",
+    clientCompany: "",
+    clientAddress: "",
+    clientEmail: "",
+    clientPhone: "",
 
-    // Section 3: Project Overview
-    projectTitle: "IT DEVELOPMENT AGREEMENT",
-    projectDescription: "End-to-end architecture, design, development, testing, and cloud deployment of custom web application and administrative dashboard.",
-    businessGoal: "Automate client workflows, payment milestone tracking, and digital contract generation.",
-    projectType: "Full-Stack Web & Cross-Platform Mobile App",
-    platforms: "Web Browser, iOS App Store, Google Play Store",
+    // Section 3: Project Overview (EMPTY FOR USER INPUT)
+    projectTitle: "",
+    projectDescription: "",
+    businessGoal: "",
+    projectType: "",
+    platforms: "",
 
-    // Section 4: Scope of Work
-    includedScope: "• Custom dashboard & authentication\n• REST APIs development & integration\n• PostgreSQL database & migrations\n• High-performance PDF/DOCX/PNG export engine",
-    excludedScope: "• Third-party paid API subscription fees\n• Apple Developer & Google Play account registration fees",
-    techStack: "Next.js 16, React 19, Tailwind CSS v4, Prisma ORM, PostgreSQL",
+    // Section 4: Scope of Work (EMPTY FOR USER INPUT)
+    includedScope: "",
+    excludedScope: "",
+    techStack: "",
 
-    // Section 5: Timeline & Milestones
+    // Section 5: Timeline & Milestones (EMPTY FOR USER INPUT)
     startDate: new Date().toISOString().split("T")[0],
     deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
-    milestones: [
-      { id: "m1", phaseName: "Phase 1: Architecture & UI Setup", description: "Design tokens, Next.js routing & database schemas", deadline: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString().split("T")[0] },
-      { id: "m2", phaseName: "Phase 2: Core Engineering & Testing", description: "API routes integration & export engine verification", deadline: new Date(Date.now() + 25 * 24 * 60 * 60 * 1000).toISOString().split("T")[0] },
-    ] as MilestoneRow[],
+    milestones: [] as MilestoneRow[],
 
-    // Section 6: Payment Terms
-    totalAmount: 250000,
+    // Section 6: Payment Terms (EMPTY FOR USER INPUT)
+    totalAmount: 0,
     paymentStructure: "50/50",
-    paymentRows: [
-      { id: "p1", label: "Advance Payment (50%)", percentage: 50, amount: 125000, dueDate: "Before project kickoff" },
-      { id: "p2", label: "Final Delivery (50%)", percentage: 50, amount: 125000, dueDate: "On final code handover" },
-    ] as PaymentRow[],
+    paymentRows: [] as PaymentRow[],
 
-    // Section 7: IP Rights
-    ipTransferCondition: "Full intellectual property rights and source code ownership shall be transferred to the Client upon 100% full payment receipt.",
+    // Section 7: IP Rights (EMPTY FOR USER INPUT)
+    ipTransferCondition: "",
 
-    // Section 8: Deliverables
-    deliverablesList: "1. Production Next.js Source Code Repository\n2. Prisma PostgreSQL Database Migrations\n3. System Documentation & API Specs",
+    // Section 8: Deliverables (EMPTY FOR USER INPUT)
+    deliverablesList: "",
 
-    // Section 9: Confidentiality & Support
-    confidentialityClause: "Both parties agree to protect proprietary algorithms, source code, and commercial data under strict confidentiality for 2 years.",
-    freeSupportPeriod: "30 days post-launch warranty bug fix support included.",
+    // Section 9: Confidentiality & Support (EMPTY FOR USER INPUT)
+    confidentialityClause: "",
+    freeSupportPeriod: "",
     revisionLimit: 2,
 
-    // Section 10: Digital Signatures
-    freelancerSignatureName: "Sahil Hode (SevenX Labs)",
-    clientSignatureName: "Sophia Smith (Managing Director)",
+    // Section 10: Digital Signatures (My Signature AUTO-FILLED, Client Empty)
+    freelancerSignatureName: "",
+    clientSignatureName: "",
     freelancerSignDate: new Date().toISOString().split("T")[0],
     clientSignDate: new Date().toISOString().split("T")[0],
 
-    // Section 11+: Custom Additional Pages (Page 4, Page 5, etc.)
+    // Section 11+: Custom Additional Pages
     customPages: [] as CustomPageItem[],
 
-    // Payment Info
-    bankName: "HDFC Bank",
-    bankAccount: "50100234567890",
-    bankIfsc: "HDFC0001234",
-    upiId: "sevenxlabs@upi",
+    // Payment Info (AUTO-FILLED from DB)
+    bankName: "",
+    bankAccount: "",
+    bankIfsc: "",
+    upiId: "",
   });
 
   const [agrSeq, setAgrSeq] = useState("000001");
@@ -159,15 +153,16 @@ export default function AgreementPage() {
       setFormData((prev) => ({
         ...prev,
         agreementNumber: fullDocNum,
-        freelancerName: profile.name || prev.freelancerName,
+        freelancerName: profile.name || "Sahil Hode",
         freelancerCompany: "SevenX Labs",
-        freelancerAddress: profile.address || prev.freelancerAddress,
-        freelancerEmail: profile.email || prev.freelancerEmail,
-        freelancerPhone: profile.phone || prev.freelancerPhone,
-        bankName: profile.bankName || prev.bankName,
-        bankAccount: profile.bankAccount || prev.bankAccount,
-        bankIfsc: profile.bankIfsc || prev.bankIfsc,
-        upiId: profile.upiId || prev.upiId,
+        freelancerAddress: profile.address || "Thane, Mumbai, Maharashtra",
+        freelancerEmail: profile.email || "sevenxlabs07@gmail.com",
+        freelancerPhone: profile.phone || "8652601566",
+        freelancerSignatureName: `${profile.name || "Sahil Hode"} (SevenX Labs)`,
+        bankName: profile.bankName || "HDFC Bank",
+        bankAccount: profile.bankAccount || "50100234567890",
+        bankIfsc: profile.bankIfsc || "HDFC0001234",
+        upiId: profile.upiId || "sevenxlabs@upi",
       }));
     });
   }, []);
@@ -179,21 +174,23 @@ export default function AgreementPage() {
     const val = formData.totalAmount;
     let newRows: PaymentRow[] = [];
 
-    if (structure === "50/50") {
-      newRows = [
-        { id: "p1", label: "Advance Payment (50%)", percentage: 50, amount: val * 0.5, dueDate: "Before project kickoff" },
-        { id: "p2", label: "Final Delivery (50%)", percentage: 50, amount: val * 0.5, dueDate: "On final code handover" },
-      ];
-    } else if (structure === "3-Way Split") {
-      newRows = [
-        { id: "p1", label: "Advance Deposit (30%)", percentage: 30, amount: val * 0.3, dueDate: "Before project kickoff" },
-        { id: "p2", label: "Milestone 2: Beta Prototype (30%)", percentage: 30, amount: val * 0.3, dueDate: "Upon Phase 2 completion" },
-        { id: "p3", label: "Final Deployment (40%)", percentage: 40, amount: val * 0.4, dueDate: "On final project handover" },
-      ];
-    } else if (structure === "Full Payment After Work") {
-      newRows = [{ id: "p1", label: "Full Payment Upon Completion (100%)", percentage: 100, amount: val, dueDate: "Upon final project handover" }];
-    } else {
-      newRows = [{ id: "p1", label: "Full Upfront Deposit (100%)", percentage: 100, amount: val, dueDate: "Before project start" }];
+    if (val > 0) {
+      if (structure === "50/50") {
+        newRows = [
+          { id: "p1", label: "Advance Payment (50%)", percentage: 50, amount: val * 0.5, dueDate: "Before project kickoff" },
+          { id: "p2", label: "Final Delivery (50%)", percentage: 50, amount: val * 0.5, dueDate: "On final code handover" },
+        ];
+      } else if (structure === "3-Way Split") {
+        newRows = [
+          { id: "p1", label: "Advance Deposit (30%)", percentage: 30, amount: val * 0.3, dueDate: "Before project kickoff" },
+          { id: "p2", label: "Milestone 2: Beta Prototype (30%)", percentage: 30, amount: val * 0.3, dueDate: "Upon Phase 2 completion" },
+          { id: "p3", label: "Final Deployment (40%)", percentage: 40, amount: val * 0.4, dueDate: "On final project handover" },
+        ];
+      } else if (structure === "Full Payment After Work") {
+        newRows = [{ id: "p1", label: "Full Payment Upon Completion (100%)", percentage: 100, amount: val, dueDate: "Upon final project handover" }];
+      } else {
+        newRows = [{ id: "p1", label: "Full Upfront Deposit (100%)", percentage: 100, amount: val, dueDate: "Before project start" }];
+      }
     }
 
     setFormData({ ...formData, paymentStructure: structure, paymentRows: newRows });
@@ -225,9 +222,9 @@ export default function AgreementPage() {
     const newPageNum = basePagesCount + formData.customPages.length + 1;
     const newPage: CustomPageItem = {
       id: `cp-${Date.now()}`,
-      title: `APPENDIX A: TECHNICAL SLA & COMPLIANCE (PAGE ${newPageNum})`,
-      subtitle: "Service level commitments & security policy",
-      content: "• 99.9% Production Server Uptime Commitment.\n• Daily automated off-site PostgreSQL database backups.\n• Technical support response SLA within 2 hours for critical incidents.",
+      title: `APPENDIX: ADDITIONAL TERMS (PAGE ${newPageNum})`,
+      subtitle: "Custom Specifications & SLA Addendum",
+      content: "",
     };
     setFormData((prev) => ({ ...prev, customPages: [...prev.customPages, newPage] }));
     setActivePreviewPage(newPageNum);
@@ -314,7 +311,7 @@ export default function AgreementPage() {
       totalAmount={formData.totalAmount}
       advanceAmount={formData.paymentRows[0]?.amount || formData.totalAmount * 0.5}
       balanceAmount={formData.paymentRows[1]?.amount || formData.totalAmount * 0.5}
-      paymentSchedule={`${formData.paymentStructure} payment structure.`}
+      paymentSchedule={formData.paymentStructure ? `${formData.paymentStructure} payment structure.` : ""}
       bankName={formData.bankName}
       bankAccount={formData.bankAccount}
       bankIfsc={formData.bankIfsc}
@@ -353,7 +350,7 @@ export default function AgreementPage() {
           </div>
           <div>
             <h1 className="text-xl font-extrabold text-neutral-900 tracking-tight">Create Agreement</h1>
-            <p className="text-xs text-neutral-600 font-medium">Generate a professional freelance contract with dynamic multi-page management</p>
+            <p className="text-xs text-neutral-600 font-medium">Generate a professional contract with clean user input and auto-filled metadata</p>
           </div>
         </div>
 
@@ -428,14 +425,14 @@ export default function AgreementPage() {
                   onClick={() => toggleSection(1)}
                   className="w-full px-5 py-3.5 flex items-center justify-between font-extrabold text-xs text-neutral-900 hover:bg-[#DFD9C9] transition cursor-pointer"
                 >
-                  <span>SECTION 1: Agreement Information</span>
+                  <span>SECTION 1: Agreement Information (Auto-Filled)</span>
                   {openSections[1] ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                 </button>
                 {openSections[1] && (
                   <div className="p-5 border-t border-[#D5CEBC] flex flex-col gap-3">
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="text-[11px] font-bold text-neutral-700 block mb-1">Agreement #</label>
+                        <label className="text-[11px] font-bold text-neutral-700 block mb-1">Agreement # (Auto-Generated)</label>
                         <div className="flex items-center bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl overflow-hidden shadow-xs">
                           <span className="px-2.5 py-2 bg-[#DFD9C9] text-[11px] font-mono font-extrabold text-neutral-800 border-r border-[#E2DDD0] select-none whitespace-nowrap">
                             SXL-AGR-{new Date().getFullYear()}-
@@ -458,12 +455,12 @@ export default function AgreementPage() {
                         </div>
                       </div>
                       <div>
-                        <label className="text-[11px] font-bold text-neutral-700 block mb-1">Date</label>
+                        <label className="text-[11px] font-bold text-neutral-700 block mb-1">Effective Date (Auto-Filled)</label>
                         <input
                           type="date"
                           value={formData.date}
                           onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                          className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900"
+                          className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-bold"
                         />
                       </div>
                     </div>
@@ -485,7 +482,7 @@ export default function AgreementPage() {
                 {openSections[2] && (
                   <div className="p-5 border-t border-[#D5CEBC] flex flex-col gap-4">
                     <div className="flex flex-col gap-2">
-                      <h4 className="text-[11px] font-extrabold text-purple-700 uppercase tracking-wider">Freelancer (You)</h4>
+                      <h4 className="text-[11px] font-extrabold text-purple-700 uppercase tracking-wider">Freelancer (Auto-Filled From Profile)</h4>
                       <div className="grid grid-cols-2 gap-2">
                         <input
                           type="text"
@@ -519,35 +516,42 @@ export default function AgreementPage() {
                     </div>
 
                     <div className="flex flex-col gap-2">
-                      <h4 className="text-[11px] font-extrabold text-blue-700 uppercase tracking-wider">Client</h4>
+                      <h4 className="text-[11px] font-extrabold text-blue-700 uppercase tracking-wider">Client (Type Client Details Below)</h4>
                       <div className="grid grid-cols-2 gap-2">
                         <input
                           type="text"
-                          placeholder="Full Name *"
+                          placeholder="Client Full Name *"
                           value={formData.clientName}
                           onChange={(e) => setFormData({ ...formData, clientName: e.target.value })}
                           className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900"
                         />
                         <input
                           type="text"
-                          placeholder="Company Name"
+                          placeholder="Client Company Name"
                           value={formData.clientCompany}
                           onChange={(e) => setFormData({ ...formData, clientCompany: e.target.value })}
                           className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900"
                         />
                         <input
                           type="email"
-                          placeholder="Email"
+                          placeholder="Client Email"
                           value={formData.clientEmail}
                           onChange={(e) => setFormData({ ...formData, clientEmail: e.target.value })}
                           className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900"
                         />
                         <input
                           type="text"
-                          placeholder="Phone"
+                          placeholder="Client Phone"
                           value={formData.clientPhone}
                           onChange={(e) => setFormData({ ...formData, clientPhone: e.target.value })}
                           className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Client Full Address"
+                          value={formData.clientAddress}
+                          onChange={(e) => setFormData({ ...formData, clientAddress: e.target.value })}
+                          className="col-span-2 bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900"
                         />
                       </div>
                     </div>
@@ -563,7 +567,7 @@ export default function AgreementPage() {
                   onClick={() => toggleSection(3)}
                   className="w-full px-5 py-3.5 flex items-center justify-between font-extrabold text-xs text-neutral-900 hover:bg-[#DFD9C9] transition cursor-pointer"
                 >
-                  <span>SECTION 3: Project Overview & Target Specifications</span>
+                  <span>SECTION 3: Project Overview & Specifications</span>
                   {openSections[3] ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                 </button>
                 {openSections[3] && (
@@ -572,7 +576,7 @@ export default function AgreementPage() {
                       <label className="text-[11px] font-bold text-neutral-700 block mb-1">Project Title</label>
                       <input
                         type="text"
-                        placeholder="Project Title"
+                        placeholder="e.g. Pet Food E-commerce Platform Development"
                         value={formData.projectTitle}
                         onChange={(e) => setFormData({ ...formData, projectTitle: e.target.value })}
                         className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900"
@@ -581,7 +585,7 @@ export default function AgreementPage() {
                     <div>
                       <label className="text-[11px] font-bold text-neutral-700 block mb-1">Project Description</label>
                       <textarea
-                        placeholder="Brief Description (e.g. End-to-end architecture, development...)"
+                        placeholder="e.g. Design, development, testing, deployment, and launch of enterprise web application..."
                         rows={3}
                         value={formData.projectDescription}
                         onChange={(e) => setFormData({ ...formData, projectDescription: e.target.value })}
@@ -592,7 +596,7 @@ export default function AgreementPage() {
                       <label className="text-[11px] font-bold text-neutral-700 block mb-1">Business Goal</label>
                       <input
                         type="text"
-                        placeholder="Business Goal (what problem this solves)"
+                        placeholder="e.g. Build a modern, secure, scalable e-commerce store..."
                         value={formData.businessGoal}
                         onChange={(e) => setFormData({ ...formData, businessGoal: e.target.value })}
                         className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium"
@@ -640,7 +644,7 @@ export default function AgreementPage() {
                     <div>
                       <label className="text-[11px] font-bold text-neutral-700 block mb-1">What&apos;s INCLUDED Scope</label>
                       <textarea
-                        placeholder="What's INCLUDED (bullet list)"
+                        placeholder="• Custom UI/UX design & responsive layout&#10;• REST API development & authentication&#10;• Database integration & cloud deployment"
                         rows={3}
                         value={formData.includedScope}
                         onChange={(e) => setFormData({ ...formData, includedScope: e.target.value })}
@@ -650,7 +654,7 @@ export default function AgreementPage() {
                     <div>
                       <label className="text-[11px] font-bold text-neutral-700 block mb-1">What&apos;s EXCLUDED Scope</label>
                       <textarea
-                        placeholder="What's NOT INCLUDED (explicit exclusions)"
+                        placeholder="• Third-party paid API subscription fees&#10;• Apple / Google store developer account registration fees"
                         rows={2}
                         value={formData.excludedScope}
                         onChange={(e) => setFormData({ ...formData, excludedScope: e.target.value })}
@@ -661,7 +665,7 @@ export default function AgreementPage() {
                       <label className="text-[11px] font-bold text-neutral-700 block mb-1">Technology Stack</label>
                       <input
                         type="text"
-                        placeholder="Technology Stack"
+                        placeholder="e.g. Next.js, React, Tailwind CSS, PostgreSQL"
                         value={formData.techStack}
                         onChange={(e) => setFormData({ ...formData, techStack: e.target.value })}
                         className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-bold"
@@ -721,6 +725,7 @@ export default function AgreementPage() {
                       <div key={m.id} className="grid grid-cols-12 gap-2 bg-[#F4F0E6] p-3 rounded-xl border border-[#E2DDD0]">
                         <input
                           type="text"
+                          placeholder="Phase Name"
                           value={m.phaseName}
                           onChange={(e) =>
                             setFormData({
@@ -732,6 +737,7 @@ export default function AgreementPage() {
                         />
                         <input
                           type="text"
+                          placeholder="Description"
                           value={m.description}
                           onChange={(e) =>
                             setFormData({
@@ -783,7 +789,8 @@ export default function AgreementPage() {
                         <label className="text-[11px] font-bold text-neutral-700 block mb-1">Total Amount (₹)</label>
                         <input
                           type="number"
-                          value={formData.totalAmount}
+                          placeholder="e.g. 250000"
+                          value={formData.totalAmount || ""}
                           onChange={(e) => handleTotalAmountChange(Number(e.target.value))}
                           className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-black text-neutral-900"
                         />
@@ -820,7 +827,7 @@ export default function AgreementPage() {
                 {openSections[7] && (
                   <div className="p-5 border-t border-[#D5CEBC] flex flex-col gap-3">
                     <textarea
-                      placeholder="Intellectual Property Transfer Clause"
+                      placeholder="e.g. Full intellectual property rights and source code ownership shall be transferred to the Client upon 100% full payment receipt."
                       rows={3}
                       value={formData.ipTransferCondition}
                       onChange={(e) => setFormData({ ...formData, ipTransferCondition: e.target.value })}
@@ -844,7 +851,7 @@ export default function AgreementPage() {
                 {openSections[8] && (
                   <div className="p-5 border-t border-[#D5CEBC] flex flex-col gap-3">
                     <textarea
-                      placeholder="Deliverables List"
+                      placeholder="1. Production Source Code Repository&#10;2. Database Migrations&#10;3. System Documentation & API Specs"
                       rows={3}
                       value={formData.deliverablesList}
                       onChange={(e) => setFormData({ ...formData, deliverablesList: e.target.value })}
@@ -868,7 +875,7 @@ export default function AgreementPage() {
                 {openSections[9] && (
                   <div className="p-5 border-t border-[#D5CEBC] flex flex-col gap-3">
                     <textarea
-                      placeholder="Confidentiality Clause"
+                      placeholder="e.g. Both parties agree to protect proprietary source code and commercial data under strict confidentiality..."
                       rows={2}
                       value={formData.confidentialityClause}
                       onChange={(e) => setFormData({ ...formData, confidentialityClause: e.target.value })}
@@ -876,7 +883,7 @@ export default function AgreementPage() {
                     />
                     <input
                       type="text"
-                      placeholder="Warranty Period (e.g. 30 days post-launch)"
+                      placeholder="Warranty Period (e.g. 30 days post-launch warranty support)"
                       value={formData.freeSupportPeriod}
                       onChange={(e) => setFormData({ ...formData, freeSupportPeriod: e.target.value })}
                       className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900"
@@ -900,7 +907,7 @@ export default function AgreementPage() {
                   <div className="p-5 border-t border-[#D5CEBC] flex flex-col gap-3">
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="text-[11px] font-bold text-neutral-700 block mb-1">Developer Signatory</label>
+                        <label className="text-[11px] font-bold text-neutral-700 block mb-1">Developer Signatory (Auto-Filled)</label>
                         <input
                           type="text"
                           value={formData.freelancerSignatureName}
@@ -912,6 +919,7 @@ export default function AgreementPage() {
                         <label className="text-[11px] font-bold text-neutral-700 block mb-1">Client Signatory</label>
                         <input
                           type="text"
+                          placeholder="e.g. Sophia Smith (Managing Director)"
                           value={formData.clientSignatureName}
                           onChange={(e) => setFormData({ ...formData, clientSignatureName: e.target.value })}
                           className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900"
@@ -923,7 +931,7 @@ export default function AgreementPage() {
               </div>
             )}
 
-            {/* SECTION 11+: Custom Pages Manager (Page 4, Page 5, etc.) */}
+            {/* SECTION 11+: Custom Pages Manager */}
             {isSectionVisible(11) && (
               <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-2xl overflow-hidden shadow-sm">
                 <button

@@ -68,41 +68,35 @@ export function ModernReceiptTemplate({
   receiptNumber = "SXL-RC-2026-000201",
   date = new Date().toISOString().split("T")[0],
 
-  clientName = "ABC Pvt. Ltd.",
-  clientAddress = "123, Business Park, Andheri East, Mumbai, Maharashtra - 400069",
+  clientName = "",
+  clientAddress = "",
 
   providerName = "SevenX Labs",
-  providerAddress = "Diva, Thane, Maharashtra, India",
-  providerEmail = "contact@sevenxlabs.com",
-  providerPhone = "+91 98765 43210",
+  providerAddress = "Thane, Mumbai, Maharashtra, India",
+  providerEmail = "sevenxlabs07@gmail.com",
+  providerPhone = "+91 8652601566",
 
-  amountReceived = 75000,
-  amountInWords = "(Rupees Seventy Five Thousand Only)",
+  amountReceived = 0,
+  amountInWords = "",
 
-  paymentFor = "Final Payment – E-Commerce Website Development",
-  invoiceNumber = "INV-2026-112",
-  invoiceDate = "2026-07-20",
+  paymentFor = "",
+  invoiceNumber = "",
+  invoiceDate = new Date().toISOString().split("T")[0],
   paymentMethod = "Bank Transfer",
-  transactionId = "TXN-2026-88991",
-  paymentDate = "2026-07-30",
+  transactionId = "",
+  paymentDate = new Date().toISOString().split("T")[0],
   bankName = "HDFC Bank",
   bankAccount = "50100234567890",
   bankIfsc = "HDFC0001234",
   upiId = "sevenxlabs@upi",
 
-  items = [
-    {
-      id: "r1",
-      description: "Final Payment for E-Commerce Website Development",
-      amount: 75000,
-    },
-  ],
-  subtotal = 75000,
+  items = [],
+  subtotal = 0,
   taxPct = 0,
   taxAmount = 0,
-  totalReceived = 75000,
+  totalReceived = 0,
 
-  notes = "Payment received in full & final settlement for the above invoice.",
+  notes = "",
   signatoryName = "Sahil Hode",
   designation = "Founder",
 
@@ -116,15 +110,6 @@ export function ModernReceiptTemplate({
       : accentColor === "pink"
       ? "bg-pink-600 text-white"
       : "bg-emerald-600 text-white";
-
-  const accentLightBg =
-    accentColor === "lime"
-      ? "bg-[#eef8ce] text-neutral-950"
-      : accentColor === "purple"
-      ? "bg-purple-100 text-purple-950"
-      : accentColor === "pink"
-      ? "bg-pink-100 text-pink-950"
-      : "bg-emerald-100 text-emerald-950";
 
   const accentShape =
     accentColor === "lime"
@@ -144,40 +129,55 @@ export function ModernReceiptTemplate({
       ? "text-pink-600"
       : "text-emerald-600";
 
+  const displayItems = items.length > 0 ? items : [
+    { id: "r-placeholder", description: "[ Enter Itemized Payment Description ]", amount: amountReceived }
+  ];
+
   return (
     <div
       id={id}
       className="relative w-[210mm] min-h-[297mm] bg-white text-neutral-900 mx-auto flex flex-col justify-between select-none shadow-2xl rounded-2xl overflow-hidden p-0"
       style={{ fontFamily: "'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" }}
     >
-      <div>
-        {/* Top Header Row with Black Curved Block on Right */}
+      {/* Top Header & Content Section */}
+      <div className="relative w-full">
+        {/* Top Header Row with Black Block in Top-Right */}
         <div className="flex justify-between items-start w-full relative">
-          {/* Top Left Branding */}
-          <div className="pt-8 pl-10 pr-4 max-w-sm">
-            <div className="flex items-center gap-2 mb-3">
+          {/* Top Left Company Branding & Crisp Logo */}
+          <div className="pt-10 pl-10 pr-4 max-w-sm">
+            <div className="flex flex-col items-start gap-1 mb-3">
               <Image
                 src="/logo.png"
                 alt="SevenX Labs"
-                width={180}
-                height={55}
-                className="h-10 w-auto object-contain"
+                width={260}
+                height={90}
+                className="h-16 w-auto object-contain max-w-[200px]"
                 priority
               />
-              <div className="flex items-center gap-1 font-extrabold tracking-tight text-xl uppercase">
+              <div className="flex items-center gap-1.5 mt-1 font-extrabold tracking-tight text-2xl uppercase">
                 <span className="text-neutral-900 font-black">SevenX</span>
-                <span className={accentText + " font-black"}>Labs</span>
+                <span className="text-[#a6ce39] font-black">Labs</span>
               </div>
+              <p className="text-xs italic font-medium text-neutral-400">Innovate. Create. Elevate.</p>
+            </div>
+
+            <div className="mt-6">
+              <span className="text-xs font-extrabold text-neutral-400 uppercase tracking-widest block mb-0.5">
+                DOCUMENT STATUS
+              </span>
+              <h2 className="text-xl font-black text-neutral-900 tracking-tight leading-snug uppercase text-emerald-700">
+                PAYMENT CONFIRMED
+              </h2>
             </div>
           </div>
 
           {/* Top Right Black Header Panel */}
-          <div className="relative w-[52%] bg-[#0a0a0a] text-white pt-8 pb-6 px-8 rounded-bl-[50px] shadow-2xl flex flex-col justify-between min-h-[170px] overflow-hidden">
+          <div className="relative w-[52%] bg-[#0a0a0a] text-white pt-10 pb-8 px-8 rounded-bl-[50px] shadow-2xl flex flex-col justify-between min-h-[200px] overflow-hidden">
             <div className="relative z-10">
-              <h1 className="text-5xl font-black tracking-wider uppercase text-white mb-4">
+              <h1 className="text-5xl font-black tracking-wider uppercase text-white mb-6">
                 RECEIPT
               </h1>
-
+              
               {/* Metadata 2-Column Grid */}
               <div className="grid grid-cols-2 gap-4 text-left text-xs font-medium border-t border-neutral-800 pt-3">
                 <div>
@@ -208,8 +208,12 @@ export function ModernReceiptTemplate({
             <span className="text-[11px] font-extrabold text-neutral-400 uppercase tracking-widest block mb-1">
               FROM (PAID BY)
             </span>
-            <h3 className="text-base font-black text-neutral-900">{clientName}</h3>
-            <p className="text-neutral-600 font-medium leading-relaxed">{clientAddress}</p>
+            <h3 className="text-base font-black text-neutral-900">
+              {clientName || <span className="text-neutral-400 italic font-normal">[ Client Name ]</span>}
+            </h3>
+            <p className="text-neutral-600 font-medium leading-relaxed">
+              {clientAddress || <span className="text-neutral-400 italic font-normal">[ Client Address ]</span>}
+            </p>
           </div>
 
           {/* TO */}
@@ -253,134 +257,85 @@ export function ModernReceiptTemplate({
           <div className="bg-neutral-50 border-x border-b border-neutral-200 rounded-b-xl p-4 text-xs space-y-2 font-medium">
             <div className="flex items-center">
               <span className="w-44 font-black uppercase text-neutral-900 text-[11px]">PAYMENT FOR</span>
-              <span className="font-bold text-neutral-900">: {paymentFor}</span>
+              <span className="font-bold text-neutral-900">
+                : {paymentFor || <span className="text-neutral-400 italic font-normal">[ Enter Payment Purpose ]</span>}
+              </span>
             </div>
 
             <div className="flex items-center">
               <span className="w-44 font-black uppercase text-neutral-900 text-[11px]">INVOICE NO.</span>
-              <span className="font-mono font-bold text-neutral-900">: {invoiceNumber}</span>
-            </div>
-
-            <div className="flex items-center">
-              <span className="w-44 font-black uppercase text-neutral-900 text-[11px]">INVOICE DATE</span>
-              <span className="font-mono font-bold text-neutral-900">: {formatDate(invoiceDate)}</span>
+              <span className="font-mono text-neutral-800">: {invoiceNumber || "-"}</span>
             </div>
 
             <div className="flex items-center">
               <span className="w-44 font-black uppercase text-neutral-900 text-[11px]">PAYMENT METHOD</span>
-              <span className="font-bold text-neutral-900">: {paymentMethod} {bankName ? `(${bankName} - A/C: ${bankAccount})` : ""}</span>
+              <span className="font-bold text-neutral-800">: {paymentMethod}</span>
             </div>
 
             <div className="flex items-center">
-              <span className="w-44 font-black uppercase text-neutral-900 text-[11px]">TRANSACTION ID</span>
-              <span className="font-mono font-bold text-neutral-900">: {transactionId}</span>
+              <span className="w-44 font-black uppercase text-neutral-900 text-[11px]">TRANSACTION / REF ID</span>
+              <span className="font-mono text-neutral-800">: {transactionId || "-"}</span>
             </div>
 
             <div className="flex items-center">
               <span className="w-44 font-black uppercase text-neutral-900 text-[11px]">PAYMENT DATE</span>
-              <span className="font-mono font-bold text-neutral-900">: {formatDate(paymentDate)}</span>
+              <span className="font-mono text-neutral-800">: {formatDate(paymentDate)}</span>
             </div>
           </div>
         </div>
 
-        {/* Itemized Table */}
+        {/* Itemized Breakup Table */}
         <div className="px-10 mt-6">
-          <div className="rounded-2xl overflow-hidden border border-neutral-200 shadow-sm bg-white">
-            <div className="bg-[#0a0a0a] text-white py-3 px-6 flex justify-between items-center text-xs font-black uppercase tracking-wider">
-              <span className="w-16 text-center">SR NO.</span>
-              <span className="flex-1 px-4">DESCRIPTION</span>
-              <span className="w-32 text-right">AMOUNT (₹)</span>
-            </div>
-            {items.map((item, index) => {
-              const srNo = String(index + 1).padStart(2, "0");
-              const isGreenRow = index % 2 === 0;
-              return (
-                <div
-                  key={item.id || index}
-                  className={`flex justify-between items-center py-3 px-5 text-xs font-semibold ${
-                    isGreenRow ? `${accentLightBg} border-t border-neutral-100` : "bg-white text-neutral-900 border-t border-neutral-100"
-                  }`}
-                >
-                  <span className="w-16 text-center font-mono">{srNo}</span>
-                  <span className="flex-1 px-4">{item.description}</span>
-                  <span className="w-32 text-right font-mono font-bold">
-                    {item.amount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-                  </span>
-                </div>
-              );
-            })}
+          <div className="bg-[#0a0a0a] text-white rounded-full py-2.5 px-6 flex justify-between items-center text-xs font-black uppercase tracking-wider mb-2 shadow-md">
+            <span>DESCRIPTION</span>
+            <span className="text-right">AMOUNT (₹)</span>
+          </div>
 
-            {/* Subtotal & Tax Rows */}
-            <div className="bg-white px-5 py-2.5 flex justify-between items-center text-xs border-t border-neutral-200 font-bold text-neutral-700">
-              <span className="uppercase text-neutral-500 text-[11px]">SUBTOTAL</span>
-              <span className="font-mono">{subtotal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
-            </div>
-
-            <div className="bg-white px-5 py-2.5 flex justify-between items-center text-xs border-t border-neutral-100 font-bold text-neutral-700">
-              <span className="uppercase text-neutral-500 text-[11px]">TAX ({taxPct}%)</span>
-              <span className="font-mono">{taxAmount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
-            </div>
-
-            {/* Total Received Green Highlight Row */}
-            <div className={`px-5 py-3 flex justify-between items-center text-xs font-black uppercase ${accentBadgeBg} border-t border-neutral-300`}>
-              <span className="tracking-wider">TOTAL RECEIVED</span>
-              <span className="font-mono text-sm font-black">
-                ₹ {totalReceived.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-              </span>
-            </div>
+          <div className="space-y-1">
+            {displayItems.map((item, idx) => (
+              <div
+                key={item.id || idx}
+                className="bg-neutral-50 border border-neutral-100 rounded-2xl py-2.5 px-6 text-xs flex justify-between items-center font-medium"
+              >
+                <span className="font-semibold text-neutral-800">{item.description}</span>
+                <span className="font-mono font-bold text-neutral-900">
+                  ₹ {item.amount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
-
-        {/* Notes */}
-        {notes && (
-          <div className="px-10 mt-5">
-            <span className="text-[11px] font-extrabold text-neutral-400 uppercase tracking-widest block mb-1">
-              NOTES
-            </span>
-            <p className="text-xs text-neutral-700 font-medium">{notes}</p>
-          </div>
-        )}
       </div>
 
-      {/* Signatures & Footer Bar at Bottom */}
-      <div className="mt-auto pt-6">
-        <div className="px-10 pb-5 flex justify-between items-end bg-white">
-          {/* Provider Signature */}
-          <div className="relative">
-            <p className="font-extrabold text-neutral-900 uppercase text-[11px] tracking-wider mb-2">AUTHORIZED SIGNATURE</p>
-            <div className="h-10 flex items-center mb-1 w-48">
-              <span
-                className="font-signature text-3xl text-neutral-900 tracking-wider select-none transform -rotate-3 border-b-2 border-neutral-900/80 pb-0.5 px-2"
-                style={{ fontFamily: "'Dancing Script', 'Caveat', cursive" }}
-              >
-                shode
-              </span>
-            </div>
-            <p className="font-bold text-neutral-900 text-xs">{signatoryName}</p>
-            <p className="text-xs text-neutral-500 font-medium">Designation: {designation}</p>
-            <p className="text-[11px] text-neutral-400 mt-0.5">Date: {formatDate(date)}</p>
-
-            {/* Stamp Badge */}
-            <div className="absolute -top-1 right-0 w-12 h-12 rounded-full border-2 border-dashed border-[#a6ce39] flex flex-col items-center justify-center text-[8px] font-black text-[#a6ce39] uppercase transform rotate-12 opacity-80 pointer-events-none">
-              <span>SEVENX</span>
-              <span className="text-[7px]">RECEIVED</span>
-            </div>
+      {/* Bottom Pinned Section */}
+      <div className="mt-auto px-10 pb-8 pt-6 relative z-10">
+        <div className="grid grid-cols-12 gap-8 items-end border-t border-neutral-200 pt-6">
+          {/* Notes / Terms Left */}
+          <div className="col-span-7 space-y-2 text-xs text-neutral-600 font-medium">
+            {notes ? (
+              <p><strong>Notes:</strong> {notes}</p>
+            ) : (
+              <p className="italic text-neutral-400">Payment received in full and final settlement for the stated invoice/purpose.</p>
+            )}
+            <p className="text-[10px] text-neutral-400 font-mono">This is a system generated digital receipt issued by SevenX Labs.</p>
           </div>
 
-          {/* Thank You Note */}
-          <div className="text-right max-w-xs space-y-1">
-            <div className="flex items-center justify-end gap-1.5 text-xs font-bold text-neutral-900">
-              <Heart className={`w-4 h-4 ${accentText} fill-current`} />
-              <span>Thank you for your business!</span>
-            </div>
-            <p className="text-xs text-neutral-500 font-medium">
-              We appreciate your trust in SevenX Labs.
-            </p>
+          {/* Signature Right */}
+          <div className="col-span-5 text-right">
+            <span
+              className="font-signature text-3xl text-neutral-900 tracking-wider inline-block select-none transform -rotate-3 border-b-2 border-neutral-900/80 pb-0.5 px-2"
+              style={{ fontFamily: "'Dancing Script', 'Caveat', cursive" }}
+            >
+              shode
+            </span>
+            <p className="text-xs font-black text-neutral-900 uppercase mt-1">{signatoryName || providerName}</p>
+            <p className="text-[10px] text-neutral-500 font-bold uppercase">{designation || "Authorized Signatory"}</p>
           </div>
         </div>
 
-        {/* Full-Width Black Footer Bar */}
-        <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 flex justify-center items-center text-xs font-semibold z-20">
+        {/* Footer Bar */}
+        <div className="mt-6 pt-3 border-t border-neutral-100 flex justify-between items-center text-[11px] font-semibold text-neutral-400">
+          <span>SevenX Labs • Receipt #{receiptNumber}</span>
           <span>Made with SevenX Labs</span>
         </div>
       </div>

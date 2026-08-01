@@ -30,29 +30,21 @@ export default function CertificateBuilderPage() {
     certificateNumber: "SXL-CC-2026-000101",
     date: new Date().toISOString().split("T")[0],
 
-    clientName: "ABC Pvt. Ltd.",
-    clientAddress: "123, Business Park, Andheri East, Mumbai, Maharashtra - 400069",
-    clientGstin: "27ABCDE5678G1Z6",
+    clientName: "",
+    clientAddress: "",
+    clientGstin: "",
 
     certificationStatement:
       "This is to certify that the project described below has been successfully completed by SevenX Labs and delivered to the client as per the agreed scope, requirements, and terms of the contract.",
-    projectTitle: "E-Commerce Website Development",
+    projectTitle: "",
     serviceProvider: "SevenX Labs",
-    startDate: "2026-03-15",
+    startDate: new Date().toISOString().split("T")[0],
     completionDate: new Date().toISOString().split("T")[0],
-    receiptNumber: "SXL-RC-2026-000001",
-    contractNumber: "SXL-RC-2026-000001",
+    receiptNumber: "",
+    contractNumber: "",
 
-    scopeOfWork:
-      "Design, development, testing, and deployment of a responsive e-commerce website with admin panel and integration of payment gateway.",
-    deliverables: [
-      "Responsive Website",
-      "Admin Panel",
-      "Payment Gateway Integration",
-      "Database & APIs",
-      "Source Code",
-      "Documentation",
-    ],
+    scopeOfWork: "",
+    deliverables: [] as string[],
 
     confirmationNote:
       "We hereby confirm that the above project has been completed in all respects and the deliverables have been handed over to the client. The client has reviewed and accepted the work.",
@@ -60,12 +52,12 @@ export default function CertificateBuilderPage() {
     providerSignatory: "Sahil Hode",
     providerDesignation: "Founder & Lead",
     providerDate: new Date().toISOString().split("T")[0],
-    clientSignatory: "Rahul Mehta",
-    clientDesignation: "Director",
+    clientSignatory: "",
+    clientDesignation: "",
     clientDate: new Date().toISOString().split("T")[0],
 
-    phone: "+91 98765 43210",
-    email: "contact@sevenxlabs.com",
+    phone: "+91 8652601566",
+    email: "sevenxlabs07@gmail.com",
     website: "www.sevenxlabs.com",
   });
 

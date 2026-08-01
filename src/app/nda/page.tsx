@@ -16,7 +16,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { useDocumentExport } from "../../hooks/useDocumentExport";
-import { createNDADB } from "../actions";
+import { createNDADB, getProfileDB, getNextDocumentNumberDB } from "../actions";
 import { toast } from "sonner";
 
 export default function NDABuilderPage() {
@@ -63,7 +63,7 @@ export default function NDABuilderPage() {
     ndaNumber: `SXL-NDA-${new Date().getFullYear()}-000001`,
     effectiveDate: new Date().toISOString().split("T")[0],
 
-    // Disclosing Party
+    // Disclosing Party (Auto-Filled)
     disclosingName: "Sahil Hode",
     disclosingCompany: "SevenX Labs",
     disclosingAddress: "Thane, Mumbai, Maharashtra",
@@ -71,34 +71,34 @@ export default function NDABuilderPage() {
     disclosingPhone: "8652601566",
     disclosingWebsite: "www.sevenxlabs.com",
 
-    // Receiving Party
-    receivingName: "Sophia Smith",
-    receivingCompany: "Smith Innovations Private Limited",
-    receivingAddress: "742 Evergreen Terrace, Springfield, IL 62704, USA",
-    receivingEmail: "sophia@smithinnovations.com",
-    receivingPhone: "+1 234 567 8900",
-    receivingWebsite: "www.smithinnovations.com",
+    // Receiving Party (Empty for user input)
+    receivingName: "",
+    receivingCompany: "",
+    receivingAddress: "",
+    receivingEmail: "",
+    receivingPhone: "",
+    receivingWebsite: "",
 
-    // Freelancer NDA Clauses
-    purpose: "Evaluating business partnership, freelance design/development services, custom software engineering, and technical project requirements.",
-    confidentialItems: "Source Code, Database Schemas, REST APIs, UI/UX Wireframes, Business Logic, Customer Data, Financial Information, Credentials, and Project Specifications.",
-    obligations: "Maintain strict confidentiality, prevent unauthorized disclosure, refrain from copying or distributing confidential materials, and restrict access solely to project personnel.",
-    exclusions: "Information that is already public, previously known without restriction, received legally from a third party, or independently developed without reference to Confidential Information.",
-    permittedDisclosure: "Disclosures approved in writing by the disclosing party, required by legal process, or made to professional legal/financial advisors bound by confidentiality.",
-    termDuration: "Agreement remains effective during project collaboration; confidentiality obligations survive for 3 years post-termination.",
-    returnTerm: "Upon written request, Receiving Party shall immediately return or permanently delete all digital files, project backups, and physical documents.",
-    ipClause: "All pre-existing intellectual property, project assets, and custom deliverables remain strictly owned by the respective owner. No transfer or license is implied unless agreed separately.",
-    dataProtection: "Employ reasonable security measures, password protection, secure storage, and strict credential access controls for all shared materials.",
-    limitationOfLiability: "Neither party shall be liable for indirect, incidental, or consequential damages. Liability is limited to direct actual damages arising from project scope.",
-    breachRemedies: "Prompt written notice of any actual or suspected breach, right to seek immediate injunctive relief, and recovery of reasonable legal expenses.",
-    terminationClause: "Either party may terminate this agreement upon written notice. Confidentiality and non-disclosure duties survive project termination.",
-    entireAgreement: "This Agreement represents the complete understanding between parties regarding confidentiality, superseding all prior oral or written discussions.",
-    additionalTerms: "Special Conditions: Custom project clauses, remote work protocols, and communication guidelines agreed upon by both parties.",
+    // Freelancer NDA Clauses (Empty for user input)
+    purpose: "",
+    confidentialItems: "",
+    obligations: "",
+    exclusions: "",
+    permittedDisclosure: "",
+    termDuration: "",
+    returnTerm: "",
+    ipClause: "",
+    dataProtection: "",
+    limitationOfLiability: "",
+    breachRemedies: "",
+    terminationClause: "",
+    entireAgreement: "",
+    additionalTerms: "",
 
     disclosingSignatory: "Sahil Hode",
     disclosingDesignation: "Founder & Lead Developer",
-    receivingSignatory: "Sophia Smith",
-    receivingDesignation: "Managing Director",
+    receivingSignatory: "",
+    receivingDesignation: "",
   });
 
   useEffect(() => {
@@ -106,11 +106,33 @@ export default function NDABuilderPage() {
     if (savedEdit) {
       try {
         const parsed = JSON.parse(savedEdit);
-        setFormData(parsed);
+        setFormData((prev) => ({ ...prev, ...parsed }));
         localStorage.removeItem("edit_nda");
         toast.success("Document loaded into editor!");
+        return;
       } catch (e) {}
     }
+
+    Promise.all([getProfileDB(), getNextDocumentNumberDB("NDA")]).then(([profile, num]) => {
+      const rawSeq = num.split("-").pop() || "001";
+      const cleanSeq = rawSeq.replace(/[^0-9]/g, "") || "001";
+      setNdaSeq(cleanSeq);
+
+      const year = new Date().getFullYear();
+      const fullDocNum = `SXL-NDA-${year}-${cleanSeq}`;
+
+      setFormData((prev) => ({
+        ...prev,
+        ndaNumber: fullDocNum,
+        disclosingName: profile.name || prev.disclosingName,
+        disclosingCompany: "SevenX Labs",
+        disclosingAddress: profile.address || prev.disclosingAddress,
+        disclosingEmail: profile.email || prev.disclosingEmail,
+        disclosingPhone: profile.phone || prev.disclosingPhone,
+        disclosingWebsite: "www.sevenxlabs.com",
+        disclosingSignatory: profile.name || prev.disclosingSignatory,
+      }));
+    });
   }, []);
 
   // Save to Database Handler

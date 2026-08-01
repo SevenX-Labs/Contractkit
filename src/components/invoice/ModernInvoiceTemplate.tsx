@@ -19,13 +19,13 @@ export interface InvoiceTemplateProps {
   logoUrl?: string;
   stampUrl?: string;
   
-  clientName: string;
+  clientName?: string;
   clientCompany?: string;
   clientAddress?: string;
   clientEmail?: string;
   clientPhone?: string;
   
-  items: Array<{
+  items?: Array<{
     id: string;
     description: string;
     quantity: number;
@@ -33,13 +33,13 @@ export interface InvoiceTemplateProps {
     amount: number;
   }>;
   
-  subtotal: number;
+  subtotal?: number;
   taxPercent?: number;
   taxAmount?: number;
   discountPercent?: number;
   discountAmount?: number;
   shippingAmount?: number;
-  total: number;
+  total?: number;
   
   paymentMethod?: string;
   paymentDetails?: string;
@@ -65,7 +65,7 @@ export interface InvoiceTemplateProps {
 export function ModernInvoiceTemplate({
   id = "invoice-pdf-preview",
   invoiceNumber = "SXL-INV-2026-000001",
-  invoiceDate,
+  invoiceDate = new Date().toISOString().split("T")[0],
   senderName = "Sahil Hode",
   senderCompany = "SevenX Labs",
   senderAddress = "Thane, Mumbai, Maharashtra",
@@ -73,11 +73,11 @@ export function ModernInvoiceTemplate({
   senderPhone = "8652601566",
   logoUrl = "/logo.png",
   stampUrl,
-  clientName = "Sophia Smith",
-  clientCompany = "Acme Global",
-  clientAddress = "100 Tech Plaza, Suite 400, Tech District, CA",
-  clientEmail = "mail@mail.com",
-  clientPhone = "+123-456-7890",
+  clientName = "",
+  clientCompany = "",
+  clientAddress = "",
+  clientEmail = "",
+  clientPhone = "",
   items = [],
   subtotal = 0,
   taxPercent = 0,
@@ -86,9 +86,9 @@ export function ModernInvoiceTemplate({
   discountAmount = 0,
   shippingAmount = 0,
   total = 0,
-  paymentMethod = "Payment Method.",
-  paymentDetails,
-  holderName = "Sahil Hode (SevenX Labs)",
+  paymentMethod = "Bank Transfer",
+  paymentDetails = "",
+  holderName = "SevenX Labs",
   bankName = "HDFC Bank",
   accountNumber = "50100234567890",
   ifscCode = "HDFC0001234",
@@ -99,20 +99,19 @@ export function ModernInvoiceTemplate({
   signatureUrl,
   qrCodeUrl,
   currencySymbol = "₹",
-  projectName = "E-Commerce Website",
+  projectName = "",
   invoiceType = "Advance Payment",
-  miniDescription = "Advance payment for design, development, and deployment of E-Commerce Website as per the agreed proposal.",
+  miniDescription = "",
   accentColor = "lime",
 }: InvoiceTemplateProps) {
-  // Color configuration
   const accentBg =
     accentColor === "lime"
-      ? "bg-[#c5e158]"
+      ? "bg-[#a6ce39]"
       : accentColor === "purple"
-      ? "bg-purple-300"
+      ? "bg-purple-500 text-white"
       : accentColor === "pink"
-      ? "bg-pink-300"
-      : "bg-emerald-300";
+      ? "bg-pink-500 text-white"
+      : "bg-emerald-500 text-white";
 
   const accentShape =
     accentColor === "lime"
@@ -123,8 +122,9 @@ export function ModernInvoiceTemplate({
       ? "#ec4899"
       : "#10b981";
 
-  const computedTaxAmount = taxAmount || (subtotal * (taxPercent || 0)) / 100;
-  const computedTotal = total || subtotal + computedTaxAmount - (discountAmount || 0) + (shippingAmount || 0);
+  const displayItems = items.length > 0 ? items : [
+    { id: "item-placeholder", description: "[ Enter Service / Item Description ]", quantity: 1, rate: 0, amount: 0 }
+  ];
 
   return (
     <div
@@ -159,12 +159,13 @@ export function ModernInvoiceTemplate({
                 INVOICE TO.
               </span>
               <h2 className="text-3xl font-black text-neutral-900 tracking-tight mb-2">
-                {clientName || "Sophia Smith"}
+                {clientName || <span className="text-neutral-400 italic font-normal text-2xl">[ Client Name ]</span>}
               </h2>
               <div className="space-y-1 text-xs text-neutral-800 font-semibold leading-relaxed">
-                {clientPhone && <p>{clientPhone}</p>}
-                {clientAddress && <p>{clientAddress}</p>}
-                {clientEmail && <p>{clientEmail}</p>}
+                {clientCompany && <p className="font-bold text-neutral-900">{clientCompany}</p>}
+                <p>{clientAddress || <span className="text-neutral-400 italic font-normal">[ Client Address ]</span>}</p>
+                {clientPhone && <p>Phone: {clientPhone}</p>}
+                {clientEmail && <p>Email: {clientEmail}</p>}
               </div>
             </div>
           </div>
@@ -192,12 +193,14 @@ export function ModernInvoiceTemplate({
                 </div>
                 <div className="pr-4">
                   <span className="text-[11px] text-neutral-400 block font-sans">Project Name</span>
-                  <span className="font-bold text-white text-xs block mt-0.5 leading-snug break-words">{projectName || "E-Commerce Website"}</span>
+                  <span className="font-bold text-white text-xs block mt-0.5 leading-snug break-words">
+                    {projectName || <span className="text-neutral-400 italic font-normal">[ Project Name ]</span>}
+                  </span>
                 </div>
               </div>
             </div>
 
-            {/* Top Right Geometric Accent Triangles */}
+            {/* Geometric Accent Triangles */}
             <div className="absolute -bottom-6 -right-6 pointer-events-none z-0 opacity-80">
               <svg width="90" height="90" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <polygon points="20,10 90,50 30,90" fill={accentShape} opacity="0.75" />
@@ -207,7 +210,7 @@ export function ModernInvoiceTemplate({
           </div>
         </div>
 
-        {/* Work Description / Mini Summary Note Above Item Table */}
+        {/* Work Description / Summary Note */}
         {miniDescription && (
           <div className="px-10 mt-6">
             <div className="bg-neutral-50 border-l-4 border-[#0a0a0a] rounded-r-2xl p-3.5 text-xs text-neutral-800 font-medium leading-relaxed shadow-xs flex items-baseline gap-2">
@@ -231,7 +234,7 @@ export function ModernInvoiceTemplate({
 
           {/* Table Body Rows */}
           <div className="flex flex-col gap-2">
-            {items.map((item, index) => {
+            {displayItems.map((item, index) => {
               const isHighlighted = index % 2 === 1;
               const srNo = String(index + 1).padStart(2, "0");
               return (
@@ -240,7 +243,7 @@ export function ModernInvoiceTemplate({
                   className={`flex justify-between items-center py-3.5 px-6 text-xs transition font-medium ${
                     isHighlighted
                       ? `${accentBg} text-neutral-900 rounded-full font-bold shadow-sm`
-                      : "bg-white text-neutral-800 rounded-full"
+                      : "bg-white text-neutral-800 rounded-full border border-neutral-100"
                   }`}
                 >
                   <span className="w-16 text-center font-mono font-bold">{srNo}</span>
@@ -254,101 +257,80 @@ export function ModernInvoiceTemplate({
         </div>
       </div>
 
-      {/* Bottom Pinned Section: Payment Details (Left) + Totals & Signature (Right) */}
+      {/* Bottom Pinned Section */}
       <div className="mt-auto px-10 pb-8 pt-6 relative z-10">
         <div className="grid grid-cols-12 gap-8 items-end">
-          {/* Left Column: Real-Time Dynamic Payment Details */}
-          <div className="col-span-7 space-y-2">
-            <h3 className="text-xs font-black text-neutral-900 tracking-tight uppercase mb-1.5 ml-1">
-              {paymentMethod}
-            </h3>
-            <div className="text-xs text-neutral-900 font-semibold space-y-1.5 bg-neutral-50 p-4 rounded-2xl border border-neutral-200 shadow-sm relative z-20">
-              {paymentDetails ? (
-                paymentDetails.split("|").map((line, i) => (
-                  <p key={i} className="text-neutral-900 font-bold font-mono">{line.trim()}</p>
-                ))
-              ) : (
-                <>
-                  <div className="flex items-center gap-2">
-                    <span className="text-neutral-500 font-medium min-w-[90px]">Holder Name:</span>
-                    <span className="font-bold text-neutral-900">{holderName}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-neutral-500 font-medium min-w-[90px]">Bank Name:</span>
-                    <span className="font-bold text-neutral-900">{bankName}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-neutral-500 font-medium min-w-[90px]">Account No:</span>
-                    <span className="font-mono font-extrabold text-neutral-900 tracking-wide">{accountNumber}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-neutral-500 font-medium min-w-[90px]">IFSC Code:</span>
-                    <span className="font-mono font-bold text-neutral-900">{ifscCode}</span>
-                  </div>
-                </>
-              )}
+          {/* Left Column: Payment Details */}
+          <div className="col-span-6 space-y-4">
+            <div className="bg-neutral-50 p-4 rounded-2xl border border-neutral-200 text-xs">
+              <span className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-widest block mb-2 font-mono">
+                PAYMENT INFORMATION
+              </span>
+              <div className="space-y-1.5 font-mono text-neutral-800">
+                {paymentDetails ? (
+                  <p className="whitespace-pre-line font-medium">{paymentDetails}</p>
+                ) : (
+                  <>
+                    <p><strong className="text-neutral-500 font-sans">Bank:</strong> {bankName || "HDFC Bank"}</p>
+                    <p><strong className="text-neutral-500 font-sans">Account Name:</strong> {holderName || senderName}</p>
+                    <p><strong className="text-neutral-500 font-sans">A/C No:</strong> {accountNumber || "50100234567890"}</p>
+                    <p><strong className="text-neutral-500 font-sans">IFSC:</strong> {ifscCode || "HDFC0001234"}</p>
+                  </>
+                )}
+              </div>
             </div>
+
+            {note && (
+              <div className="text-[11px] text-neutral-500 italic leading-snug">
+                <strong>Note:</strong> {note}
+              </div>
+            )}
           </div>
 
           {/* Right Column: Totals & Signature */}
-          <div className="col-span-5 flex flex-col items-end space-y-6">
-            {/* Totals Summary */}
-            <div className="w-full text-right space-y-2 text-xs">
-              <div className="flex justify-between items-center text-neutral-600 font-bold">
-                <span>Sub Total :</span>
-                <span className="font-mono text-neutral-900 text-sm">{formatCurrency(subtotal, currencySymbol)}</span>
+          <div className="col-span-6 flex flex-col items-end gap-6">
+            <div className="w-full bg-neutral-900 text-white p-5 rounded-2xl shadow-xl flex flex-col gap-2 font-mono text-xs">
+              <div className="flex justify-between items-center text-neutral-300">
+                <span>Subtotal:</span>
+                <span>{formatCurrency(subtotal, currencySymbol)}</span>
               </div>
-
-              {taxPercent ? (
-                <div className="flex justify-between items-center text-neutral-600 font-bold border-b border-neutral-900 pb-1">
-                  <span>Tax Vat ({taxPercent}%) :</span>
-                  <span className="font-mono text-neutral-900 text-sm">{formatCurrency(computedTaxAmount, currencySymbol)}</span>
+              {taxAmount > 0 && (
+                <div className="flex justify-between items-center text-neutral-300">
+                  <span>Tax ({taxPercent}%):</span>
+                  <span>{formatCurrency(taxAmount, currencySymbol)}</span>
                 </div>
-              ) : null}
-
-              {discountAmount ? (
-                <div className="flex justify-between items-center text-emerald-700 font-bold">
-                  <span>Discount :</span>
-                  <span className="font-mono text-sm">-{formatCurrency(discountAmount, currencySymbol)}</span>
+              )}
+              {discountAmount > 0 && (
+                <div className="flex justify-between items-center text-emerald-400">
+                  <span>Discount:</span>
+                  <span>-{formatCurrency(discountAmount, currencySymbol)}</span>
                 </div>
-              ) : null}
-
-              <div className="flex justify-between items-center pt-2 text-neutral-900">
-                <span className="text-sm font-black uppercase">Total :</span>
-                <span className="text-2xl font-black font-mono tracking-tight">{formatCurrency(computedTotal, currencySymbol)}</span>
+              )}
+              <div className="flex justify-between items-center text-sm font-black text-white pt-2 border-t border-neutral-800">
+                <span className="uppercase font-sans tracking-wider">Total Due:</span>
+                <span className="text-[#a6ce39] text-base">{formatCurrency(total, currencySymbol)}</span>
               </div>
             </div>
 
-            {/* Manager / Signature Block */}
-            <div className="text-right flex flex-col items-end">
-              <span className="text-[11px] font-extrabold text-neutral-900 uppercase block mb-1">Authorized Signature</span>
-              {signatureUrl ? (
-                <img src={signatureUrl} alt="Signature" className="h-10 object-contain mb-1" />
-              ) : (
-                <span
-                  className="font-signature text-3xl text-neutral-900 tracking-wider select-none transform -rotate-3 border-b-2 border-neutral-900/80 pb-0.5 px-2 mb-1"
-                  style={{ fontFamily: "'Dancing Script', 'Caveat', cursive" }}
-                >
-                  shode
-                </span>
-              )}
-              <span className="text-xs font-extrabold text-neutral-900 block">{signatureName}</span>
-              <span className="text-[10px] font-bold text-neutral-500 block">{signatureTitle}</span>
+            {/* Signature Block */}
+            <div className="text-right">
+              <span
+                className="font-signature text-3xl text-neutral-900 tracking-wider inline-block select-none transform -rotate-3 border-b-2 border-neutral-900/80 pb-0.5 px-2"
+                style={{ fontFamily: "'Dancing Script', 'Caveat', cursive" }}
+              >
+                shode
+              </span>
+              <p className="text-xs font-black text-neutral-900 uppercase mt-1">{signatureName || senderName}</p>
+              <p className="text-[10px] text-neutral-500 font-bold uppercase">{signatureTitle || "Authorized Signatory"}</p>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Bottom Geometric Accent */}
-      <div className="absolute bottom-10 -left-6 pointer-events-none z-0 opacity-40">
-        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <polygon points="0,90 70,50 10,0" fill={accentShape} />
-        </svg>
-      </div>
-
-      {/* Full-Width Black Footer Bar */}
-      <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 flex justify-center items-center text-xs font-semibold z-20">
-        <span>Made with SevenX Labs</span>
+        {/* Footer Bar */}
+        <div className="mt-8 pt-4 border-t border-neutral-200 flex justify-between items-center text-[11px] font-semibold text-neutral-400">
+          <span>SevenX Labs • Invoice #{invoiceNumber}</span>
+          <span>Made with SevenX Labs</span>
+        </div>
       </div>
     </div>
   );
