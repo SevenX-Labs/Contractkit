@@ -182,11 +182,11 @@ export function ModernNDATemplate({
                   {/* Metadata 2-Column Grid */}
                   <div className="grid grid-cols-2 gap-4 text-left text-xs font-medium border-t border-neutral-800 pt-2.5">
                     <div>
-                      <span className="text-[10px] text-neutral-400 block font-sans uppercase">Agreement No.</span>
+                      <span className="text-[10px] text-neutral-300 font-bold block uppercase tracking-wider font-sans">Agreement No.</span>
                       <span className="font-mono font-bold text-white text-xs block mt-0.5 whitespace-nowrap">{ndaNumber}</span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-neutral-400 block font-sans uppercase">Effective Date</span>
+                      <span className="text-[10px] text-neutral-300 font-bold block uppercase tracking-wider font-sans">Effective Date</span>
                       <span className="font-mono font-bold text-white text-xs block mt-0.5 whitespace-nowrap">{formatDate(effectiveDate)}</span>
                     </div>
                   </div>
@@ -206,15 +206,15 @@ export function ModernNDATemplate({
             <div className="px-10 mt-2.5 text-[11.5px] text-neutral-800 font-medium leading-relaxed">
               <p>
                 This Non-Disclosure Agreement (&quot;Agreement&quot;) is entered into on{" "}
-                <strong className="text-neutral-900 font-bold">{formatDate(effectiveDate)}</strong> (&quot;Effective Date&quot;) by and between the Disclosing Party and Receiving Party listed below to safeguard proprietary project information and assets.
+                <strong className="text-neutral-900 font-bold">{formatDate(effectiveDate)}</strong>{" "}(&quot;Effective Date&quot;) by and between the Disclosing Party and Receiving Party listed below to safeguard proprietary project information and assets.
               </p>
             </div>
 
             {/* Section 1 & 2: Parties Pill Header & 2-Column Grid */}
             <div className="px-10 mt-2.5" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
-              <div className="bg-[#0a0a0a] text-white rounded-full py-1.5 px-6 flex justify-between items-center text-[11px] font-black uppercase tracking-wider mb-1.5 shadow-md">
-                <span className="w-1/2 text-left pl-2">1. DISCLOSING PARTY</span>
-                <span className="w-1/2 text-left pl-4">2. RECEIVING PARTY</span>
+              <div className="grid grid-cols-2 gap-4 bg-[#0a0a0a] text-white rounded-full py-2 px-6 text-xs font-black uppercase tracking-wider mb-1.5 shadow-md" style={{ lineHeight: "1.4" }}>
+                <span className="text-left pl-2" style={{ display: "block", lineHeight: "1.4" }}>1. DISCLOSING PARTY</span>
+                <span className="text-left pl-3" style={{ display: "block", lineHeight: "1.4" }}>2. RECEIVING PARTY</span>
               </div>
 
               <div className="grid grid-cols-2 gap-4 bg-neutral-50 p-2.5 rounded-2xl border border-neutral-200 text-xs">

@@ -363,19 +363,19 @@ export function ModernAgreementTemplate({
                   {/* Metadata 2-Column Grid */}
                   <div className="grid grid-cols-2 gap-3 text-left text-xs font-medium border-t border-neutral-800 pt-2.5">
                     <div>
-                      <span className="text-[10px] text-neutral-400 block uppercase font-sans tracking-wider">Agreement No.</span>
+                      <span className="text-[10px] text-neutral-300 font-bold block uppercase tracking-wider font-sans">Agreement No.</span>
                       <span className="font-mono font-bold text-white text-xs block mt-0.5 whitespace-nowrap">{formattedAgrNumber}</span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-neutral-400 block uppercase font-sans tracking-wider">Effective Date</span>
+                      <span className="text-[10px] text-neutral-300 font-bold block uppercase tracking-wider font-sans">Effective Date</span>
                       <span className="font-mono font-bold text-white text-xs block mt-0.5 whitespace-nowrap">{formatDate(effectiveDate)}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Top Right Geometric Accent Triangles */}
-                <div className="absolute bottom-2 right-2 overflow-hidden pointer-events-none z-0 opacity-80">
-                  <svg width="60" height="60" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <div className="absolute bottom-0 right-0 overflow-hidden pointer-events-none z-20">
+                  <svg width="75" height="75" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <polygon points="30,20 100,50 40,90" fill={accentShape} opacity="0.95" />
                     <polygon points="60,30 100,60 70,85" fill={accentShape} opacity="0.65" />
                   </svg>
@@ -387,7 +387,7 @@ export function ModernAgreementTemplate({
             <div className="px-10 mt-2.5 text-xs text-neutral-800 font-medium leading-relaxed">
               <p>
                 This IT Development Agreement (&quot;Agreement&quot;) is made and entered into on{" "}
-                <strong className="text-neutral-900 font-bold">{formatDate(effectiveDate)}</strong> (&quot;Effective Date&quot;), by and between the parties mentioned below.
+                <strong className="text-neutral-900 font-bold">{formatDate(effectiveDate)}</strong> {" "}(&quot;Effective Date&quot;), by and between the parties mentioned below.
               </p>
             </div>
 
