@@ -293,6 +293,18 @@ export default function AgreementPage() {
     await handleSave();
   };
 
+  const computedDurationDays = (() => {
+    if (formData.startDate && formData.deadline) {
+      const s = new Date(formData.startDate);
+      const d = new Date(formData.deadline);
+      const diff = d.getTime() - s.getTime();
+      if (!isNaN(diff) && diff > 0) {
+        return Math.ceil(diff / (1000 * 60 * 60 * 24));
+      }
+    }
+    return 45;
+  })();
+
   const renderAgreementContent = (page?: number, elementId = "agreement-pdf-preview") => (
     <ModernAgreementTemplate
       id={elementId}
@@ -327,6 +339,7 @@ export default function AgreementPage() {
       deliverables={formData.deliverablesList}
       startDate={formData.startDate}
       deliveryDate={formData.deadline}
+      durationDays={computedDurationDays}
       totalAmount={formData.totalAmount}
       advanceAmount={formData.paymentRows[0]?.amount || formData.totalAmount * 0.5}
       balanceAmount={formData.paymentRows[1]?.amount || formData.totalAmount * 0.5}
@@ -1404,7 +1417,7 @@ export default function AgreementPage() {
           </div>
 
           {/* Hidden Offscreen Container for PDF Export (All Pages) */}
-          <div style={{ position: "absolute", left: "-9999px", top: 0, width: "210mm", overflow: "hidden", pointerEvents: "none" }}>
+          <div style={{ position: "fixed", left: 0, top: 0, opacity: 0, pointerEvents: "none", zIndex: -9999, width: "210mm" }}>
             {renderAgreementContent(undefined, "agreement-pdf-preview")}
           </div>
         </div>

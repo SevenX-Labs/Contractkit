@@ -35,14 +35,22 @@ export function useDocumentExport() {
         }
 
         // Reset styling on target element
+        clonedElement.style.position = "relative";
+        clonedElement.style.left = "0";
+        clonedElement.style.top = "0";
         clonedElement.style.transform = "none";
         clonedElement.style.webkitTransform = "none";
         clonedElement.style.boxShadow = "none";
         clonedElement.style.margin = "0 auto";
+        clonedElement.style.opacity = "1";
+        clonedElement.style.visibility = "visible";
 
         // Reset transforms, scale, zoom, filters and margins on all ancestor containers up to body
         let curr = clonedElement.parentElement;
         while (curr && curr !== clonedDoc.body) {
+          curr.style.position = "static";
+          curr.style.left = "auto";
+          curr.style.top = "auto";
           curr.style.transform = "none";
           curr.style.webkitTransform = "none";
           curr.style.zoom = "1";
@@ -53,6 +61,8 @@ export function useDocumentExport() {
           curr.style.display = "block";
           curr.style.width = "auto";
           curr.style.height = "auto";
+          curr.style.opacity = "1";
+          curr.style.visibility = "visible";
           curr = curr.parentElement;
         }
       }
@@ -183,6 +193,11 @@ export function useDocumentExport() {
    * Capture a single DOM element to a high-res canvas.
    */
   const captureElement = async (element: HTMLElement): Promise<HTMLCanvasElement> => {
+    if (typeof document !== "undefined" && document.fonts) {
+      try {
+        await document.fonts.ready;
+      } catch (e) {}
+    }
     return html2canvas(element, {
       scale: 2,
       useCORS: true,

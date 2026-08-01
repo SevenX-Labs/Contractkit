@@ -301,6 +301,18 @@ export function ModernAgreementTemplate({
     return agreementNumber;
   })();
 
+  const effectiveDurationDays = (() => {
+    if (startDate && deliveryDate) {
+      const s = new Date(startDate);
+      const d = new Date(deliveryDate);
+      const diff = d.getTime() - s.getTime();
+      if (!isNaN(diff) && diff > 0) {
+        return Math.ceil(diff / (1000 * 60 * 60 * 24));
+      }
+    }
+    return durationDays || 45;
+  })();
+
   const basePages = pageLayout === "2-page" ? 2 : pageLayout === "4-page" ? 4 : 3;
   const numPages = totalPages || (basePages + customPages.length);
 
@@ -581,7 +593,7 @@ export function ModernAgreementTemplate({
                       </div>
                       <div>
                         <span className="text-[10px] text-neutral-500 uppercase font-sans font-bold block">Total Duration</span>
-                        <span className="font-bold text-neutral-900">{durationDays} Days</span>
+                        <span className="font-bold text-neutral-900">{effectiveDurationDays} Days</span>
                       </div>
                     </div>
 
