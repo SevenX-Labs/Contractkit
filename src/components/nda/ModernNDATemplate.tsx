@@ -329,6 +329,27 @@ export function ModernNDATemplate({
                 </div>
               </div>
 
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* PAGE 2 */}
+      {showPage2 && (
+        <div data-page="true" className="relative w-full min-h-[297mm] flex flex-col justify-between pt-7 pb-8">
+          <div>
+            {/* Minimal Top Header */}
+            <div className="px-10 pb-3 border-b border-neutral-200 flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <span className="font-black text-neutral-900 text-xs uppercase tracking-wider">SevenX Labs</span>
+                <span className="text-neutral-300">•</span>
+                <span className="text-xs font-bold text-neutral-600 uppercase">Non-Disclosure Agreement</span>
+              </div>
+              <span className="font-mono text-xs text-neutral-500 font-bold">Ref #{ndaNumber} | Page 2 of 2</span>
+            </div>
+
+            {/* Page 2 Clauses: Sections 9 - 16 */}
+            <div className="px-10 mt-3 space-y-2.5">
               {/* Section 9 & 10 */}
               <div className="grid grid-cols-2 gap-2.5">
                 <div className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ breakInside: "avoid" }}>
@@ -355,27 +376,6 @@ export function ModernNDATemplate({
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* PAGE 2 */}
-      {showPage2 && (
-        <div data-page="true" className="relative w-full min-h-[297mm] flex flex-col justify-between pt-7 pb-8">
-          <div>
-            {/* Minimal Top Header */}
-            <div className="px-10 pb-3 border-b border-neutral-200 flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                <span className="font-black text-neutral-900 text-xs uppercase tracking-wider">SevenX Labs</span>
-                <span className="text-neutral-300">•</span>
-                <span className="text-xs font-bold text-neutral-600 uppercase">Non-Disclosure Agreement</span>
-              </div>
-              <span className="font-mono text-xs text-neutral-500 font-bold">Ref #{ndaNumber} | Page 2 of 2</span>
-            </div>
-
-            {/* Page 2 Clauses: Sections 11 - 16 */}
-            <div className="px-10 mt-4 space-y-3">
               {/* Section 11 & 12 */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-white border border-neutral-200">

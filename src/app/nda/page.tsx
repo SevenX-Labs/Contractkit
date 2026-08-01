@@ -902,7 +902,7 @@ export default function NDABuilderPage() {
       </main>
 
       {/* Hidden Offscreen Container for Clean PDF/DOCX/PNG Exports */}
-      <div className="hidden">
+      <div style={{ position: "absolute", left: "-9999px", top: 0, width: "210mm", overflow: "hidden", pointerEvents: "none" }}>
         <div id="nda-export-container">
           <ModernNDATemplate
             {...formData}
