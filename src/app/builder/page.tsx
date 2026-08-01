@@ -49,7 +49,7 @@ export default function DocumentStudioPage() {
 
   const [formData, setFormData] = useState({
     documentType: "SOFTWARE_CONTRACT",
-    documentNumber: "SXL-SOF-001",
+    documentNumber: `SXL-SOF-${new Date().getFullYear()}-000001`,
     title: "Software Development & Architecture Contract",
     date: new Date().toISOString().split("T")[0],
     dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
