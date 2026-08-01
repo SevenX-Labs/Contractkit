@@ -140,7 +140,7 @@ export function ModernNDATemplate({
     >
       {/* PAGE 1 */}
       {showPage1 && (
-        <div data-page="true" className="relative w-full min-h-[297mm] flex flex-col justify-between pb-0 page-break-after-always" style={{ breakAfter: "page" }}>
+        <div data-page="true" className="relative w-full min-h-[297mm] flex flex-col justify-between pb-8 page-break-after-always" style={{ breakAfter: "page" }}>
           <div>
             {/* Top Header Row with Black Block on Right */}
             <div className="flex justify-between items-start w-full relative">
@@ -357,18 +357,12 @@ export function ModernNDATemplate({
               </div>
             </div>
           </div>
-
-          {/* Page 1 Footer Bar */}
-          <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20 flex justify-between items-center text-xs font-semibold mt-6">
-            <span>Made with SevenX Labs</span>
-            <span className="font-mono text-[11px] text-neutral-400">Page 1 of 2</span>
-          </div>
         </div>
       )}
 
       {/* PAGE 2 */}
       {showPage2 && (
-        <div data-page="true" className="relative w-full min-h-[297mm] flex flex-col justify-between pt-7 pb-0">
+        <div data-page="true" className="relative w-full min-h-[297mm] flex flex-col justify-between pt-7 pb-8">
           <div>
             {/* Minimal Top Header */}
             <div className="px-10 pb-3 border-b border-neutral-200 flex justify-between items-center">
@@ -494,12 +488,6 @@ export function ModernNDATemplate({
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Page 2 Footer Bar */}
-          <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20 flex justify-between items-center text-xs font-semibold mt-6">
-            <span>Made with SevenX Labs</span>
-            <span className="font-mono text-[11px] text-neutral-400">Page 2 of 2</span>
           </div>
         </div>
       )}

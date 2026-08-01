@@ -319,8 +319,8 @@ export function ModernAgreementTemplate({
       {showPage1 && (
         <div
           data-page="true"
-          className="relative w-full flex flex-col justify-between pb-0 page-break-after-always"
-          style={{ minHeight: "297mm", height: "297mm", display: "flex", flexDirection: "column", justifyContent: "space-between", boxSizing: "border-box", breakAfter: "page" }}
+          className="relative w-full min-h-[297mm] flex flex-col justify-between pb-8 page-break-after-always"
+          style={{ breakAfter: "page" }}
         >
           <div>
             {/* Top Header Row with Black Block on Right */}
@@ -513,12 +513,6 @@ export function ModernAgreementTemplate({
               )}
             </div>
           </div>
-
-          {/* Page 1 Footer Bar */}
-          <div className="mt-auto relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20 flex justify-between items-center text-xs font-semibold">
-            <span>Made with SevenX Labs</span>
-            <span className="font-mono text-[11px] text-neutral-400">Page 1 of {numPages}</span>
-          </div>
         </div>
       )}
 
@@ -526,8 +520,8 @@ export function ModernAgreementTemplate({
       {showPage2 && (
         <div
           data-page="true"
-          className="relative w-full flex flex-col justify-between pt-7 pb-0 page-break-after-always"
-          style={{ minHeight: "297mm", height: "297mm", display: "flex", flexDirection: "column", justifyContent: "space-between", boxSizing: "border-box", breakAfter: basePages >= 3 ? "page" : "auto" }}
+          className="relative w-full min-h-[297mm] flex flex-col justify-between pt-7 pb-8 page-break-after-always"
+          style={{ breakAfter: basePages >= 3 ? "page" : "auto" }}
         >
           <div>
             {/* Running Header for Page 2 */}
@@ -657,12 +651,6 @@ export function ModernAgreementTemplate({
               )}
             </div>
           </div>
-
-          {/* Page 2 Footer Bar */}
-          <div className="mt-auto relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20 flex justify-between items-center text-xs font-semibold">
-            <span>Made with SevenX Labs</span>
-            <span className="font-mono text-[11px] text-neutral-400">Page 2 of {numPages}</span>
-          </div>
         </div>
       )}
 
@@ -670,8 +658,8 @@ export function ModernAgreementTemplate({
       {showPage3 && (
         <div
           data-page="true"
-          className="relative w-full flex flex-col justify-between pt-7 pb-0 page-break-after-always"
-          style={{ minHeight: "297mm", height: "297mm", display: "flex", flexDirection: "column", justifyContent: "space-between", boxSizing: "border-box", breakAfter: basePages >= 4 ? "page" : "auto" }}
+          className="relative w-full min-h-[297mm] flex flex-col justify-between pt-7 pb-8 page-break-after-always"
+          style={{ breakAfter: basePages >= 4 ? "page" : "auto" }}
         >
           <div>
             {/* Running Header for Page 3 */}
@@ -823,12 +811,6 @@ export function ModernAgreementTemplate({
               )}
             </div>
           </div>
-
-          {/* Page 3 Footer Bar */}
-          <div className="mt-auto relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20 flex justify-between items-center text-xs font-semibold">
-            <span>Made with SevenX Labs</span>
-            <span className="font-mono text-[11px] text-neutral-400">Page 3 of {numPages}</span>
-          </div>
         </div>
       )}
 
@@ -836,8 +818,8 @@ export function ModernAgreementTemplate({
       {showPage4 && (
         <div
           data-page="true"
-          className="relative w-full flex flex-col justify-between pt-7 pb-0 page-break-after-always"
-          style={{ minHeight: "297mm", height: "297mm", display: "flex", flexDirection: "column", justifyContent: "space-between", boxSizing: "border-box", breakAfter: customPages.length > 0 ? "page" : "auto" }}
+          className="relative w-full min-h-[297mm] flex flex-col justify-between pt-7 pb-8 page-break-after-always"
+          style={{ breakAfter: customPages.length > 0 ? "page" : "auto" }}
         >
           <div>
             {/* Running Header for Page 4 */}
@@ -907,12 +889,6 @@ export function ModernAgreementTemplate({
               </div>
             </div>
           </div>
-
-          {/* Page 4 Footer Bar */}
-          <div className="mt-auto relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20 flex justify-between items-center text-xs font-semibold">
-            <span>Made with SevenX Labs</span>
-            <span className="font-mono text-[11px] text-neutral-400">Page 4 of {numPages}</span>
-          </div>
         </div>
       )}
 
@@ -927,8 +903,8 @@ export function ModernAgreementTemplate({
           <div
             key={cp.id || idx}
             data-page="true"
-            className="relative w-full flex flex-col justify-between pt-7 pb-0 page-break-after-always"
-            style={{ minHeight: "297mm", height: "297mm", display: "flex", flexDirection: "column", justifyContent: "space-between", boxSizing: "border-box", breakAfter: idx === customPages.length - 1 ? "auto" : "page" }}
+            className="relative w-full min-h-[297mm] flex flex-col justify-between pt-7 pb-8 page-break-after-always"
+            style={{ breakAfter: idx === customPages.length - 1 ? "auto" : "page" }}
           >
             <div>
               {/* Running Header */}
