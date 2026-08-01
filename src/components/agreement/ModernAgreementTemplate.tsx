@@ -110,6 +110,86 @@ export interface AgreementTemplateProps {
   accentColor?: "lime" | "purple" | "pink" | "emerald";
 }
 
+// Helper: Smart Tech Stack Renderer
+function renderFormattedTechStack(stackStr?: string) {
+  if (!stackStr) {
+    return <span className="text-neutral-400 italic font-normal text-xs">[ Technology Stack ]</span>;
+  }
+
+  // Check if text has colon category markers like "Frontend:", "Backend:", "Database:"
+  const categoryMatches = stackStr.match(/([A-Za-z0-9\s\/&]+):/g);
+  if (categoryMatches && categoryMatches.length >= 2) {
+    const segments = stackStr.split(/(?=[A-Za-z0-9\s\/&]+:)/g).map((s) => s.trim()).filter(Boolean);
+    return (
+      <div className="space-y-1 mt-1 max-h-[130px] overflow-y-auto pr-1">
+        {segments.map((seg, idx) => {
+          const colonPos = seg.indexOf(":");
+          if (colonPos !== -1) {
+            const label = seg.substring(0, colonPos).trim();
+            const val = seg.substring(colonPos + 1).replace(/^\.\s*/, "").replace(/\.$/, "").trim();
+            return (
+              <div key={idx} className="flex flex-wrap items-baseline gap-1 text-[10px]">
+                <span className="font-sans font-extrabold text-[9px] uppercase tracking-wider text-[#5e9618] bg-[#f0f9df] px-1.5 py-0.5 rounded border border-[#d3ec9c] shrink-0">
+                  {label}
+                </span>
+                <span className="font-mono font-medium text-neutral-800 leading-snug">{val}</span>
+              </div>
+            );
+          }
+          return <p key={idx} className="font-mono text-[10px] text-neutral-800">{seg}</p>;
+        })}
+      </div>
+    );
+  }
+
+  // Comma-separated fallback
+  if (stackStr.includes(",")) {
+    const items = stackStr.split(",").map((s) => s.trim()).filter(Boolean);
+    if (items.length >= 3) {
+      return (
+        <div className="flex flex-wrap gap-1 mt-1 max-h-[120px] overflow-y-auto pr-1">
+          {items.map((item, idx) => (
+            <span key={idx} className="bg-white text-neutral-800 font-mono text-[9.5px] font-bold px-2 py-0.5 rounded-md border border-neutral-200 shadow-2xs">
+              {item}
+            </span>
+          ))}
+        </div>
+      );
+    }
+  }
+
+  return <p className="font-mono text-[10.5px] leading-relaxed text-neutral-800 max-h-[120px] overflow-y-auto">{stackStr}</p>;
+}
+
+// Helper: Smart Scope of Work Renderer
+function renderFormattedIncludedScope(scopeStr?: string) {
+  if (!scopeStr) {
+    return <span className="text-neutral-400 italic font-normal text-xs">[ Enter included scope of work... ]</span>;
+  }
+
+  let items: string[] = [];
+  if (scopeStr.includes("\n") || scopeStr.includes("•") || scopeStr.includes("- ")) {
+    items = scopeStr.split(/[\n•\-]/).map((s) => s.trim()).filter(Boolean);
+  } else if (scopeStr.includes(",")) {
+    items = scopeStr.split(",").map((s) => s.trim()).filter(Boolean);
+  }
+
+  if (items.length >= 3) {
+    return (
+      <div className="grid grid-cols-2 gap-x-3 gap-y-1 mt-1 text-[10.5px] max-h-[135px] overflow-y-auto pr-1">
+        {items.map((item, i) => (
+          <div key={i} className="flex items-start gap-1.5 font-sans text-neutral-800 font-medium leading-tight">
+            <span className="text-[#8cc63f] font-black text-xs leading-none select-none shrink-0">•</span>
+            <span className="line-clamp-2">{item}</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return <p className="whitespace-pre-line leading-relaxed text-[10.5px] font-mono text-neutral-800 max-h-[135px] overflow-y-auto">{scopeStr}</p>;
+}
+
 export function ModernAgreementTemplate({
   id = "agreement-pdf-preview",
   activePage,
@@ -224,42 +304,42 @@ export function ModernAgreementTemplate({
             {/* Top Header Row with Black Block on Right */}
             <div className="flex justify-between items-start w-full relative">
               {/* Top Left Branding */}
-              <div className="pt-8 pl-10 pr-4 max-w-sm">
-                <div className="flex flex-col items-start gap-1 mb-2">
+              <div className="pt-6 pl-10 pr-4 max-w-sm">
+                <div className="flex flex-col items-start gap-1 mb-1.5">
                   <Image
                     src="/logo.png"
                     alt="SevenX Labs"
                     width={220}
                     height={70}
-                    className="h-12 w-auto object-contain"
+                    className="h-11 w-auto object-contain"
                     priority
                   />
                   <div className="flex items-center gap-1.5 mt-0.5 font-extrabold tracking-tight text-xl uppercase">
                     <span className="text-neutral-900 font-black">SevenX</span>
                     <span className="text-[#a6ce39] font-black">Labs</span>
                   </div>
-                  <p className="text-xs italic font-medium text-neutral-400">Innovate. Create. Elevate.</p>
+                  <p className="text-[11px] italic font-medium text-neutral-400">Innovate. Create. Elevate.</p>
                 </div>
 
-                <div className="mt-4">
-                  <span className="text-xs font-extrabold text-neutral-400 uppercase tracking-widest block mb-0.5">
+                <div className="mt-3">
+                  <span className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-widest block mb-0.5">
                     AGREEMENT FOR
                   </span>
-                  <h2 className="text-lg font-black text-neutral-900 tracking-tight leading-snug">
+                  <h2 className="text-base font-black text-neutral-900 tracking-tight leading-snug">
                     {projectTitle || <span className="text-neutral-400 italic font-normal">[ Project Title ]</span>}
                   </h2>
                 </div>
               </div>
 
               {/* Top Right Black Header Panel */}
-              <div className="relative w-[55%] bg-[#0a0a0a] text-white pt-7 pb-6 px-7 rounded-bl-[40px] shadow-xl flex flex-col justify-between min-h-[175px] overflow-hidden">
+              <div className="relative w-[55%] bg-[#0a0a0a] text-white pt-6 pb-5 px-7 rounded-bl-[40px] shadow-xl flex flex-col justify-between min-h-[165px] overflow-hidden">
                 <div className="relative z-10 pr-12">
-                  <h1 className="text-3xl font-black tracking-wider uppercase text-white mb-3">
+                  <h1 className="text-3xl font-black tracking-wider uppercase text-white mb-2.5">
                     AGREEMENT
                   </h1>
                   
                   {/* Metadata 2-Column Grid */}
-                  <div className="grid grid-cols-2 gap-3 text-left text-xs font-medium border-t border-neutral-800 pt-3">
+                  <div className="grid grid-cols-2 gap-3 text-left text-xs font-medium border-t border-neutral-800 pt-2.5">
                     <div>
                       <span className="text-[10px] text-neutral-400 block uppercase font-sans tracking-wider">Agreement No.</span>
                       <span className="font-mono font-bold text-white text-xs block mt-0.5 whitespace-nowrap">{formattedAgrNumber}</span>
@@ -282,7 +362,7 @@ export function ModernAgreementTemplate({
             </div>
 
             {/* Intro Paragraph */}
-            <div className="px-10 mt-4 text-xs text-neutral-800 font-medium leading-relaxed">
+            <div className="px-10 mt-2.5 text-xs text-neutral-800 font-medium leading-relaxed">
               <p>
                 This IT Development Agreement (&quot;Agreement&quot;) is made and entered into on{" "}
                 <strong className="text-neutral-900 font-bold">{formatDate(effectiveDate)}</strong> (&quot;Effective Date&quot;), by and between the parties mentioned below.
@@ -290,18 +370,18 @@ export function ModernAgreementTemplate({
             </div>
 
             {/* Parties Pill Header & 2-Column Grid */}
-            <div className="px-10 mt-3" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
-              <div className="grid grid-cols-2 gap-4 bg-[#0a0a0a] text-white rounded-full py-2.5 px-6 text-xs font-black uppercase tracking-wider mb-2 shadow-md" style={{ lineHeight: "1.4" }}>
+            <div className="px-10 mt-2.5" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+              <div className="grid grid-cols-2 gap-4 bg-[#0a0a0a] text-white rounded-full py-2 px-6 text-xs font-black uppercase tracking-wider mb-1.5 shadow-md" style={{ lineHeight: "1.4" }}>
                 <span className="text-left pl-2" style={{ display: "block", lineHeight: "1.4" }}>1. SERVICE PROVIDER</span>
                 <span className="text-left pl-3" style={{ display: "block", lineHeight: "1.4" }}>2. CLIENT</span>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 bg-neutral-50 p-3.5 rounded-2xl border border-neutral-200 text-xs">
+              <div className="grid grid-cols-2 gap-4 bg-neutral-50 p-3 rounded-2xl border border-neutral-200 text-xs">
                 {/* Service Provider */}
-                <div className="space-y-1 pr-3 border-r border-neutral-200">
+                <div className="space-y-0.5 pr-3 border-r border-neutral-200">
                   <h3 className="text-xs font-black text-neutral-900">{providerCompany || providerName || "SevenX Labs"}</h3>
-                  <p className="text-neutral-700 font-medium text-xs">{providerAddress || "Thane, Mumbai, Maharashtra"}</p>
-                  <div className="pt-0.5 space-y-0.5 text-xs">
+                  <p className="text-neutral-700 font-medium text-[11px]">{providerAddress || "Thane, Mumbai, Maharashtra"}</p>
+                  <div className="pt-0.5 space-y-0.5 text-[11px]">
                     <p><strong className="text-neutral-600 font-bold">Phone:</strong> {providerPhone || "-"}</p>
                     <p><strong className="text-neutral-600 font-bold">Email:</strong> {providerEmail || "-"}</p>
                     {(providerGst || providerPan) && (
@@ -311,15 +391,15 @@ export function ModernAgreementTemplate({
                 </div>
 
                 {/* Client */}
-                <div className="space-y-1 pl-3">
+                <div className="space-y-0.5 pl-3">
                   <h3 className="text-xs font-black text-neutral-900">
                     {clientName || <span className="text-neutral-400 italic font-normal">[ Client Name ]</span>}
                   </h3>
-                  {clientCompany && <p className="text-neutral-800 font-bold text-xs">{clientCompany}</p>}
-                  <p className="text-neutral-700 font-medium text-xs">
+                  {clientCompany && <p className="text-neutral-800 font-bold text-[11px]">{clientCompany}</p>}
+                  <p className="text-neutral-700 font-medium text-[11px]">
                     {clientAddress || <span className="text-neutral-400 italic font-normal">[ Client Address ]</span>}
                   </p>
-                  <div className="pt-0.5 space-y-0.5 text-xs">
+                  <div className="pt-0.5 space-y-0.5 text-[11px]">
                     <p><strong className="text-neutral-600 font-bold">Phone:</strong> {clientPhone || "-"}</p>
                     <p><strong className="text-neutral-600 font-bold">Email:</strong> {clientEmail || "-"}</p>
                     {(clientGst || clientPan) && (
@@ -331,55 +411,67 @@ export function ModernAgreementTemplate({
             </div>
 
             {/* Sections on Page 1 */}
-            <div className="px-10 mt-3 space-y-3">
+            <div className="px-10 mt-2.5 space-y-2.5">
               {/* Section 3: Project Overview */}
-              <div className="p-3.5 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
-                <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <Briefcase style={{ width: "16px", height: "16px", display: "block" }} />
+              <div className="p-3 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "10px", breakInside: "avoid", pageBreakInside: "avoid" }}>
+                <div className={`p-2 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Briefcase style={{ width: "15px", height: "15px", display: "block" }} />
                 </div>
                 <div className="flex-1 grid grid-cols-12 gap-3">
-                  <div className="col-span-6 space-y-1">
+                  <div className="col-span-5 space-y-1">
                     <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">3. PROJECT OVERVIEW</h4>
-                    <p className="text-xs text-neutral-800 leading-relaxed font-medium">
+                    <p className="text-[11px] text-neutral-800 leading-relaxed font-medium line-clamp-4">
                       {projectDescription || <span className="text-neutral-400 italic font-normal">[ Enter project overview description... ]</span>}
                     </p>
                     {businessGoal && (
-                      <p className="text-[11px] text-neutral-600 leading-snug font-medium pt-1 border-t border-neutral-100">
+                      <p className="text-[10.5px] text-neutral-600 leading-snug font-medium pt-1 border-t border-neutral-100 line-clamp-2">
                         <strong className="text-neutral-800 font-bold">Goal:</strong> {businessGoal}
                       </p>
                     )}
                   </div>
-                  <div className="col-span-6 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs space-y-1 font-mono text-neutral-800">
-                    <p><strong className="text-neutral-600 font-bold font-sans">Type:</strong> {projectType || <span className="text-neutral-400 italic font-normal">[ Project Type ]</span>}</p>
-                    <p><strong className="text-neutral-600 font-bold font-sans">Tech Stack:</strong> {techStack || <span className="text-neutral-400 italic font-normal">[ Technology Stack ]</span>}</p>
-                    <p><strong className="text-neutral-600 font-bold font-sans">Platforms:</strong> {platforms || <span className="text-neutral-400 italic font-normal">[ Target Platforms ]</span>}</p>
+
+                  <div className="col-span-7 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs space-y-1 text-neutral-800">
+                    <div className="flex items-baseline gap-1 font-mono text-[10.5px]">
+                      <strong className="text-neutral-600 font-bold font-sans text-[10px] uppercase shrink-0">Type:</strong>
+                      <span className="font-semibold text-neutral-900">{projectType || <span className="text-neutral-400 italic font-normal">[ Project Type ]</span>}</span>
+                    </div>
+
+                    <div>
+                      <strong className="text-neutral-600 font-bold font-sans text-[10px] uppercase block">Tech Stack:</strong>
+                      {renderFormattedTechStack(techStack)}
+                    </div>
+
+                    {platforms && (
+                      <div className="flex items-baseline gap-1 font-mono text-[10.5px] pt-1 border-t border-neutral-200/60">
+                        <strong className="text-neutral-600 font-bold font-sans text-[10px] uppercase shrink-0">Platforms:</strong>
+                        <span className="font-medium text-neutral-800">{platforms}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
 
               {/* Section 4: Scope of Work */}
-              <div className="p-3.5 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
-                <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <Target style={{ width: "16px", height: "16px", display: "block" }} />
+              <div className="p-3 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "10px", breakInside: "avoid", pageBreakInside: "avoid" }}>
+                <div className={`p-2 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Target style={{ width: "15px", height: "15px", display: "block" }} />
                 </div>
                 <div className="flex-1 grid grid-cols-12 gap-3">
-                  <div className="col-span-5">
+                  <div className="col-span-4">
                     <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">4. SCOPE OF WORK</h4>
-                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium">Full lifecycle engineering & code delivery as specified.</p>
+                    <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium">Full lifecycle engineering & code delivery as specified.</p>
                   </div>
-                  <div className="col-span-7 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs space-y-1 font-mono text-neutral-800">
+
+                  <div className="col-span-8 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs space-y-1 text-neutral-800">
                     <div>
-                      <span className="text-[10px] font-bold text-neutral-500 uppercase block font-sans">Included Scope</span>
-                      {includedScope ? (
-                        <p className="whitespace-pre-line leading-relaxed">{includedScope}</p>
-                      ) : (
-                        <span className="text-neutral-400 italic font-normal">[ Enter included scope of work... ]</span>
-                      )}
+                      <span className="text-[10px] font-extrabold text-neutral-500 uppercase block font-sans tracking-wider">Included Scope</span>
+                      {renderFormattedIncludedScope(includedScope)}
                     </div>
+
                     {excludedScope && (
-                      <div className="pt-1.5 border-t border-neutral-200">
-                        <span className="text-[10px] font-bold text-red-600 uppercase block font-sans">Excluded Scope</span>
-                        <p className="whitespace-pre-line leading-relaxed text-neutral-600">{excludedScope}</p>
+                      <div className="pt-1 border-t border-neutral-200">
+                        <span className="text-[9.5px] font-bold text-red-600 uppercase block font-sans">Excluded Scope</span>
+                        <p className="whitespace-pre-line leading-relaxed text-[10px] text-neutral-600 font-mono line-clamp-2">{excludedScope}</p>
                       </div>
                     )}
                   </div>
@@ -388,19 +480,19 @@ export function ModernAgreementTemplate({
 
               {/* In 2-page mode, Section 5 is also on Page 1 */}
               {basePages === 2 && (
-                <div className="p-3 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
-                  <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <Calendar style={{ width: "16px", height: "16px", display: "block" }} />
+                <div className="p-2.5 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "10px", breakInside: "avoid", pageBreakInside: "avoid" }}>
+                  <div className={`p-2 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Calendar style={{ width: "15px", height: "15px", display: "block" }} />
                   </div>
                   <div className="flex-1 grid grid-cols-12 gap-3">
                     <div className="col-span-5">
                       <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">5. TIMELINE & MILESTONES</h4>
-                      <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium">Execution according to agreed milestone deadlines.</p>
+                      <p className="text-[11px] text-neutral-800 mt-0.5 leading-relaxed font-medium">Execution according to agreed milestone deadlines.</p>
                     </div>
-                    <div className="col-span-7 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs space-y-0.5 font-mono text-neutral-800">
-                      <p><strong className="text-neutral-600 font-bold">Start Date:</strong> {formatDate(startDate)}</p>
-                      <p><strong className="text-neutral-600 font-bold">Estimated Completion:</strong> {formatDate(deliveryDate)}</p>
-                      <p><strong className="text-neutral-600 font-bold">Duration:</strong> {durationDays} Days</p>
+                    <div className="col-span-7 bg-neutral-50 p-2 rounded-xl border border-neutral-100 text-[11px] space-y-0.5 font-mono text-neutral-800">
+                      <p><strong className="text-neutral-600 font-bold font-sans">Start Date:</strong> {formatDate(startDate)}</p>
+                      <p><strong className="text-neutral-600 font-bold font-sans">Target Completion:</strong> {formatDate(deliveryDate)}</p>
+                      <p><strong className="text-neutral-600 font-bold font-sans">Duration:</strong> {durationDays} Days</p>
                     </div>
                   </div>
                 </div>
