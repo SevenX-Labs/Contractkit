@@ -27,6 +27,7 @@ import {
   Lock,
   Code,
   PenTool,
+  Layers,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -51,6 +52,8 @@ export default function AgreementPage() {
   const [showFloatingPreview, setShowFloatingPreview] = useState(false);
   const [openSections, setOpenSections] = useState<Record<number, boolean>>({ 1: true, 2: true, 3: true, 7: true, 10: true });
   const [showAllSections, setShowAllSections] = useState(false);
+  const [pageLayoutMode, setPageLayoutMode] = useState<"2-page" | "3-page">("3-page");
+  const [activePreviewPage, setActivePreviewPage] = useState<number>(1);
 
   const toggleSection = (sectionIndex: number) => {
     setOpenSections((prev) => ({ ...prev, [sectionIndex]: !prev[sectionIndex] }));
@@ -79,6 +82,8 @@ export default function AgreementPage() {
     projectTitle: "IT DEVELOPMENT AGREEMENT",
     projectDescription: "End-to-end architecture, design, development, testing, and cloud deployment of custom web application and administrative dashboard.",
     businessGoal: "Automate client workflows, payment milestone tracking, and digital contract generation.",
+    projectType: "Full-Stack Web & Cross-Platform Mobile App",
+    platforms: "Web Browser, iOS App Store, Google Play Store",
 
     // Section 4: Scope of Work
     includedScope: "• Custom dashboard & authentication\n• REST APIs development & integration\n• PostgreSQL database & migrations\n• High-performance PDF/DOCX/PNG export engine",
@@ -117,6 +122,12 @@ export default function AgreementPage() {
     clientSignatureName: "Sophia Smith (Managing Director)",
     freelancerSignDate: new Date().toISOString().split("T")[0],
     clientSignDate: new Date().toISOString().split("T")[0],
+
+    // Payment Info
+    bankName: "HDFC Bank",
+    bankAccount: "50100234567890",
+    bankIfsc: "HDFC0001234",
+    upiId: "sevenxlabs@upi",
   });
 
   const [agrSeq, setAgrSeq] = useState("000001");
@@ -126,7 +137,7 @@ export default function AgreementPage() {
     if (savedEdit) {
       try {
         const parsed = JSON.parse(savedEdit);
-        setFormData(parsed);
+        setFormData((prev) => ({ ...prev, ...parsed }));
         localStorage.removeItem("edit_agreement");
         toast.success("Document loaded into editor!");
         return;
@@ -144,18 +155,20 @@ export default function AgreementPage() {
       setFormData((prev) => ({
         ...prev,
         agreementNumber: fullDocNum,
-        freelancerName: profile.name || "Sahil Hode",
+        freelancerName: profile.name || prev.freelancerName,
         freelancerCompany: "SevenX Labs",
-        freelancerAddress: profile.address || "Thane, Mumbai, Maharashtra",
-        freelancerEmail: profile.email || "sevenxlabs07@gmail.com",
-        freelancerPhone: profile.phone || "+91 8652601566",
-        bankName: profile.bankName || "HDFC Bank",
-        bankAccount: profile.bankAccount || "50100234567890",
-        bankIfsc: profile.bankIfsc || "HDFC0001234",
-        upiId: profile.upiId || "sevenxlabs@upi",
+        freelancerAddress: profile.address || prev.freelancerAddress,
+        freelancerEmail: profile.email || prev.freelancerEmail,
+        freelancerPhone: profile.phone || prev.freelancerPhone,
+        bankName: profile.bankName || prev.bankName,
+        bankAccount: profile.bankAccount || prev.bankAccount,
+        bankIfsc: profile.bankIfsc || prev.bankIfsc,
+        upiId: profile.upiId || prev.upiId,
       }));
     });
   }, []);
+
+  const totalPagesCount = pageLayoutMode === "3-page" ? 3 : 2;
 
   const handlePaymentStructureChange = (structure: string) => {
     const val = formData.totalAmount;
@@ -220,8 +233,6 @@ export default function AgreementPage() {
     }
   };
 
-  const [activePreviewPage, setActivePreviewPage] = useState<number>(1);
-
   const handleExportPDF = async () => {
     const currentDocNum = formData.agreementNumber;
     await exportToPDF("agreement-pdf-preview", `Agreement-${currentDocNum}.pdf`);
@@ -244,6 +255,8 @@ export default function AgreementPage() {
     <ModernAgreementTemplate
       id={elementId}
       activePage={page}
+      pageLayout={pageLayoutMode}
+      totalPages={totalPagesCount}
       agreementNumber={formData.agreementNumber}
       effectiveDate={formData.date}
       version={formData.version}
@@ -260,16 +273,24 @@ export default function AgreementPage() {
       projectTitle={formData.projectTitle}
       projectDescription={formData.projectDescription}
       businessGoal={formData.businessGoal}
+      projectType={formData.projectType}
+      platforms={formData.platforms}
       techStack={formData.techStack}
       includedScope={formData.includedScope}
       excludedScope={formData.excludedScope}
+      milestones={formData.milestones}
+      paymentRows={formData.paymentRows}
       deliverables={formData.deliverablesList}
       startDate={formData.startDate}
       deliveryDate={formData.deadline}
       totalAmount={formData.totalAmount}
-      advanceAmount={formData.totalAmount * 0.5}
-      balanceAmount={formData.totalAmount * 0.5}
+      advanceAmount={formData.paymentRows[0]?.amount || formData.totalAmount * 0.5}
+      balanceAmount={formData.paymentRows[1]?.amount || formData.totalAmount * 0.5}
       paymentSchedule={`${formData.paymentStructure} payment structure.`}
+      bankName={formData.bankName}
+      bankAccount={formData.bankAccount}
+      bankIfsc={formData.bankIfsc}
+      upiId={formData.upiId}
       ipClause={formData.ipTransferCondition}
       confidentialityClause={formData.confidentialityClause}
       warrantyPeriod={formData.freeSupportPeriod}
@@ -278,6 +299,19 @@ export default function AgreementPage() {
       currencySymbol="₹"
     />
   );
+
+  const isSectionVisible = (sectionNum: number) => {
+    if (showAllSections) return true;
+    if (pageLayoutMode === "3-page") {
+      if (activePreviewPage === 1) return sectionNum >= 1 && sectionNum <= 4;
+      if (activePreviewPage === 2) return sectionNum >= 5 && sectionNum <= 7;
+      if (activePreviewPage === 3) return sectionNum >= 8 && sectionNum <= 10;
+    } else {
+      if (activePreviewPage === 1) return sectionNum >= 1 && sectionNum <= 5;
+      if (activePreviewPage === 2) return sectionNum >= 6 && sectionNum <= 10;
+    }
+    return true;
+  };
 
   return (
     <div className="flex flex-col gap-6 pb-12">
@@ -289,7 +323,7 @@ export default function AgreementPage() {
           </div>
           <div>
             <h1 className="text-xl font-extrabold text-neutral-900 tracking-tight">Create Agreement</h1>
-            <p className="text-xs text-neutral-600 font-medium">Generate a professional freelance contract matching invoice design system</p>
+            <p className="text-xs text-neutral-600 font-medium">Generate a professional freelance contract with dynamic multi-page layout</p>
           </div>
         </div>
 
@@ -330,9 +364,7 @@ export default function AgreementPage() {
               <h3 className="text-xs font-black text-neutral-900 uppercase tracking-wider">
                 {showAllSections
                   ? "All Form Sections (1 - 10)"
-                  : activePreviewPage === 1
-                  ? "Page 1 Sections (Sections 1 - 6)"
-                  : "Page 2 Sections (Sections 7 - 10)"}
+                  : `Page ${activePreviewPage} Sections`}
               </h3>
               <p className="text-[10px] text-neutral-500 font-medium">
                 {showAllSections
@@ -345,14 +377,14 @@ export default function AgreementPage() {
               onClick={() => setShowAllSections(!showAllSections)}
               className="text-[11px] font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 px-3 py-1.5 rounded-full border border-purple-200 transition cursor-pointer"
             >
-              {showAllSections ? "Show Page Form" : "Show All Sections"}
+              {showAllSections ? "Show Active Page Form" : "Show All Sections"}
             </button>
           </div>
 
-          {/* PAGE 1 SECTIONS (1 - 6) */}
-          {(showAllSections || activePreviewPage === 1) && (
-            <>
-              {/* SECTION 1: Agreement Info */}
+          {/* PAGE SECTIONS (1 - 10) */}
+          <div className="flex flex-col gap-4">
+            {/* SECTION 1: Agreement Info */}
+            {isSectionVisible(1) && (
               <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-2xl overflow-hidden shadow-sm">
                 <button
                   onClick={() => toggleSection(1)}
@@ -400,8 +432,10 @@ export default function AgreementPage() {
                   </div>
                 )}
               </div>
+            )}
 
-              {/* SECTION 2: Parties */}
+            {/* SECTION 2: Parties */}
+            {isSectionVisible(2) && (
               <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-2xl overflow-hidden shadow-sm">
                 <button
                   onClick={() => toggleSection(2)}
@@ -482,44 +516,79 @@ export default function AgreementPage() {
                   </div>
                 )}
               </div>
+            )}
 
-              {/* SECTION 3: Project Overview */}
+            {/* SECTION 3: Project Overview */}
+            {isSectionVisible(3) && (
               <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-2xl overflow-hidden shadow-sm">
                 <button
                   onClick={() => toggleSection(3)}
                   className="w-full px-5 py-3.5 flex items-center justify-between font-extrabold text-xs text-neutral-900 hover:bg-[#DFD9C9] transition cursor-pointer"
                 >
-                  <span>SECTION 3: Project Overview</span>
+                  <span>SECTION 3: Project Overview & Target Specifications</span>
                   {openSections[3] ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                 </button>
                 {openSections[3] && (
                   <div className="p-5 border-t border-[#D5CEBC] flex flex-col gap-3">
-                    <input
-                      type="text"
-                      placeholder="Project Title"
-                      value={formData.projectTitle}
-                      onChange={(e) => setFormData({ ...formData, projectTitle: e.target.value })}
-                      className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900"
-                    />
-                    <textarea
-                      placeholder="Brief Description (2-3 lines)"
-                      rows={3}
-                      value={formData.projectDescription}
-                      onChange={(e) => setFormData({ ...formData, projectDescription: e.target.value })}
-                      className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 resize-none"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Business Goal (what problem this solves)"
-                      value={formData.businessGoal}
-                      onChange={(e) => setFormData({ ...formData, businessGoal: e.target.value })}
-                      className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900"
-                    />
+                    <div>
+                      <label className="text-[11px] font-bold text-neutral-700 block mb-1">Project Title</label>
+                      <input
+                        type="text"
+                        placeholder="Project Title"
+                        value={formData.projectTitle}
+                        onChange={(e) => setFormData({ ...formData, projectTitle: e.target.value })}
+                        className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-bold text-neutral-700 block mb-1">Project Description</label>
+                      <textarea
+                        placeholder="Brief Description (e.g. End-to-end architecture, development...)"
+                        rows={3}
+                        value={formData.projectDescription}
+                        onChange={(e) => setFormData({ ...formData, projectDescription: e.target.value })}
+                        className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 resize-none font-medium"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-bold text-neutral-700 block mb-1">Business Goal</label>
+                      <input
+                        type="text"
+                        placeholder="Business Goal (what problem this solves)"
+                        value={formData.businessGoal}
+                        onChange={(e) => setFormData({ ...formData, businessGoal: e.target.value })}
+                        className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 pt-1 border-t border-[#D5CEBC]">
+                      <div>
+                        <label className="text-[11px] font-bold text-neutral-700 block mb-1">Project Type</label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Full-Stack Web & Cross-Platform Mobile App"
+                          value={formData.projectType}
+                          onChange={(e) => setFormData({ ...formData, projectType: e.target.value })}
+                          className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-bold text-neutral-700 block mb-1">Target Platforms</label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Web Browser, iOS App Store, Google Play Store"
+                          value={formData.platforms}
+                          onChange={(e) => setFormData({ ...formData, platforms: e.target.value })}
+                          className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900"
+                        />
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
+            )}
 
-              {/* SECTION 4: Scope of Work */}
+            {/* SECTION 4: Scope of Work */}
+            {isSectionVisible(4) && (
               <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-2xl overflow-hidden shadow-sm">
                 <button
                   onClick={() => toggleSection(4)}
@@ -530,32 +599,43 @@ export default function AgreementPage() {
                 </button>
                 {openSections[4] && (
                   <div className="p-5 border-t border-[#D5CEBC] flex flex-col gap-3">
-                    <textarea
-                      placeholder="What's INCLUDED (bullet list)"
-                      rows={3}
-                      value={formData.includedScope}
-                      onChange={(e) => setFormData({ ...formData, includedScope: e.target.value })}
-                      className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-mono resize-none"
-                    />
-                    <textarea
-                      placeholder="What's NOT INCLUDED (explicit exclusions)"
-                      rows={2}
-                      value={formData.excludedScope}
-                      onChange={(e) => setFormData({ ...formData, excludedScope: e.target.value })}
-                      className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-mono resize-none"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Technology Stack"
-                      value={formData.techStack}
-                      onChange={(e) => setFormData({ ...formData, techStack: e.target.value })}
-                      className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900"
-                    />
+                    <div>
+                      <label className="text-[11px] font-bold text-neutral-700 block mb-1">What&apos;s INCLUDED Scope</label>
+                      <textarea
+                        placeholder="What's INCLUDED (bullet list)"
+                        rows={3}
+                        value={formData.includedScope}
+                        onChange={(e) => setFormData({ ...formData, includedScope: e.target.value })}
+                        className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-mono resize-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-bold text-neutral-700 block mb-1">What&apos;s EXCLUDED Scope</label>
+                      <textarea
+                        placeholder="What's NOT INCLUDED (explicit exclusions)"
+                        rows={2}
+                        value={formData.excludedScope}
+                        onChange={(e) => setFormData({ ...formData, excludedScope: e.target.value })}
+                        className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-mono resize-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-bold text-neutral-700 block mb-1">Technology Stack</label>
+                      <input
+                        type="text"
+                        placeholder="Technology Stack"
+                        value={formData.techStack}
+                        onChange={(e) => setFormData({ ...formData, techStack: e.target.value })}
+                        className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-bold"
+                      />
+                    </div>
                   </div>
                 )}
               </div>
+            )}
 
-              {/* SECTION 5: Milestones */}
+            {/* SECTION 5: Timeline & Milestones */}
+            {isSectionVisible(5) && (
               <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-2xl overflow-hidden shadow-sm">
                 <button
                   onClick={() => toggleSection(5)}
@@ -566,7 +646,28 @@ export default function AgreementPage() {
                 </button>
                 {openSections[5] && (
                   <div className="p-5 border-t border-[#D5CEBC] flex flex-col gap-3">
-                    <div className="flex items-center justify-between">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[11px] font-bold text-neutral-700 block mb-1">Start Date</label>
+                        <input
+                          type="date"
+                          value={formData.startDate}
+                          onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                          className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-bold text-neutral-700 block mb-1">Target Deadline</label>
+                        <input
+                          type="date"
+                          value={formData.deadline}
+                          onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
+                          className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2">
                       <span className="text-[11px] font-bold text-neutral-700">Project Milestones</span>
                       <button
                         type="button"
@@ -577,6 +678,7 @@ export default function AgreementPage() {
                         <span>Add Milestone</span>
                       </button>
                     </div>
+
                     {formData.milestones.map((m) => (
                       <div key={m.id} className="grid grid-cols-12 gap-2 bg-[#F4F0E6] p-3 rounded-xl border border-[#E2DDD0]">
                         <input
@@ -599,7 +701,7 @@ export default function AgreementPage() {
                               milestones: formData.milestones.map((row) => (row.id === m.id ? { ...row, description: e.target.value } : row)),
                             })
                           }
-                          className="col-span-5 bg-transparent text-xs text-neutral-700"
+                          className="col-span-4 bg-transparent text-xs text-neutral-700"
                         />
                         <input
                           type="date"
@@ -610,12 +712,12 @@ export default function AgreementPage() {
                               milestones: formData.milestones.map((row) => (row.id === m.id ? { ...row, deadline: e.target.value } : row)),
                             })
                           }
-                          className="col-span-2 bg-[#EBE7DC] text-xs font-mono text-neutral-900 rounded p-1"
+                          className="col-span-3 bg-transparent text-xs text-neutral-900 font-mono"
                         />
                         <button
                           type="button"
                           onClick={() => removeMilestone(m.id)}
-                          className="col-span-1 text-neutral-400 hover:text-pink-700 text-right cursor-pointer"
+                          className="col-span-1 text-red-500 hover:text-red-700 flex items-center justify-center cursor-pointer"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -624,26 +726,28 @@ export default function AgreementPage() {
                   </div>
                 )}
               </div>
+            )}
 
-              {/* SECTION 6: Payment Terms */}
+            {/* SECTION 6: Payment Terms */}
+            {isSectionVisible(6) && (
               <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-2xl overflow-hidden shadow-sm">
                 <button
                   onClick={() => toggleSection(6)}
                   className="w-full px-5 py-3.5 flex items-center justify-between font-extrabold text-xs text-neutral-900 hover:bg-[#DFD9C9] transition cursor-pointer"
                 >
-                  <span>SECTION 6: Payment Terms & Auto-Milestones</span>
+                  <span>SECTION 6: Payment Terms & Schedule</span>
                   {openSections[6] ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                 </button>
                 {openSections[6] && (
                   <div className="p-5 border-t border-[#D5CEBC] flex flex-col gap-3">
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="text-[11px] font-bold text-neutral-700 block mb-1">Total Fee (₹)</label>
+                        <label className="text-[11px] font-bold text-neutral-700 block mb-1">Total Amount (₹)</label>
                         <input
                           type="number"
                           value={formData.totalAmount}
                           onChange={(e) => handleTotalAmountChange(Number(e.target.value))}
-                          className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-extrabold text-neutral-900"
+                          className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-black text-neutral-900"
                         />
                       </div>
                       <div>
@@ -651,49 +755,34 @@ export default function AgreementPage() {
                         <select
                           value={formData.paymentStructure}
                           onChange={(e) => handlePaymentStructureChange(e.target.value)}
-                          className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900"
+                          className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 cursor-pointer"
                         >
-                          <option value="50/50">50/50 Split (50% Advance + 50% Final)</option>
-                          <option value="3-Way Split">3-Way Split (30% + 30% + 40%)</option>
-                          <option value="Milestone-based">Milestone-based (40% + 60%)</option>
-                          <option value="Full Upfront">Full Upfront (100%)</option>
-                          <option value="Full Payment After Work">Full Payment After Work (100% Upon Completion)</option>
-                          <option value="Monthly Retainer">Monthly Retainer</option>
+                          <option value="50/50">50% Advance / 50% Handover</option>
+                          <option value="3-Way Split">30% / 30% / 40% Split</option>
+                          <option value="Full Upfront">100% Upfront Deposit</option>
+                          <option value="Full Payment After Work">100% Upon Handover</option>
                         </select>
                       </div>
-                    </div>
-
-                    <div className="mt-2 flex flex-col gap-2">
-                      <span className="text-[11px] font-bold text-neutral-700">Auto-Generated Payment Breakdown</span>
-                      {formData.paymentRows.map((r) => (
-                        <div key={r.id} className="flex items-center justify-between p-2.5 rounded-xl bg-[#F4F0E6] border border-[#E2DDD0] text-xs">
-                          <span className="font-bold text-neutral-900">{r.label} ({r.percentage}%)</span>
-                          <span className="font-extrabold font-mono text-neutral-900">{formatCurrency(r.amount, "₹")}</span>
-                        </div>
-                      ))}
                     </div>
                   </div>
                 )}
               </div>
-            </>
-          )}
+            )}
 
-          {/* PAGE 2 SECTIONS (7 - 10) */}
-          {(showAllSections || activePreviewPage === 2) && (
-            <>
-              {/* SECTION 7: IP Rights */}
+            {/* SECTION 7: Intellectual Property */}
+            {isSectionVisible(7) && (
               <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-2xl overflow-hidden shadow-sm">
                 <button
                   onClick={() => toggleSection(7)}
                   className="w-full px-5 py-3.5 flex items-center justify-between font-extrabold text-xs text-neutral-900 hover:bg-[#DFD9C9] transition cursor-pointer"
                 >
-                  <span>SECTION 7: Intellectual Property & Ownership</span>
+                  <span>SECTION 7: Intellectual Property & Source Code</span>
                   {openSections[7] ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                 </button>
                 {openSections[7] && (
                   <div className="p-5 border-t border-[#D5CEBC] flex flex-col gap-3">
                     <textarea
-                      placeholder="IP Transfer Condition"
+                      placeholder="Intellectual Property Transfer Clause"
                       rows={3}
                       value={formData.ipTransferCondition}
                       onChange={(e) => setFormData({ ...formData, ipTransferCondition: e.target.value })}
@@ -702,8 +791,10 @@ export default function AgreementPage() {
                   </div>
                 )}
               </div>
+            )}
 
-              {/* SECTION 8: Deliverables */}
+            {/* SECTION 8: Deliverables */}
+            {isSectionVisible(8) && (
               <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-2xl overflow-hidden shadow-sm">
                 <button
                   onClick={() => toggleSection(8)}
@@ -724,8 +815,10 @@ export default function AgreementPage() {
                   </div>
                 )}
               </div>
+            )}
 
-              {/* SECTION 9: Confidentiality & Warranty */}
+            {/* SECTION 9: Confidentiality & Support */}
+            {isSectionVisible(9) && (
               <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-2xl overflow-hidden shadow-sm">
                 <button
                   onClick={() => toggleSection(9)}
@@ -741,7 +834,7 @@ export default function AgreementPage() {
                       rows={2}
                       value={formData.confidentialityClause}
                       onChange={(e) => setFormData({ ...formData, confidentialityClause: e.target.value })}
-                      className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 resize-none"
+                      className="bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 resize-none font-medium"
                     />
                     <input
                       type="text"
@@ -753,8 +846,10 @@ export default function AgreementPage() {
                   </div>
                 )}
               </div>
+            )}
 
-              {/* SECTION 10: Digital Signatures */}
+            {/* SECTION 10: Digital Signatures */}
+            {isSectionVisible(10) && (
               <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-2xl overflow-hidden shadow-sm">
                 <button
                   onClick={() => toggleSection(10)}
@@ -788,36 +883,65 @@ export default function AgreementPage() {
                   </div>
                 )}
               </div>
-            </>
-          )}
+            )}
+          </div>
         </div>
 
         {/* Live A4 Preview Panel */}
         <div className="lg:col-span-6 flex flex-col gap-4">
-          <div className="flex items-center justify-between px-2">
+          <div className="flex items-center justify-between px-2 flex-wrap gap-2">
             <span className="text-xs font-bold text-neutral-700 uppercase tracking-wider">Live Contract Preview</span>
             
-            {/* Page Arrow Switcher */}
-            <div className="flex items-center gap-2 bg-[#EBE7DC] px-3 py-1 rounded-full border border-[#E2DDD0] shadow-xs">
-              <button
-                disabled={activePreviewPage === 1}
-                onClick={() => setActivePreviewPage(1)}
-                className="p-1 rounded-full hover:bg-[#DFD9C9] disabled:opacity-30 transition cursor-pointer text-neutral-900"
-                title="Previous Page"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <span className="text-xs font-bold font-mono text-neutral-900">
-                Page {activePreviewPage} of 2
-              </span>
-              <button
-                disabled={activePreviewPage === 2}
-                onClick={() => setActivePreviewPage(2)}
-                className="p-1 rounded-full hover:bg-[#DFD9C9] disabled:opacity-30 transition cursor-pointer text-neutral-900"
-                title="Next Page"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
+            <div className="flex items-center gap-3">
+              {/* Page Layout Mode Selector Switch */}
+              <div className="flex items-center bg-[#EBE7DC] p-0.5 rounded-full border border-[#E2DDD0]">
+                <button
+                  onClick={() => {
+                    setPageLayoutMode("2-page");
+                    if (activePreviewPage > 2) setActivePreviewPage(2);
+                  }}
+                  className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition cursor-pointer ${
+                    pageLayoutMode === "2-page"
+                      ? "bg-[#0a0a0a] text-white shadow-xs"
+                      : "text-neutral-600 hover:text-neutral-900"
+                  }`}
+                >
+                  2 Pages
+                </button>
+                <button
+                  onClick={() => setPageLayoutMode("3-page")}
+                  className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition cursor-pointer ${
+                    pageLayoutMode === "3-page"
+                      ? "bg-[#0a0a0a] text-white shadow-xs"
+                      : "text-neutral-600 hover:text-neutral-900"
+                  }`}
+                >
+                  3 Pages
+                </button>
+              </div>
+
+              {/* Page Arrow Switcher */}
+              <div className="flex items-center gap-2 bg-[#EBE7DC] px-3 py-1 rounded-full border border-[#E2DDD0] shadow-xs">
+                <button
+                  disabled={activePreviewPage === 1}
+                  onClick={() => setActivePreviewPage((prev) => Math.max(1, prev - 1))}
+                  className="p-1 rounded-full hover:bg-[#DFD9C9] disabled:opacity-30 transition cursor-pointer text-neutral-900"
+                  title="Previous Page"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <span className="text-xs font-bold font-mono text-neutral-900">
+                  Page {activePreviewPage} of {totalPagesCount}
+                </span>
+                <button
+                  disabled={activePreviewPage === totalPagesCount}
+                  onClick={() => setActivePreviewPage((prev) => Math.min(totalPagesCount, prev + 1))}
+                  className="p-1 rounded-full hover:bg-[#DFD9C9] disabled:opacity-30 transition cursor-pointer text-neutral-900"
+                  title="Next Page"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
 
@@ -836,7 +960,7 @@ export default function AgreementPage() {
             </div>
           </div>
 
-          {/* Hidden Offscreen Container for PDF Export (Both Pages) */}
+          {/* Hidden Offscreen Container for PDF Export (All Pages) */}
           <div style={{ position: "absolute", left: "-9999px", top: 0, width: "210mm", overflow: "hidden", pointerEvents: "none" }}>
             {renderAgreementContent(undefined, "agreement-pdf-preview")}
           </div>
@@ -847,28 +971,28 @@ export default function AgreementPage() {
       {showFloatingPreview && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-[#EBE7DC] border border-[#E2DDD0] rounded-3xl p-6 max-w-4xl w-full shadow-2xl flex flex-col gap-4 my-auto max-h-[90vh]">
-            <div className="flex items-center justify-between border-b border-[#D5CEBC] pb-4">
+            <div className="flex items-center justify-between border-b border-[#D5CEBC] pb-4 flex-wrap gap-3">
               <div>
                 <h3 className="text-base font-extrabold text-neutral-900">Floating Live Contract Preview</h3>
                 <p className="text-xs text-neutral-600 font-mono">Agreement #{formData.agreementNumber}</p>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 flex-wrap">
                 {/* Modal Page Switcher */}
                 <div className="flex items-center gap-2 bg-[#DFD9C9] px-3 py-1 rounded-full border border-[#D5CEBC]">
                   <button
                     disabled={activePreviewPage === 1}
-                    onClick={() => setActivePreviewPage(1)}
+                    onClick={() => setActivePreviewPage((prev) => Math.max(1, prev - 1))}
                     className="p-1 rounded-full hover:bg-neutral-900 hover:text-white disabled:opacity-30 transition cursor-pointer"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
                   <span className="text-xs font-bold font-mono text-neutral-900">
-                    Page {activePreviewPage} of 2
+                    Page {activePreviewPage} of {totalPagesCount}
                   </span>
                   <button
-                    disabled={activePreviewPage === 2}
-                    onClick={() => setActivePreviewPage(2)}
+                    disabled={activePreviewPage === totalPagesCount}
+                    onClick={() => setActivePreviewPage((prev) => Math.min(totalPagesCount, prev + 1))}
                     className="p-1 rounded-full hover:bg-neutral-900 hover:text-white disabled:opacity-30 transition cursor-pointer"
                   >
                     <ChevronRight className="w-4 h-4" />

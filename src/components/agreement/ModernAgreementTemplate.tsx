@@ -17,9 +17,26 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 
+export interface MilestoneItem {
+  id: string;
+  phaseName: string;
+  description: string;
+  deadline: string;
+}
+
+export interface PaymentItem {
+  id: string;
+  label: string;
+  percentage: number;
+  amount: number;
+  dueDate: string;
+}
+
 export interface AgreementTemplateProps {
   id?: string;
-  activePage?: number; // 1 or 2 (or undefined for all pages)
+  activePage?: number; // 1, 2, 3 (or undefined for all pages)
+  totalPages?: number;
+  pageLayout?: "2-page" | "3-page";
   agreementNumber: string;
   effectiveDate: string;
   version?: string;
@@ -55,12 +72,14 @@ export interface AgreementTemplateProps {
   startDate?: string;
   deliveryDate?: string;
   durationDays?: number;
+  milestones?: MilestoneItem[];
 
   totalAmount?: number;
   advanceAmount?: number;
   balanceAmount?: number;
   currencySymbol?: string;
   paymentSchedule?: string;
+  paymentRows?: PaymentItem[];
 
   bankName?: string;
   bankAccount?: string;
@@ -85,6 +104,8 @@ export interface AgreementTemplateProps {
 export function ModernAgreementTemplate({
   id = "agreement-pdf-preview",
   activePage,
+  totalPages,
+  pageLayout = "3-page",
   agreementNumber = "SXL-AGR-2026-000001",
   effectiveDate = new Date().toISOString().split("T")[0],
   version = "1.0",
@@ -107,20 +128,24 @@ export function ModernAgreementTemplate({
   clientPan = "FGHIJ5678K",
 
   projectDescription = "Design, development, testing, and deployment of enterprise web application and mobile app solution.",
+  businessGoal,
   projectType = "Full-Stack Web & Cross-Platform Mobile App",
   techStack = "Next.js, TypeScript, Tailwind CSS, Node.js, PostgreSQL, React Native",
   platforms = "Web Browser, iOS App Store, Google Play Store",
   includedScope = "• UI/UX Prototype Design & User Flow Architecture\n• Frontend & Backend API Development\n• Database Architecture & Cloud Infrastructure Setup\n• Quality Assurance Testing & Bug Fixes\n• Final Deployment & Code Handover",
+  excludedScope,
 
   startDate = new Date().toISOString().split("T")[0],
   deliveryDate = new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
   durationDays = 45,
+  milestones,
 
   totalAmount = 250000,
   advanceAmount = 125000,
   balanceAmount = 125000,
   currencySymbol = "₹",
   paymentSchedule = "50% Advance upon agreement signing, 50% upon final source code handover and deployment.",
+  paymentRows,
   bankName = "HDFC Bank",
   bankAccount = "50100234567890",
   bankIfsc = "HDFC0001234",
@@ -169,8 +194,12 @@ export function ModernAgreementTemplate({
     return agreementNumber;
   })();
 
+  const isThreePage = pageLayout === "3-page";
+  const numPages = totalPages || (isThreePage ? 3 : 2);
+
   const showPage1 = activePage === undefined || activePage === 1;
   const showPage2 = activePage === undefined || activePage === 2;
+  const showPage3 = isThreePage && (activePage === undefined || activePage === 3);
 
   return (
     <div
@@ -251,13 +280,13 @@ export function ModernAgreementTemplate({
             </div>
 
             {/* Parties Pill Header & 2-Column Grid */}
-            <div className="px-10 mt-4" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
-              <div className="grid grid-cols-2 gap-4 bg-[#0a0a0a] text-white rounded-full py-3 px-6 text-xs font-black uppercase tracking-wider mb-2 shadow-md" style={{ lineHeight: "1.4" }}>
+            <div className="px-10 mt-3" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+              <div className="grid grid-cols-2 gap-4 bg-[#0a0a0a] text-white rounded-full py-2.5 px-6 text-xs font-black uppercase tracking-wider mb-2 shadow-md" style={{ lineHeight: "1.4" }}>
                 <span className="text-left pl-2" style={{ display: "block", lineHeight: "1.4" }}>1. SERVICE PROVIDER</span>
                 <span className="text-left pl-3" style={{ display: "block", lineHeight: "1.4" }}>2. CLIENT</span>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 bg-neutral-50 p-4 rounded-2xl border border-neutral-200 text-xs">
+              <div className="grid grid-cols-2 gap-4 bg-neutral-50 p-3.5 rounded-2xl border border-neutral-200 text-xs">
                 {/* Service Provider */}
                 <div className="space-y-1 pr-3 border-r border-neutral-200">
                   <h3 className="text-xs font-black text-neutral-900">{providerCompany || providerName}</h3>
@@ -265,7 +294,9 @@ export function ModernAgreementTemplate({
                   <div className="pt-0.5 space-y-0.5 text-xs">
                     <p><strong className="text-neutral-600 font-bold">Phone:</strong> {providerPhone}</p>
                     <p><strong className="text-neutral-600 font-bold">Email:</strong> {providerEmail}</p>
-                    <p><strong className="text-neutral-600 font-bold">GST / PAN:</strong> {providerGst} / {providerPan}</p>
+                    {(providerGst || providerPan) && (
+                      <p><strong className="text-neutral-600 font-bold">GST / PAN:</strong> {providerGst || "-"} / {providerPan || "-"}</p>
+                    )}
                   </div>
                 </div>
 
@@ -277,34 +308,41 @@ export function ModernAgreementTemplate({
                   <div className="pt-0.5 space-y-0.5 text-xs">
                     <p><strong className="text-neutral-600 font-bold">Phone:</strong> {clientPhone}</p>
                     <p><strong className="text-neutral-600 font-bold">Email:</strong> {clientEmail}</p>
-                    <p><strong className="text-neutral-600 font-bold">GST / PAN:</strong> {clientGst} / {clientPan}</p>
+                    {(clientGst || clientPan) && (
+                      <p><strong className="text-neutral-600 font-bold">GST / PAN:</strong> {clientGst || "-"} / {clientPan || "-"}</p>
+                    )}
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Sections 3, 4, 5, 6 on Page 1 */}
-            <div className="px-10 mt-4 space-y-3">
+            {/* Sections on Page 1 */}
+            <div className="px-10 mt-3 space-y-3">
               {/* Section 3: Project Overview */}
-              <div className="p-3 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
+              <div className="p-3.5 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
                 <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <Briefcase style={{ width: "16px", height: "16px", display: "block" }} />
                 </div>
                 <div className="flex-1 grid grid-cols-12 gap-3">
-                  <div className="col-span-5">
+                  <div className="col-span-6 space-y-1">
                     <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">3. PROJECT OVERVIEW</h4>
-                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium">{projectDescription}</p>
+                    <p className="text-xs text-neutral-800 leading-relaxed font-medium">{projectDescription}</p>
+                    {businessGoal && (
+                      <p className="text-[11px] text-neutral-600 leading-snug font-medium pt-1 border-t border-neutral-100">
+                        <strong className="text-neutral-800 font-bold">Goal:</strong> {businessGoal}
+                      </p>
+                    )}
                   </div>
-                  <div className="col-span-7 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs space-y-0.5 font-mono text-neutral-800">
-                    <p><strong className="text-neutral-600 font-bold">Type:</strong> {projectType}</p>
-                    <p><strong className="text-neutral-600 font-bold">Tech Stack:</strong> {techStack}</p>
-                    <p><strong className="text-neutral-600 font-bold">Platforms:</strong> {platforms}</p>
+                  <div className="col-span-6 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs space-y-1 font-mono text-neutral-800">
+                    <p><strong className="text-neutral-600 font-bold font-sans">Type:</strong> {projectType || "Full-Stack Web & Cross-Platform Mobile App"}</p>
+                    <p><strong className="text-neutral-600 font-bold font-sans">Tech Stack:</strong> {techStack || "Next.js, TypeScript, PostgreSQL"}</p>
+                    <p><strong className="text-neutral-600 font-bold font-sans">Platforms:</strong> {platforms || "Web Browser, iOS, Android"}</p>
                   </div>
                 </div>
               </div>
 
               {/* Section 4: Scope of Work */}
-              <div className="p-3 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
+              <div className="p-3.5 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
                 <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <Target style={{ width: "16px", height: "16px", display: "block" }} />
                 </div>
@@ -313,83 +351,157 @@ export function ModernAgreementTemplate({
                     <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">4. SCOPE OF WORK</h4>
                     <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium">Full lifecycle engineering & code delivery as specified.</p>
                   </div>
-                  <div className="col-span-7 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs space-y-0.5 font-mono text-neutral-800">
-                    {includedScope ? (
+                  <div className="col-span-7 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs space-y-1 font-mono text-neutral-800">
+                    <div>
+                      <span className="text-[10px] font-bold text-neutral-500 uppercase block font-sans">Included Scope</span>
                       <p className="whitespace-pre-line leading-relaxed">{includedScope}</p>
-                    ) : (
-                      <p>Custom dashboard & authentication • REST APIs development & integration • PostgreSQL database & migrations • High-performance PDF/DOCX/PNG export engine</p>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Section 5: Timeline & Milestones */}
-              <div className="p-3 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
-                <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <Calendar style={{ width: "16px", height: "16px", display: "block" }} />
-                </div>
-                <div className="flex-1 grid grid-cols-12 gap-3">
-                  <div className="col-span-5">
-                    <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">5. TIMELINE & MILESTONES</h4>
-                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium">Execution according to agreed milestone deadlines.</p>
-                  </div>
-                  <div className="col-span-7 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs space-y-0.5 font-mono text-neutral-800">
-                    <p><strong className="text-neutral-600 font-bold">Start Date:</strong> {formatDate(startDate)}</p>
-                    <p><strong className="text-neutral-600 font-bold">Estimated Completion:</strong> {formatDate(deliveryDate)}</p>
-                    <p><strong className="text-neutral-600 font-bold">Duration:</strong> {durationDays} Days</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Section 6: Payment Terms */}
-              <div className="p-3 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
-                <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <IndianRupee style={{ width: "16px", height: "16px", display: "block" }} />
-                </div>
-                <div className="flex-1 grid grid-cols-12 gap-3">
-                  <div className="col-span-5">
-                    <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">6. PAYMENT TERMS</h4>
-                    <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium">{paymentSchedule}</p>
-                  </div>
-                  <div className="col-span-7 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs space-y-0.5 font-mono text-neutral-800">
-                    <p><strong className="text-neutral-600 font-bold">Total Project Fee:</strong> <span className="font-extrabold text-neutral-900">{formatCurrency(totalAmount, currencySymbol)}</span></p>
-                    <p><strong className="text-neutral-600 font-bold">Advance Deposit (50%):</strong> {formatCurrency(advanceAmount, currencySymbol)}</p>
-                    <p><strong className="text-neutral-600 font-bold">Balance Handover (50%):</strong> {formatCurrency(balanceAmount, currencySymbol)}</p>
-                    {bankName && (
-                      <div className="mt-1.5 pt-1.5 border-t border-neutral-200 text-[10px] text-neutral-700 font-mono">
-                        <p><strong>Bank:</strong> {bankName} {bankAccount ? `| A/C: ${bankAccount}` : ""} {bankIfsc ? `| IFSC: ${bankIfsc}` : ""}</p>
-                        {upiId && <p><strong>UPI:</strong> {upiId}</p>}
+                    </div>
+                    {excludedScope && (
+                      <div className="pt-1.5 border-t border-neutral-200">
+                        <span className="text-[10px] font-bold text-red-600 uppercase block font-sans">Excluded Scope</span>
+                        <p className="whitespace-pre-line leading-relaxed text-neutral-600">{excludedScope}</p>
                       </div>
                     )}
                   </div>
                 </div>
               </div>
+
+              {/* In 2-page mode, Section 5 is also on Page 1 if space permits */}
+              {!isThreePage && (
+                <div className="p-3 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
+                  <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Calendar style={{ width: "16px", height: "16px", display: "block" }} />
+                  </div>
+                  <div className="flex-1 grid grid-cols-12 gap-3">
+                    <div className="col-span-5">
+                      <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider">5. TIMELINE & MILESTONES</h4>
+                      <p className="text-xs text-neutral-800 mt-0.5 leading-relaxed font-medium">Execution according to agreed milestone deadlines.</p>
+                    </div>
+                    <div className="col-span-7 bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs space-y-0.5 font-mono text-neutral-800">
+                      <p><strong className="text-neutral-600 font-bold">Start Date:</strong> {formatDate(startDate)}</p>
+                      <p><strong className="text-neutral-600 font-bold">Estimated Completion:</strong> {formatDate(deliveryDate)}</p>
+                      <p><strong className="text-neutral-600 font-bold">Duration:</strong> {durationDays} Days</p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Page 1 Full-Width Black Footer Bar */}
-          <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20" style={{ display: "flex", justifyContent: "center", alignItems: "center", fontSize: "12px", fontWeight: 600 }}>
+          {/* Page 1 Footer Bar */}
+          <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20 flex justify-between items-center text-xs font-semibold">
             <span>Made with SevenX Labs</span>
+            <span className="font-mono text-[11px] text-neutral-400">Page 1 of {numPages}</span>
           </div>
         </div>
       )}
 
       {/* PAGE 2 */}
       {showPage2 && (
-        <div data-page="true" className="relative w-full h-[297mm] flex flex-col justify-between pt-8 pb-0 overflow-hidden">
+        <div data-page="true" className="relative w-full h-[297mm] flex flex-col justify-between pt-7 pb-0 overflow-hidden page-break-after-always" style={{ breakAfter: isThreePage ? "page" : "auto" }}>
           <div>
-            {/* Minimal Top Header for Page 2 */}
-            <div className="px-10 pb-4 border-b border-neutral-200 flex justify-between items-center">
+            {/* Running Header for Page 2 */}
+            <div className="px-10 pb-3 border-b border-neutral-200 flex justify-between items-center">
               <div className="flex items-center gap-2">
-                <span className="font-black text-neutral-900 text-sm uppercase">SevenX Labs</span>
+                <span className="font-black text-neutral-900 text-xs uppercase tracking-wider">SevenX Labs</span>
                 <span className="text-neutral-300">•</span>
                 <span className="text-xs font-bold text-neutral-600 uppercase">IT Development Agreement</span>
               </div>
-              <span className="font-mono text-xs text-neutral-500 font-bold">Ref #{formattedAgrNumber}</span>
+              <span className="font-mono text-xs text-neutral-500 font-bold">Ref #{formattedAgrNumber} | Page 2 of {numPages}</span>
             </div>
 
-            {/* Sections 7, 8, 9, 10 on Page 2 */}
-            <div className="px-10 mt-6 space-y-4">
+            {/* Sections on Page 2 */}
+            <div className="px-10 mt-5 space-y-3.5">
+              {/* Section 5: Timeline & Milestones (in 3-page mode) */}
+              {isThreePage && (
+                <div className="p-4 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
+                  <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Calendar style={{ width: "16px", height: "16px", display: "block" }} />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1.5">5. TIMELINE & PROJECT MILESTONES</h4>
+                    <div className="grid grid-cols-3 gap-3 bg-neutral-50 p-2.5 rounded-xl border border-neutral-200 text-xs font-mono mb-2.5">
+                      <div>
+                        <span className="text-[10px] text-neutral-500 uppercase font-sans font-bold block">Start Date</span>
+                        <span className="font-bold text-neutral-900">{formatDate(startDate)}</span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-neutral-500 uppercase font-sans font-bold block">Target Delivery</span>
+                        <span className="font-bold text-neutral-900">{formatDate(deliveryDate)}</span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-neutral-500 uppercase font-sans font-bold block">Total Duration</span>
+                        <span className="font-bold text-neutral-900">{durationDays} Days</span>
+                      </div>
+                    </div>
+
+                    {milestones && milestones.length > 0 && (
+                      <div className="space-y-1.5">
+                        <span className="text-[10px] font-black text-neutral-500 uppercase tracking-wider block">Milestone Schedule</span>
+                        <div className="border border-neutral-200 rounded-xl overflow-hidden text-xs">
+                          {milestones.map((m, idx) => (
+                            <div key={m.id || idx} className={`p-2 flex justify-between items-center ${idx % 2 === 0 ? "bg-white" : "bg-neutral-50"} ${idx !== 0 ? "border-t border-neutral-100" : ""}`}>
+                              <div>
+                                <span className="font-bold text-neutral-900">{m.phaseName}</span>
+                                <p className="text-[11px] text-neutral-600 font-medium">{m.description}</p>
+                              </div>
+                              <span className="font-mono text-[11px] font-bold text-neutral-700 bg-neutral-100 px-2 py-0.5 rounded-md whitespace-nowrap">
+                                {formatDate(m.deadline)}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Section 6: Payment Terms */}
+              <div className="p-4 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
+                <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <IndianRupee style={{ width: "16px", height: "16px", display: "block" }} />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1.5">6. PAYMENT TERMS & SCHEDULE</h4>
+                  <p className="text-xs text-neutral-800 mb-2 font-medium">{paymentSchedule}</p>
+                  
+                  {paymentRows && paymentRows.length > 0 ? (
+                    <div className="border border-neutral-200 rounded-xl overflow-hidden text-xs mb-2 font-mono">
+                      {paymentRows.map((p, idx) => (
+                        <div key={p.id || idx} className={`p-2 flex justify-between items-center ${idx % 2 === 0 ? "bg-neutral-50" : "bg-white"} ${idx !== 0 ? "border-t border-neutral-100" : ""}`}>
+                          <div>
+                            <span className="font-bold text-neutral-900 font-sans">{p.label}</span>
+                            <span className="text-[11px] text-neutral-500 font-mono ml-2">({p.percentage}%)</span>
+                          </div>
+                          <div className="text-right">
+                            <span className="font-extrabold text-neutral-900">{formatCurrency(p.amount, currencySymbol)}</span>
+                            <span className="text-[10px] text-neutral-500 block font-sans">{p.dueDate}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-xs font-mono space-y-1 mb-2">
+                      <p><strong className="text-neutral-600 font-bold font-sans">Total Fee:</strong> <span className="font-black text-neutral-900">{formatCurrency(totalAmount, currencySymbol)}</span></p>
+                      <p><strong className="text-neutral-600 font-bold font-sans">Advance (50%):</strong> {formatCurrency(advanceAmount, currencySymbol)}</p>
+                      <p><strong className="text-neutral-600 font-bold font-sans">Balance (50%):</strong> {formatCurrency(balanceAmount, currencySymbol)}</p>
+                    </div>
+                  )}
+
+                  {bankName && (
+                    <div className="bg-neutral-900 text-white p-2.5 rounded-xl text-[11px] font-mono flex flex-wrap justify-between items-center">
+                      <div>
+                        <span><strong>Bank:</strong> {bankName}</span>
+                        {bankAccount && <span className="ml-2">| <strong>A/C:</strong> {bankAccount}</span>}
+                        {bankIfsc && <span className="ml-2">| <strong>IFSC:</strong> {bankIfsc}</span>}
+                      </div>
+                      {upiId && <div><strong>UPI:</strong> {upiId}</div>}
+                    </div>
+                  )}
+                </div>
+              </div>
+
               {/* Section 7: Intellectual Property & Ownership */}
               <div className="p-4 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
                 <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -401,13 +513,98 @@ export function ModernAgreementTemplate({
                 </div>
               </div>
 
+              {/* If 2-page mode, Sections 8, 9, 10 + Signatures are also on Page 2 */}
+              {!isThreePage && (
+                <>
+                  <div className="p-3.5 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
+                    <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <FileCheck style={{ width: "16px", height: "16px", display: "block" }} />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1">8. DELIVERABLES & CODE HANDOVER</h4>
+                      <p className="text-xs text-neutral-800 leading-relaxed font-medium whitespace-pre-line">{deliverables}</p>
+                    </div>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
+                    <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <Lock style={{ width: "16px", height: "16px", display: "block" }} />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1">9. CONFIDENTIALITY & DATA SECURITY</h4>
+                      <p className="text-xs text-neutral-800 leading-relaxed font-medium">{confidentialityClause}</p>
+                    </div>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
+                    <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <ShieldCheck style={{ width: "16px", height: "16px", display: "block" }} />
+                    </div>
+                    <div className="flex-1 space-y-1 text-xs">
+                      <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1">10. WARRANTY & REVISION POLICY</h4>
+                      <p><strong className="text-neutral-900 font-bold">• Warranty:</strong> {warrantyPeriod}</p>
+                      <p><strong className="text-neutral-900 font-bold">• Revisions:</strong> {revisionPolicy}</p>
+                    </div>
+                  </div>
+
+                  {/* Signatures for 2-page mode */}
+                  <div className="mt-4" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+                    <div className="grid grid-cols-2 gap-6 bg-neutral-50 p-4 rounded-2xl border border-neutral-200">
+                      <div>
+                        <p className="font-extrabold text-neutral-900 uppercase text-[11px] tracking-wider mb-2">AUTHORIZED SIGNATURE:</p>
+                        <div className="py-1 border-b border-neutral-300">
+                          <span
+                            className="font-signature text-2xl text-neutral-900 tracking-wider select-none transform -rotate-3 border-b-2 border-neutral-900/80 pb-0.5 px-2"
+                            style={{ fontFamily: "'Dancing Script', 'Caveat', cursive" }}
+                          >
+                            shode
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-neutral-500 font-medium mt-1">Date: {formatDate(effectiveDate)}</p>
+                      </div>
+                      <div>
+                        <p className="font-extrabold text-neutral-900 uppercase text-[11px] tracking-wider mb-2">CLIENT SIGNATURE:</p>
+                        <p className="font-mono text-neutral-900 border-b border-neutral-300 pb-1 font-bold text-xs">{clientSignatory}</p>
+                        <p className="text-[11px] text-neutral-500 font-medium mt-1">Date: {formatDate(effectiveDate)}</p>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Page 2 Footer Bar */}
+          <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20 flex justify-between items-center text-xs font-semibold">
+            <span>Made with SevenX Labs</span>
+            <span className="font-mono text-[11px] text-neutral-400">Page 2 of {numPages}</span>
+          </div>
+        </div>
+      )}
+
+      {/* PAGE 3 (For 3-page Layout) */}
+      {showPage3 && (
+        <div data-page="true" className="relative w-full h-[297mm] flex flex-col justify-between pt-7 pb-0 overflow-hidden">
+          <div>
+            {/* Running Header for Page 3 */}
+            <div className="px-10 pb-3 border-b border-neutral-200 flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <span className="font-black text-neutral-900 text-xs uppercase tracking-wider">SevenX Labs</span>
+                <span className="text-neutral-300">•</span>
+                <span className="text-xs font-bold text-neutral-600 uppercase">IT Development Agreement</span>
+              </div>
+              <span className="font-mono text-xs text-neutral-500 font-bold">Ref #{formattedAgrNumber} | Page 3 of {numPages}</span>
+            </div>
+
+            {/* Sections 8, 9, 10 & Signatures on Page 3 */}
+            <div className="px-10 mt-5 space-y-4">
               {/* Section 8: Deliverables & Code Handover */}
               <div className="p-4 rounded-2xl bg-white border border-neutral-200" style={{ display: "flex", alignItems: "flex-start", gap: "12px", breakInside: "avoid", pageBreakInside: "avoid" }}>
                 <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <FileCheck style={{ width: "16px", height: "16px", display: "block" }} />
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1">8. DELIVERABLES & CODE HANDOVER</h4>
+                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1.5">8. DELIVERABLES & CODE HANDOVER</h4>
                   <p className="text-xs text-neutral-800 leading-relaxed font-medium whitespace-pre-line">{deliverables}</p>
                 </div>
               </div>
@@ -418,7 +615,7 @@ export function ModernAgreementTemplate({
                   <Lock style={{ width: "16px", height: "16px", display: "block" }} />
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1">9. CONFIDENTIALITY & DATA SECURITY</h4>
+                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1.5">9. CONFIDENTIALITY & DATA SECURITY</h4>
                   <p className="text-xs text-neutral-800 leading-relaxed font-medium">{confidentialityClause}</p>
                 </div>
               </div>
@@ -428,42 +625,45 @@ export function ModernAgreementTemplate({
                 <div className={`p-2.5 rounded-full ${accentBadgeBg}`} style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <ShieldCheck style={{ width: "16px", height: "16px", display: "block" }} />
                 </div>
-                <div className="flex-1 space-y-1 text-xs">
-                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1">10. WARRANTY, SUPPORT & REVISION POLICY</h4>
+                <div className="flex-1 space-y-1.5 text-xs">
+                  <h4 className="text-xs font-black text-neutral-900 uppercase tracking-wider mb-1.5">10. WARRANTY, SUPPORT & REVISION POLICY</h4>
                   <p><strong className="text-neutral-900 font-bold">• Warranty Support:</strong> {warrantyPeriod}</p>
                   <p><strong className="text-neutral-900 font-bold">• Revision Policy:</strong> {revisionPolicy}</p>
                   <p><strong className="text-neutral-900 font-bold">• Termination & Refunds:</strong> {cancellationPolicy}</p>
                 </div>
               </div>
-            </div>
 
-            {/* Signatures Section */}
-            <div className="px-10 mt-8" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
-              <div className="grid grid-cols-2 gap-6 bg-neutral-50 p-6 rounded-2xl border border-neutral-200">
-                <div>
-                  <p className="font-extrabold text-neutral-900 uppercase text-xs tracking-wider mb-2">AUTHORIZED SIGNATURE:</p>
-                  <div className="py-2 border-b border-neutral-300">
-                    <span
-                      className="font-signature text-3xl text-neutral-900 tracking-wider select-none transform -rotate-3 border-b-2 border-neutral-900/80 pb-0.5 px-2"
-                      style={{ fontFamily: "'Dancing Script', 'Caveat', cursive" }}
-                    >
-                      shode
-                    </span>
+              {/* Signatures Section */}
+              <div className="mt-8" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
+                <div className="grid grid-cols-2 gap-6 bg-neutral-50 p-6 rounded-2xl border border-neutral-200">
+                  <div>
+                    <p className="font-extrabold text-neutral-900 uppercase text-xs tracking-wider mb-2">AUTHORIZED SIGNATURE:</p>
+                    <div className="py-2 border-b border-neutral-300">
+                      <span
+                        className="font-signature text-3xl text-neutral-900 tracking-wider select-none transform -rotate-3 border-b-2 border-neutral-900/80 pb-0.5 px-2"
+                        style={{ fontFamily: "'Dancing Script', 'Caveat', cursive" }}
+                      >
+                        shode
+                      </span>
+                    </div>
+                    <p className="text-xs text-neutral-500 font-medium mt-1.5">Date: {formatDate(effectiveDate)}</p>
+                    <p className="text-[11px] text-neutral-700 font-bold">{providerSignatory}</p>
                   </div>
-                  <p className="text-xs text-neutral-500 font-medium mt-1">Date: {formatDate(effectiveDate)}</p>
-                </div>
-                <div>
-                  <p className="font-extrabold text-neutral-900 uppercase text-xs tracking-wider mb-2">CLIENT SIGNATURE:</p>
-                  <p className="font-mono text-neutral-900 border-b border-neutral-300 pb-1 font-bold text-xs">{clientSignatory}</p>
-                  <p className="text-xs text-neutral-500 font-medium mt-1">Date: {formatDate(effectiveDate)}</p>
+                  <div>
+                    <p className="font-extrabold text-neutral-900 uppercase text-xs tracking-wider mb-2">CLIENT SIGNATURE:</p>
+                    <p className="font-mono text-neutral-900 border-b border-neutral-300 pb-2.5 font-bold text-xs">{clientSignatory}</p>
+                    <p className="text-xs text-neutral-500 font-medium mt-1.5">Date: {formatDate(effectiveDate)}</p>
+                    <p className="text-[11px] text-neutral-700 font-bold">{clientCompany || clientName}</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Page 2 Full-Width Black Footer Bar */}
-          <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20" style={{ display: "flex", justifyContent: "center", alignItems: "center", fontSize: "12px", fontWeight: 600 }}>
+          {/* Page 3 Footer Bar */}
+          <div className="relative w-full bg-[#0a0a0a] text-white px-10 py-3.5 z-20 flex justify-between items-center text-xs font-semibold">
             <span>Made with SevenX Labs</span>
+            <span className="font-mono text-[11px] text-neutral-400">Page 3 of {numPages}</span>
           </div>
         </div>
       )}
