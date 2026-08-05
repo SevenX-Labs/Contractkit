@@ -10,6 +10,7 @@ export interface InvoiceTemplateProps {
   invoiceNumber: string;
   invoiceDate: string;
   dueDate?: string;
+  paymentStatus?: "Paid" | "Unpaid" | "Partial" | string;
   
   senderName?: string;
   senderCompany?: string;
@@ -66,6 +67,8 @@ export function ModernInvoiceTemplate({
   id = "invoice-pdf-preview",
   invoiceNumber = "SXL-INV-2026-000001",
   invoiceDate = new Date().toISOString().split("T")[0],
+  dueDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+  paymentStatus = "Unpaid",
   senderName = "Sahil Hode",
   senderCompany = "SevenX Labs",
   senderAddress = "Thane, Mumbai, Maharashtra",
@@ -123,7 +126,8 @@ export function ModernInvoiceTemplate({
       : "#10b981";
 
   const displayItems = items.length > 0 ? items : [
-    { id: "item-placeholder", description: "[ Enter Service / Item Description ]", quantity: 1, rate: 0, amount: 0 }
+    { id: "item-1", description: "Milestone 1: Requirement Analysis, Wireframes & UI Architecture", quantity: 1, rate: 0, amount: 0 },
+    { id: "item-2", description: "Milestone 2: Full-Stack Development & API Integration", quantity: 1, rate: 0, amount: 0 }
   ];
 
   return (
@@ -171,28 +175,44 @@ export function ModernInvoiceTemplate({
           </div>
 
           {/* Top Right Black Header Panel */}
-          <div className="relative w-[52%] bg-[#0a0a0a] text-white pt-10 pb-8 px-8 rounded-bl-[50px] shadow-2xl flex flex-col justify-between min-h-[200px] overflow-hidden">
+          <div className="relative w-[52%] bg-[#0a0a0a] text-white pt-8 pb-6 px-8 rounded-bl-[50px] shadow-2xl flex flex-col justify-between min-h-[210px] overflow-hidden">
             <div className="relative z-10">
-              <h1 className="text-6xl font-black tracking-wider uppercase text-white mb-6">
-                INVOICE
-              </h1>
+              <div className="flex items-center justify-between mb-4">
+                <h1 className="text-5xl font-black tracking-wider uppercase text-white">
+                  INVOICE
+                </h1>
+                {/* Payment Status Badge */}
+                <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                  paymentStatus === "Paid"
+                    ? "bg-[#a6ce39] text-neutral-950 shadow-xs"
+                    : paymentStatus === "Partial"
+                    ? "bg-amber-400 text-neutral-950 shadow-xs"
+                    : "bg-rose-500/20 text-rose-300 border border-rose-500/40"
+                }`}>
+                  {paymentStatus || "Unpaid"}
+                </span>
+              </div>
               
               {/* Metadata 2-Column Grid */}
-              <div className="grid grid-cols-2 gap-3 text-left text-xs font-medium border-t border-neutral-800 pt-4">
+              <div className="grid grid-cols-2 gap-2.5 text-left text-xs font-medium border-t border-neutral-800 pt-3">
                 <div>
-                  <span className="text-[11px] text-neutral-400 block font-sans">Invoice No.</span>
+                  <span className="text-[10px] text-neutral-400 block font-sans">Invoice No.</span>
                   <span className="font-mono font-bold text-white text-xs block mt-0.5 whitespace-nowrap">{invoiceNumber}</span>
                 </div>
                 <div>
-                  <span className="text-[11px] text-neutral-400 block font-sans">Date</span>
+                  <span className="text-[10px] text-neutral-400 block font-sans">Date</span>
                   <span className="font-mono font-bold text-white text-xs block mt-0.5 whitespace-nowrap">{formatDate(invoiceDate)}</span>
                 </div>
                 <div>
-                  <span className="text-[11px] text-neutral-400 block font-sans">Invoice Type</span>
+                  <span className="text-[10px] text-neutral-400 block font-sans">Due Date</span>
+                  <span className="font-mono font-bold text-white text-xs block mt-0.5 whitespace-nowrap">{dueDate ? formatDate(dueDate) : formatDate(invoiceDate)}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-neutral-400 block font-sans">Invoice Type</span>
                   <span className="font-bold text-[#a6ce39] text-xs block mt-0.5 whitespace-nowrap">{invoiceType || "Advance Payment"}</span>
                 </div>
-                <div className="pr-4">
-                  <span className="text-[11px] text-neutral-400 block font-sans">Project Name</span>
+                <div className="col-span-2 pr-4">
+                  <span className="text-[10px] text-neutral-400 block font-sans">Project Name</span>
                   <span className="font-bold text-white text-xs block mt-0.5 leading-snug break-words">
                     {projectName || <span className="text-neutral-400 italic font-normal">[ Project Name ]</span>}
                   </span>
@@ -226,10 +246,11 @@ export function ModernInvoiceTemplate({
         <div className="px-10 mt-6">
           {/* Black Full-Width Header Row */}
           <div className="bg-[#0a0a0a] text-white rounded-full py-3.5 px-6 flex justify-between items-center text-xs font-black uppercase tracking-wider mb-2 shadow-md">
-            <span className="w-16 text-center">SR NO.</span>
+            <span className="w-12 text-center">SR NO.</span>
             <span className="flex-1 px-4">ITEM DESCRIPTION</span>
-            <span className="w-28 text-right">RATE</span>
-            <span className="w-28 text-right">TOTAL</span>
+            <span className="w-14 text-center">QTY</span>
+            <span className="w-24 text-right">RATE</span>
+            <span className="w-24 text-right">TOTAL</span>
           </div>
 
           {/* Table Body Rows */}
@@ -246,10 +267,11 @@ export function ModernInvoiceTemplate({
                       : "bg-white text-neutral-800 rounded-full border border-neutral-100"
                   }`}
                 >
-                  <span className="w-16 text-center font-mono font-bold">{srNo}</span>
+                  <span className="w-12 text-center font-mono font-bold">{srNo}</span>
                   <span className="flex-1 px-4 font-semibold">{item.description}</span>
-                  <span className="w-28 text-right font-mono">{formatCurrency(item.rate, currencySymbol)}</span>
-                  <span className="w-28 text-right font-mono font-bold">{formatCurrency(item.amount, currencySymbol)}</span>
+                  <span className="w-14 text-center font-mono font-bold">{item.quantity ?? 1}</span>
+                  <span className="w-24 text-right font-mono">{formatCurrency(item.rate, currencySymbol)}</span>
+                  <span className="w-24 text-right font-mono font-bold">{formatCurrency(item.amount, currencySymbol)}</span>
                 </div>
               );
             })}
@@ -294,18 +316,17 @@ export function ModernInvoiceTemplate({
                 <span>Subtotal:</span>
                 <span>{formatCurrency(subtotal, currencySymbol)}</span>
               </div>
-              {taxAmount > 0 && (
-                <div className="flex justify-between items-center text-neutral-300">
-                  <span>Tax ({taxPercent}%):</span>
-                  <span>{formatCurrency(taxAmount, currencySymbol)}</span>
-                </div>
-              )}
-              {discountAmount > 0 && (
-                <div className="flex justify-between items-center text-emerald-400">
-                  <span>Discount:</span>
-                  <span>-{formatCurrency(discountAmount, currencySymbol)}</span>
-                </div>
-              )}
+              
+              <div className="flex justify-between items-center text-emerald-400">
+                <span>Discount {discountPercent > 0 ? `(${discountPercent}%)` : ""}:</span>
+                <span>{discountAmount > 0 ? `-${formatCurrency(discountAmount, currencySymbol)}` : `${currencySymbol}0.00`}</span>
+              </div>
+
+              <div className="flex justify-between items-center text-neutral-300">
+                <span>Tax {taxPercent > 0 ? `(${taxPercent}%)` : ""}:</span>
+                <span>{taxAmount > 0 ? formatCurrency(taxAmount, currencySymbol) : `${currencySymbol}0.00`}</span>
+              </div>
+
               <div className="flex justify-between items-center text-sm font-black text-white pt-2 border-t border-neutral-800">
                 <span className="uppercase font-sans tracking-wider">Total Due:</span>
                 <span className="text-[#a6ce39] text-base">{formatCurrency(total, currencySymbol)}</span>
@@ -326,8 +347,13 @@ export function ModernInvoiceTemplate({
           </div>
         </div>
 
+        {/* Small Footer Agreement Note */}
+        <div className="text-[10px] text-neutral-500 italic text-center mt-6 mb-2 font-medium">
+          This invoice is issued as per the signed IT Development Agreement.
+        </div>
+
         {/* Footer Bar */}
-        <div className="mt-8 pt-4 border-t border-neutral-200 flex justify-between items-center text-[11px] font-semibold text-neutral-400">
+        <div className="pt-3 border-t border-neutral-200 flex justify-between items-center text-[11px] font-semibold text-neutral-400">
           <span>SevenX Labs • Invoice #{invoiceNumber}</span>
           <span>Made with SevenX Labs</span>
         </div>

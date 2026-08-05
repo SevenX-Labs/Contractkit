@@ -220,6 +220,10 @@ export default function InvoicePage() {
       invoiceNumber={formData.invoiceNumber}
       invoiceDate={formData.invoiceDate}
       dueDate={formData.dueDate}
+      paymentStatus={formData.paymentStatus || (formData.status === "paid" ? "Paid" : "Unpaid")}
+      projectName={formData.projectName}
+      invoiceType={formData.invoiceType}
+      miniDescription={formData.miniDescription}
       senderName={formData.senderName}
       senderCompany={formData.senderCompany}
       senderAddress={formData.senderAddress}
@@ -339,11 +343,35 @@ export default function InvoicePage() {
               </div>
             </div>
             <div>
-              <label className="text-xs font-bold text-neutral-700 block mb-1.5">Date</label>
+              <label className="text-xs font-bold text-neutral-700 block mb-1.5">Payment Status</label>
+              <select
+                value={formData.paymentStatus || "Unpaid"}
+                onChange={(e) => setFormData({ ...formData, paymentStatus: e.target.value as any })}
+                className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 focus:outline-none cursor-pointer"
+              >
+                <option value="Unpaid">Unpaid</option>
+                <option value="Paid">Paid</option>
+                <option value="Partial">Partial</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs font-bold text-neutral-700 block mb-1.5">Invoice Date</label>
               <input
                 type="date"
                 value={formData.invoiceDate}
                 onChange={(e) => setFormData({ ...formData, invoiceDate: e.target.value })}
+                className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-bold text-neutral-700 block mb-1.5">Due Date</label>
+              <input
+                type="date"
+                value={formData.dueDate}
+                onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
                 className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs text-neutral-900 font-medium focus:outline-none"
               />
             </div>
@@ -620,6 +648,41 @@ export default function InvoicePage() {
                   value={bankDetails.ifscCode}
                   onChange={(e) => handleBankDetailChange("ifscCode", e.target.value)}
                   className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-mono text-neutral-900 focus:outline-none"
+                />
+              </div>
+            </div>
+
+            {/* Tax & Discount Controls */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="text-[10px] font-bold text-neutral-600 uppercase block mb-1">Discount (%)</label>
+                <input
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={formData.discountPercent || 0}
+                  onChange={(e) => {
+                    const disc = Number(e.target.value);
+                    const totals = calculateInvoiceTotals(formData.items, disc, formData.taxPercent);
+                    setFormData((prev) => ({ ...prev, discountPercent: disc, ...totals }));
+                  }}
+                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold text-neutral-600 uppercase block mb-1">Tax / GST (%)</label>
+                <input
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={formData.taxPercent || 0}
+                  onChange={(e) => {
+                    const tax = Number(e.target.value);
+                    const totals = calculateInvoiceTotals(formData.items, formData.discountPercent, tax);
+                    setFormData((prev) => ({ ...prev, taxPercent: tax, ...totals }));
+                  }}
+                  className="w-full bg-[#F4F0E6] border border-[#E2DDD0] rounded-xl px-3 py-2 text-xs font-bold text-neutral-900 focus:outline-none"
                 />
               </div>
             </div>

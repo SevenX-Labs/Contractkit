@@ -44,6 +44,7 @@ export interface InvoiceData {
   projectName?: string;
   invoiceType?: string;
   miniDescription?: string;
+  paymentStatus?: "Paid" | "Unpaid" | "Partial";
   
   senderName: string;
   senderCompany: string;
